@@ -1,7 +1,8 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use work.defines.all;
 
-entity command_unit is
+entity communication_unit is
     Port ( clk : in  STD_LOGIC;
            kernel_completed : in  STD_LOGIC;
 
@@ -10,19 +11,17 @@ entity command_unit is
            spi_bus_in : in  STD_LOGIC_VECTOR (4 downto 0);
 
            -- Instruction memory
-           instruction_data_out : out  STD_LOGIC_VECTOR (15 downto 0);
+           instruction_data_out : out word_t;
            instruction_address_out : out  STD_LOGIC_VECTOR (15 downto 0);
            instruction_write_enable_out : out  STD_LOGIC;
 
            -- SRAM
            command_sram_override : out  STD_LOGIC;
            command_sram_flip : out  STD_LOGIC;
-           sram_data_inout : inout  STD_LOGIC_VECTOR (15 downto 0);
-           sram_address : out  STD_LOGIC_VECTOR (18 downto 0);
-           sram_write_enable : out  STD_LOGIC);
-end command_unit;
+           sram_bus_inout : inout sram_bus_t);
+end communication_unit;
 
-architecture Behavioral of command_unit is
+architecture Behavioral of communication_unit is
 
 begin
 
