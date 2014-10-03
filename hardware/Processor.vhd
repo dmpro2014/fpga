@@ -20,7 +20,7 @@ entity Processor is
            -- MC
            mc_ebi_bus : inout STD_LOGIC_VECTOR (49 downto 0);
            mc_spi_bus : inout STD_LOGIC_VECTOR (4 downto 0);
-           
+
            -- Generic IO
            led_1_out : out STD_LOGIC;
            led_2_out : out STD_LOGIC);
