@@ -29,6 +29,10 @@ entity Processor is
 end Processor;
 
 architecture Behavioral of Processor is
+
+  -- PC
+  signal pc_out : std_logic_vector (15 downto 0);
+
   -- Communication unit
   signal comm_sram_override_out : STD_LOGIC;
   signal comm_sram_flip_out : STD_LOGIC;
@@ -42,6 +46,11 @@ architecture Behavioral of Processor is
 
   -- Thread spawner
   signal kernel_completed_out : STD_LOGIC;
+  signal pc_write_enable_out : STD_LOGIC;
+
+  -- MUX units
+  signal mux_pc_in_out : STD_LOGIC_VECTOR(15 downto 0);
+
 begin
 
   communication_unit : entity work.communication_unit
@@ -62,6 +71,12 @@ begin
             sram_bus_control_out => comm_sram_bus_control_out
           );
 
+  pc : entity work.pc
+  port map(
+            clk => clk,
+            write_enable => pc_write_enable_out,
+            pc_in => mux_pc_in_out,
+            pc_out => pc_out);
 
 end Behavioral;
 
