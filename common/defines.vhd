@@ -17,5 +17,6 @@ package defines is
     end record;
 
   subtype word_t is std_logic_vector(15 downto 0);
-
+  subtype ebi_bus_t is std_logic_vector(49 downto 0);
+  subtype spi_bus_t is std_logic_vector(4 downto 0);
 end package defines;

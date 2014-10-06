@@ -4,11 +4,11 @@ use work.defines.all;
 
 entity communication_unit is
   Port ( clk : in  STD_LOGIC;
-         kernel_completed : in  STD_LOGIC;
+         kernel_completed_in : in  STD_LOGIC;
 
          -- MC busses
-         ebi_bus_in : in  STD_LOGIC_VECTOR (49 downto 0);
-         spi_bus_in : in  STD_LOGIC_VECTOR (4 downto 0);
+         ebi_bus_in : in  ebi_bus_t;
+         spi_bus_in : in  spi_bus_t;
 
          -- Instruction memory
          instruction_data_out : out word_t;
@@ -16,10 +16,10 @@ entity communication_unit is
          instruction_write_enable_out : out  STD_LOGIC;
 
          -- SRAM
-         command_sram_override : out  STD_LOGIC;
-         command_sram_flip : out  STD_LOGIC;
-         sram_bus_data : inout sram_bus_data_t;
-         sram_bus_control: out sram_control_t
+         command_sram_override_out : out  STD_LOGIC;
+         command_sram_flip_out : out  STD_LOGIC;
+         sram_bus_data_inout : inout sram_bus_data_t;
+         sram_bus_control_out: out sram_bus_control_t
 
        );
 end communication_unit;
