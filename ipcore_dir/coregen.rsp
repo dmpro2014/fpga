@@ -1,0 +1,2 @@
+SETPROJECT "/opt/dmlab/home/eirikjak/ghettoCUDA/fpga/ipcore_dir/coregen.cgp"
+LAUNCHXCO "/opt/dmlab/home/eirikjak/ghettoCUDA/fpga/ipcore_dir/ip_memory.xco"

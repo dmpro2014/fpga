@@ -5,6 +5,7 @@ use work.defines.all;
 entity communication_unit is
   Port ( clk : in  STD_LOGIC;
          kernel_completed_in : in  STD_LOGIC;
+         comm_reset_system_out : out STD_LOGIC;
 
          -- MC busses
          ebi_bus_in : in  ebi_bus_t;
