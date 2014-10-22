@@ -25,7 +25,7 @@ entity Processor is
          -- Generic IO
          led_1_out : out STD_LOGIC;
          led_2_out : out STD_LOGIC);
-
+				 
 end Processor;
 
 architecture Behavioral of Processor is
@@ -45,10 +45,23 @@ architecture Behavioral of Processor is
   signal comm_instruction_write_enable_out : STD_LOGIC;
 
   signal comm_reset_system_out : STD_LOGIC;
+	
+	signal comm_kernel_start_out: std_logic;
+	signal comm_kernel_address_out: instruction_address_t;
+	signal comm_kernel_number_of_threads_out: thread_id_t;
+	
 
-  -- Thread spawner
-  signal kernel_completed_out : STD_LOGIC;
-  signal pc_write_enable_out : STD_LOGIC;
+	-- Control(CTRL)
+	signal ctrl_pc_write_enable_out: std_logic;
+	
+  -- Thread spawner(TS)
+  signal ts_kernel_complete_out : std_logic;
+  signal ts_pc_input_select_out : std_logic_vector(1 downto 0);
+	signal ts_pc_out: instruction_address_t;
+	signal ts_thread_id_out: thread_id_t;
+	signal ts_id_write_enable_out : std_logic;
+
+	signal ts_thread_done_in : std_logic;
 
   -- MUX units
   signal mux_pc_in_out : STD_LOGIC_VECTOR(15 downto 0);
@@ -59,14 +72,27 @@ architecture Behavioral of Processor is
 
 begin
 
-  -- Normal components
+	-- Thread Spawner
+	thread_spawner : entity work.thread_spawner
+	port map(
+						clk => clk,
+						kernel_start_in => comm_kernel_start_out,
+						kernel_addr_in => comm_kernel_address_out,
+						num_threads_in => comm_kernel_number_of_threads_out,
+						thread_done_in => TS_thread_done_in,
+						pc_start_out => TS_pc_out,
+						pc_input_select_out => TS_pc_input_select_out,
+						thread_id_out => TS_thread_id_out,
+						id_write_enable_out => TS_id_write_enable_out
+					);
+-- Normal components
 
   communication_unit : entity work.communication_unit
   port map(
             clk => clk,
             ebi_bus_in => mc_ebi_bus,
             spi_bus_in => mc_spi_bus,
-            kernel_completed_in => kernel_completed_out,
+            kernel_completed_in => TS_kernel_complete_out,
 
             command_sram_override_out => comm_sram_override_out,
             command_sram_flip_out => comm_sram_flip_out,
@@ -77,14 +103,17 @@ begin
 
             sram_bus_data_inout => comm_sram_bus_data_out,
             sram_bus_control_out => comm_sram_bus_control_out,
-
+						
+						kernel_number_of_threads_out => comm_kernel_number_of_threads_out,
+						kernel_start_out => comm_kernel_start_out,
+						kernel_address_out => comm_kernel_address_out,
             comm_reset_system_out => comm_reset_system_out
           );
 
   pc : entity work.pc
   port map(
             clk => clk,
-            write_enable => pc_write_enable_out,
+            write_enable => CTRL_pc_write_enable_out,
             pc_in => mux_pc_in_out,
             pc_out => pc_out);
 

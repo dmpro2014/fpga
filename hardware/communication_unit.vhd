@@ -7,6 +7,11 @@ entity communication_unit is
          kernel_completed_in : in  STD_LOGIC;
          comm_reset_system_out : out STD_LOGIC;
 
+				 -- Thread Spawner signals 
+				 kernel_start_out: out std_logic;
+				 kernel_address_out: out instruction_address_t;
+				 kernel_number_of_threads_out: out thread_id_t;
+				 
          -- MC busses
          ebi_bus_in : in  ebi_bus_t;
          spi_bus_in : in  spi_bus_t;
@@ -21,7 +26,7 @@ entity communication_unit is
          command_sram_flip_out : out  STD_LOGIC;
          sram_bus_data_inout : inout sram_bus_data_t;
          sram_bus_control_out: out sram_bus_control_t
-
+         
        );
 end communication_unit;
 

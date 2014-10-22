@@ -1,9 +1,11 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
+package defines is
 
-	constant INSTRUCTION_ADDRESS_WIDTH = 16;
-	constant WORD_WIDTH = 16;
+	constant INSTRUCTION_ADDRESS_WIDTH: integer := 16;
+	constant DATA_WIDTH: integer := 19;
+	constant WORD_WIDTH: integer := 16;
 	
   type sram_bus_control_t is
     record
@@ -22,4 +24,6 @@ use IEEE.STD_LOGIC_1164.ALL;
   subtype ebi_bus_t is std_logic_vector(49 downto 0);
   subtype spi_bus_t is std_logic_vector(4 downto 0);
 	subtype instruction_address_t is std_logic_vector(INSTRUCTION_ADDRESS_WIDTH -1 downto 0);
+	subtype thread_id_t is std_logic_vector(DATA_WIDTH -1 downto 0);
+	
 end package defines;
