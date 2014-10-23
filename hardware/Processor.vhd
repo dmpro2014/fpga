@@ -77,7 +77,7 @@ architecture Behavioral of Processor is
   signal ctrl_read_register_2_out: std_logic;
   signal ctrl_mask_enable_out: std_logic;
   signal ctrl_alu_op_out: alu_op_t;
-  signal ctrl_active_barrel_row_out: std_logic_vector(BARREL_HEIGHT_BIT_WIDTH -1 downto 0);
+  signal ctrl_active_barrel_row_out: barrel_row_t;
   signal ctrl_thread_done_out: std_logic;
   signal ctrl_lsu_load_enable_out: std_logic;
   signal ctrl_lsu_write_enable_out: std_logic;
@@ -89,7 +89,7 @@ architecture Behavioral of Processor is
   signal load_store_memory_write_enable_out : std_logic;
   signal load_store_memory_chip_enable_out : std_logic;
 
-  signal load_store_registers_file_select_out : std_logic_vector(BARREL_HEIGHT_BIT_WIDTH - 1 downto 0);
+  signal load_store_registers_file_select_out : barrel_row_t;
   signal load_store_registers_write_enable_out : std_logic;
   signal load_store_sp_memory_data_out : sp_memory_datas_t;
 

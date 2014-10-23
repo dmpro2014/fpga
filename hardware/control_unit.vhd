@@ -11,7 +11,7 @@ entity control_unit is
           mask_enable_out: out std_logic;
           alu_op_out: out alu_op_t;
           pc_write_enable_out: out std_logic;
-          active_barrel_row_out: out std_logic_vector(BARREL_HEIGHT_BIT_WIDTH -1 downto 0);
+          active_barrel_row_out: out barrel_row_t;
           thread_done_out: out std_logic;
           lsu_load_enable_out: out std_logic;
           lsu_write_enable: out std_logic

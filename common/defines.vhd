@@ -35,6 +35,8 @@ package defines is
   type sp_memory_addresses_t is array(NUMBER_OF_STREAMING_PROCESSORS - 1 downto 0) of instruction_address_t;
   type sp_memory_datas_t is array(NUMBER_OF_STREAMING_PROCESSORS - 1 downto 0) of word_t;
 
+  subtype barrel_row_t is std_logic_vector(BARREL_HEIGHT_BIT_WIDTH -1 downto 0);
+
   subtype opcode_t is std_logic_vector(6 downto 0); -- Placeholder
   subtype alu_op_t is std_logic_vector(4 downto 0); -- Placeholder
 
