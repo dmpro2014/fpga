@@ -40,7 +40,6 @@
       <association xil_pn:name="Implementation"/>
     </file>
     <file xil_pn:name="common/defines.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation"/>
       <association xil_pn:name="Implementation"/>
     </file>
     <file xil_pn:name="hardware/mux_2.vhd" xil_pn:type="FILE_VHDL">
@@ -56,6 +55,10 @@
       <association xil_pn:name="Implementation"/>
     </file>
     <file xil_pn:name="hardware/warp_drive.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation"/>
+      <association xil_pn:name="Implementation"/>
+    </file>
+    <file xil_pn:name="hardware/load_store_unit.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation"/>
       <association xil_pn:name="Implementation"/>
     </file>
