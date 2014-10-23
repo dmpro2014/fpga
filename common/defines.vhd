@@ -37,7 +37,7 @@ package defines is
 
   type sp_memory_addresses_t is array(NUMBER_OF_STREAMING_PROCESSORS - 1 downto 0) of instruction_address_t;
   type sp_memory_datas_t is array(NUMBER_OF_STREAMING_PROCESSORS - 1 downto 0) of word_t;
-	type register_directory_ids_t is array(BARREL_HEIGHT-1 downto 0) of  std_logic_vector(DATA_WIDTH -1 downto 0);
+	type register_directory_ids_t is array(BARREL_HEIGHT-1 downto 0) of  thread_id_t;
 
   subtype barrel_row_t is std_logic_vector(BARREL_HEIGHT_BIT_WIDTH -1 downto 0);
 
