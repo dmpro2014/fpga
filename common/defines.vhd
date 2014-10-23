@@ -3,7 +3,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 package defines is
 
-	constant REGISTER_COUNT_BIT_WIDTH: integer := 4;
+  constant REGISTER_COUNT_BIT_WIDTH: integer := 4;
 
   constant INSTRUCTION_ADDRESS_WIDTH: integer := 16;
   constant DATA_ADDRESS_WIDTH: integer := 20;
@@ -34,6 +34,7 @@ package defines is
   subtype instruction_address_t is std_logic_vector(INSTRUCTION_ADDRESS_WIDTH -1 downto 0);
 	subtype memory_address_t is std_logic_vector(DATA_ADDRESS_WIDTH -1 downto 0);
   subtype thread_id_t is std_logic_vector(DATA_WIDTH -1 downto 0);
+  subtype register_address_t is std_logic_vector(REGISTER_COUNT_BIT_WIDTH - 1 downto 0);
 
   type sp_memory_addresses_t is array(NUMBER_OF_STREAMING_PROCESSORS - 1 downto 0) of instruction_address_t;
   type sp_memory_datas_t is array(NUMBER_OF_STREAMING_PROCESSORS - 1 downto 0) of word_t;
