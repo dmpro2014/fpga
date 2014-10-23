@@ -1,5 +1,6 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use work.defines.all;
 
 entity control_unit is
     Port (  clk : in std_logic;
@@ -13,13 +14,12 @@ entity control_unit is
 						active_barrel_row_out: out std_logic_vector(BARREL_HEIGHT_BIT_WIDTH downto 0);
 						thread_done_out: out std_logic;
 						lsu_load_enable_out: out std_logic;
-						lsu_write_enable: out std_logic;		
+						lsu_write_enable: out std_logic
+						
 		);
+		
 end control_unit;
 
 architecture Behavioral of control_unit is
-
 begin
-
-
 end Behavioral;

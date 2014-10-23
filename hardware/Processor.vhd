@@ -50,10 +50,6 @@ architecture Behavioral of Processor is
 	signal comm_kernel_address_out: instruction_address_t;
 	signal comm_kernel_number_of_threads_out: thread_id_t;
 	
-
-	-- Control(CTRL)
-	signal ctrl_pc_write_enable_out: std_logic;
-	
   -- Thread spawner(TS)
   signal ts_kernel_complete_out : std_logic;
   signal ts_pc_input_select_out : std_logic_vector(1 downto 0);
@@ -68,9 +64,43 @@ architecture Behavioral of Processor is
   signal mux_instruction_memory_address_in_out : STD_LOGIC_VECTOR(15 downto 0);
 
   -- Instruction memory
-  signal instruction_data_out : STD_LOGIC_VECTOR(15 downto 0);
+  signal instruction_data_out : std_logic_vector(15 downto 0);
+
+	
+	-- Control(CTRL)
+	signal ctrl_pc_write_enable_out: std_logic;
+	signal ctrl_opcode_in: opcode_t;
+	signal ctrl_register_write_enable_out: std_logic;
+	signal ctrl_read_register_1_out: std_logic;
+	signal ctrl_read_register_2_out: std_logic;
+	signal ctrl_mask_enable_out: std_logic;
+	signal ctrl_alu_op_out: alu_op_t;
+	signal ctrl_active_barrel_row_out: std_logic_vector(BARREL_HEIGHT_BIT_WIDTH downto 0);
+	signal ctrl_thread_done_out: std_logic;
+	signal ctrl_lsu_load_enable_out: std_logic;
+	signal ctrl_lsu_write_enable: std_logic;
 
 begin
+
+  -- Control unit
+	control_unit : entity work.control_unit
+	port map(
+			clk => clk,
+			opcode_in => ctrl_opcode_in,
+			register_write_enable_out => ctrl_register_write_enable_out,
+			read_register_1_out => ctrl_read_register_1_out,
+			read_register_2_out => ctrl_read_register_2_out,
+			mask_enable_out => ctrl_mask_enable_out,
+			alu_op_out => ctrl_alu_op_out,
+			pc_write_enable_out => ctrl_pc_write_enable_out,
+			active_barrel_row_out =>ctrl_active_barrel_row_out,
+			thread_done_out => ctrl_thread_done_out,
+			lsu_load_enable_out => ctrl_lsu_load_enable_out,
+			lsu_write_enable => ctrl_lsu_write_enable
+	
+	);
+	
+
 
 	-- Thread Spawner
 	thread_spawner : entity work.thread_spawner
@@ -79,7 +109,7 @@ begin
 						kernel_start_in => comm_kernel_start_out,
 						kernel_addr_in => comm_kernel_address_out,
 						num_threads_in => comm_kernel_number_of_threads_out,
-						thread_done_in => TS_thread_done_in,
+						thread_done_in => ctrl_thread_done_out,
 						pc_start_out => TS_pc_out,
 						pc_input_select_out => TS_pc_input_select_out,
 						thread_id_out => TS_thread_id_out,

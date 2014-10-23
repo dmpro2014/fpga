@@ -32,7 +32,6 @@ package defines is
   subtype instruction_address_t is std_logic_vector(INSTRUCTION_ADDRESS_WIDTH -1 downto 0);
   subtype thread_id_t is std_logic_vector(DATA_WIDTH -1 downto 0);
   type sp_memory_addresses_t is array(NUMBER_OF_STREAMING_PROCESSORS - 1 downto 0) of instruction_address_t;
-	subtype thread_id_t is std_logic_vector(DATA_WIDTH -1 downto 0);
 	subtype opcode_t is std_logic_vector(6 downto 0); -- Placeholder
 	subtype alu_op_t is std_logic_vector(4 downto 0); -- Placeholder
 
