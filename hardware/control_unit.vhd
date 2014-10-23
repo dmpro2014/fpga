@@ -2,7 +2,19 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 entity control_unit is
-    Port ( instruction_in : in  STD_LOGIC_VECTOR (15 downto 0));
+    Port (  clk : in std_logic;
+						opcode_in: in opcode_t;
+						register_write_enable_out: out std_logic;
+						read_register_1_out: out std_logic;
+						read_register_2_out: out std_logic;
+						mask_enable_out: out std_logic;
+						alu_op_out: out alu_op_t;
+						pc_write_enable_out: out std_logic;
+						active_barrel_row_out: out std_logic_vector(BARREL_HEIGHT_BIT_WIDTH downto 0);
+						thread_done_out: out std_logic;
+						lsu_load_enable_out: out std_logic;
+						lsu_write_enable: out std_logic;		
+		);
 end control_unit;
 
 architecture Behavioral of control_unit is
