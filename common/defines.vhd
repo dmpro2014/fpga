@@ -3,8 +3,10 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 package defines is
 
+	constant REGISTER_COUNT_BIT_WIDTH: integer := 4;
+
   constant INSTRUCTION_ADDRESS_WIDTH: integer := 16;
-  constant DATA_ADDRESS_WIDTH: integer := 19;
+  constant DATA_ADDRESS_WIDTH: integer := 20;
   constant DATA_WIDTH: integer := 19;
   constant WORD_WIDTH: integer := 16;
 
@@ -30,10 +32,12 @@ package defines is
   subtype ebi_bus_t is std_logic_vector(49 downto 0);
   subtype spi_bus_t is std_logic_vector(4 downto 0);
   subtype instruction_address_t is std_logic_vector(INSTRUCTION_ADDRESS_WIDTH -1 downto 0);
+	subtype memory_address_t is std_logic_vector(DATA_ADDRESS_WIDTH -1 downto 0);
   subtype thread_id_t is std_logic_vector(DATA_WIDTH -1 downto 0);
 
   type sp_memory_addresses_t is array(NUMBER_OF_STREAMING_PROCESSORS - 1 downto 0) of instruction_address_t;
   type sp_memory_datas_t is array(NUMBER_OF_STREAMING_PROCESSORS - 1 downto 0) of word_t;
+	type register_directory_ids_t is array(BARREL_HEIGHT-1 downto 0) of  std_logic_vector(DATA_WIDTH -1 downto 0);
 
   subtype barrel_row_t is std_logic_vector(BARREL_HEIGHT_BIT_WIDTH -1 downto 0);
 
