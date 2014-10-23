@@ -20,6 +20,14 @@ entity control_unit is
 		
 end control_unit;
 
-architecture Behavioral of control_unit is
+architecture rtl of control_unit is
 begin
-end Behavioral;
+
+	warp_drive: entity work.warp_drive
+	port map(
+				clk => clk,
+				pc_write_enable_out => pc_write_enable_out,
+				active_barrel_row_out => active_barrel_row_out
+	);
+	
+end rtl;
