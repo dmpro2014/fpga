@@ -63,8 +63,8 @@ architecture Behavioral of Processor is
   signal ts_thread_done_in : std_logic;
 
   -- Streaming processor (SP)
-  signal sp_sram_bus_addresses_out : sp_sram_addresses_t;
-  signal sp_sram_bus_datas_out : sp_sram_datas_t;
+  signal sp_sram_bus_addresses_out : memory_address_t;
+  signal sp_sram_bus_data_out : word_t;
 
   -- MUX units
   signal mux_pc_in_out : STD_LOGIC_VECTOR(15 downto 0);
@@ -77,10 +77,11 @@ architecture Behavioral of Processor is
   signal ctrl_pc_write_enable_out: std_logic;
   signal ctrl_opcode_in: opcode_t;
   signal ctrl_register_write_enable_out: std_logic;
-  signal ctrl_read_register_1_out: std_logic;
-  signal ctrl_read_register_2_out: std_logic;
+  signal ctrl_read_register_1_out: register_address_t;
+  signal ctrl_read_register_2_out: register_address_t;
+  signal ctrl_write_register_out:  register_address_t;
   signal ctrl_mask_enable_out: std_logic;
-  signal ctrl_alu_op_out: alu_op_t;
+  signal ctrl_alu_op_out: alu_funct_t;
   signal ctrl_active_barrel_row_out: barrel_row_t;
   signal ctrl_thread_done_out: std_logic;
   signal ctrl_lsu_load_enable_out: std_logic;
@@ -94,7 +95,7 @@ architecture Behavioral of Processor is
 
   signal load_store_registers_file_select_out : barrel_row_t;
   signal load_store_registers_write_enable_out : std_logic;
-  signal load_store_sp_sram_data_out : sp_sram_datas_t;
+  signal load_store_sp_sram_data_out : word_t;
 
 begin
 
@@ -107,6 +108,7 @@ begin
             register_write_enable_out => ctrl_register_write_enable_out,
             read_register_1_out => ctrl_read_register_1_out,
             read_register_2_out => ctrl_read_register_2_out,
+            write_register_out  => ctrl_write_register_out,
             mask_enable_out => ctrl_mask_enable_out,
             alu_op_out => ctrl_alu_op_out,
             pc_write_enable_out => ctrl_pc_write_enable_out,
@@ -115,6 +117,27 @@ begin
             lsu_load_enable_out => ctrl_lsu_load_enable_out,
             lsu_write_enable => ctrl_lsu_write_enable_out
           );
+          
+          
+          -- Replace with array of SPs
+ streaming_processors : entity work.streaming_processor
+  port map(
+            clock => clk,
+            read_reg_1_in => ctrl_read_register_1_out,
+            read_reg_2_in => ctrl_read_register_2_out,
+            write_reg_in  => ctrl_write_register_out,
+            reg_write_enable_in => ctrl_register_write_enable_out,
+            mask_enable_in => ctrl_mask_enable_out,
+            alu_function_in => ctrl_alu_op_out,
+            id_data_in => TS_thread_id_out,
+            id_write_enable_in => TS_id_write_enable_out,
+            barrel_select_in =>  ctrl_active_barrel_row_out,
+            return_write_enable_in => load_store_registers_write_enable_out,
+            return_barrel_select_in => load_store_registers_file_select_out,
+            return_data_in => load_store_sp_sram_data_out,
+            lsu_write_data_out => sp_sram_bus_data_out,
+            lsu_address_out     => sp_sram_bus_addresses_out
+           );
 
   -- Thread Spawner
   thread_spawner : entity work.thread_spawner
@@ -162,7 +185,7 @@ begin
             request_sram_bus_write_in => ctrl_lsu_write_enable_out,
             register_file_select_in => ctrl_active_barrel_row_out,
             sp_sram_bus_addresses_in => sp_sram_bus_addresses_out,
-            sp_sram_bus_datas_in => sp_sram_bus_datas_out,
+            sp_sram_bus_datas_in => sp_sram_bus_data_out,
 
             --Memory wires
             sram_bus_data_1_inout => load_store_sram_bus_data_1_inout,
@@ -223,6 +246,8 @@ begin
             b_in => comm_instruction_address_out,
             select_in => comm_instruction_write_enable_out,
             data_out => mux_instruction_memory_address_in_out);
+            
+ 
 
 
 end Behavioral;

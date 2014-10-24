@@ -9,7 +9,7 @@ entity streaming_processor is
          ; write_reg_in         : in  register_address_t
          ; reg_write_enable_in  : in  std_logic
          ; mask_enable_in       : in  std_logic
-         ; alu_function_in      : in  alu_op_t
+         ; alu_function_in      : in  alu_funct_t
          ; id_data_in           : in thread_id_t
          ; id_write_enable_in   : in  std_logic
          ; barrel_select_in     : in  barrel_row_t
@@ -22,11 +22,17 @@ entity streaming_processor is
 end streaming_processor;
 
 architecture rtl of streaming_processor is
+    
+    --Register directory out
     signal reg_dir_read_data_1_i      : word_t;
     signal reg_dir_read_data_2_i      : word_t;
     signal reg_dir_predicate_i        : std_logic;
+    
+    --Register directory in
     signal reg_dir_write_enable_i     : std_logic;
     
+    
+    -- ALU out
     signal alu_result_i               : word_t;
 
 

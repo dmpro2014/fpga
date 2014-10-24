@@ -7,10 +7,11 @@ entity control_unit is
           reset: in std_logic;
           opcode_in: in opcode_t;
           register_write_enable_out: out std_logic;
-          read_register_1_out: out std_logic;
-          read_register_2_out: out std_logic;
+          read_register_1_out: out register_address_t;
+          read_register_2_out: out register_address_t;
+          write_register_out : out register_address_t;
           mask_enable_out: out std_logic;
-          alu_op_out: out alu_op_t;
+          alu_op_out: out alu_funct_t;
           pc_write_enable_out: out std_logic;
           active_barrel_row_out: out barrel_row_t;
           thread_done_out: out std_logic;

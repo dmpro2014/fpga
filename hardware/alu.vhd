@@ -7,7 +7,7 @@ use work.defines.all;
 entity alu is
     Port ( operand_a_in : in  word_t
          ; operand_b_in : in  word_t
-         ; funct_in     : in  alu_op_t
+         ; funct_in     : in  alu_funct_t
          ; result_out   : out word_t
          );
 end alu;

@@ -31,7 +31,7 @@ package defines is
   subtype barrel_row_t is std_logic_vector(BARREL_HEIGHT_BIT_WIDTH -1 downto 0);
 
   subtype opcode_t is std_logic_vector(6 downto 0); -- Placeholder
-  subtype alu_op_t is std_logic_vector(4 downto 0); -- Placeholder
+  subtype alu_funct_t is std_logic_vector(4 downto 0); -- Placeholder
   
 
   type sram_bus_control_t is
