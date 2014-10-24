@@ -63,8 +63,8 @@ architecture Behavioral of Processor is
   signal ts_thread_done_in : std_logic;
 
   -- Streaming processor (SP)
-  signal sp_sram_bus_addresses_out : memory_address_t;
-  signal sp_sram_bus_data_out : word_t;
+  signal sp_sram_bus_addresses_out : sp_sram_addresses_t;
+  signal sp_sram_bus_data_out : sp_sram_datas_t;
 
   -- MUX units
   signal mux_pc_in_out : STD_LOGIC_VECTOR(15 downto 0);
@@ -95,7 +95,7 @@ architecture Behavioral of Processor is
 
   signal load_store_registers_file_select_out : barrel_row_t;
   signal load_store_registers_write_enable_out : std_logic;
-  signal load_store_sp_sram_data_out : word_t;
+  signal load_store_sp_sram_data_out : sp_sram_datas_t;
 
 begin
 
@@ -120,7 +120,7 @@ begin
           
           
           -- Replace with array of SPs
- streaming_processors : entity work.streaming_processor
+ streaming_processors : entity work.sp_block
   port map(
             clock => clk,
             read_reg_1_in => ctrl_read_register_1_out,

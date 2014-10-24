@@ -40,7 +40,7 @@
       <association xil_pn:name="Implementation"/>
     </file>
     <file xil_pn:name="common/defines.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="Implementation"/>
+      <association xil_pn:name="Implementation" xil_pn:seqIDinc="7"/>
     </file>
     <file xil_pn:name="hardware/mux_2.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation"/>
@@ -79,6 +79,14 @@
       <association xil_pn:name="Implementation"/>
     </file>
     <file xil_pn:name="hardware/alu.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation"/>
+      <association xil_pn:name="Implementation"/>
+    </file>
+    <file xil_pn:name="hardware/sp_array.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation"/>
+      <association xil_pn:name="Implementation"/>
+    </file>
+    <file xil_pn:name="hardware/sp_block.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation"/>
       <association xil_pn:name="Implementation"/>
     </file>
