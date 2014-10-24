@@ -35,7 +35,7 @@ architecture Behavioral of Processor is
 
   -- PC
   signal pc_out : std_logic_vector (15 downto 0);
-	
+ 
   -- Communication unit
   signal comm_sram_override_out : STD_LOGIC;
   signal comm_sram_flip_out : STD_LOGIC;
@@ -126,7 +126,7 @@ begin
             pc_input_select_out => TS_pc_input_select_out,
             thread_id_out => TS_thread_id_out,
             id_write_enable_out => TS_id_write_enable_out,
-						kernel_complete_out => TS_kernel_complete_out
+            kernel_complete_out => TS_kernel_complete_out
           );
 
   communication_unit : entity work.communication_unit
