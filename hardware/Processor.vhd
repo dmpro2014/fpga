@@ -35,7 +35,7 @@ architecture Behavioral of Processor is
 
   -- PC
   signal pc_out : std_logic_vector (15 downto 0);
-
+	
   -- Communication unit
   signal comm_sram_override_out : STD_LOGIC;
   signal comm_sram_flip_out : STD_LOGIC;
@@ -54,7 +54,7 @@ architecture Behavioral of Processor is
 
   -- Thread spawner(TS)
   signal ts_kernel_complete_out : std_logic;
-  signal ts_pc_input_select_out : std_logic_vector(1 downto 0);
+  signal ts_pc_input_select_out : std_logic;
   signal ts_pc_out: instruction_address_t;
   signal ts_thread_id_out: thread_id_t;
   signal ts_id_write_enable_out : std_logic;
@@ -125,7 +125,8 @@ begin
             pc_start_out => TS_pc_out,
             pc_input_select_out => TS_pc_input_select_out,
             thread_id_out => TS_thread_id_out,
-            id_write_enable_out => TS_id_write_enable_out
+            id_write_enable_out => TS_id_write_enable_out,
+						kernel_complete_out => TS_kernel_complete_out
           );
 
   communication_unit : entity work.communication_unit
@@ -133,7 +134,7 @@ begin
             clk => clk,
             ebi_bus_in => mc_ebi_bus,
             spi_bus_in => mc_spi_bus,
-            kernel_completed_in => TS_kernel_complete_out,
+            kernel_complete_in => TS_kernel_complete_out,
 
             command_sram_override_out => comm_sram_override_out,
             command_sram_flip_out => comm_sram_flip_out,
@@ -201,6 +202,7 @@ begin
             clk => clk,
             write_enable => CTRL_pc_write_enable_out,
             pc_in => mux_pc_in_out,
+						pc_input_select_in => TS_pc_input_select_out,
             pc_out => pc_out);
 
   instruction_memory : entity work.instruction_memory

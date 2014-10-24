@@ -12,7 +12,7 @@ entity thread_spawner is
 					
 					num_threads_in: in thread_id_t;
 					pc_start_out: out instruction_address_t;
-					pc_input_select_out: out std_logic_vector(1 downto 0);
+					pc_input_select_out: out std_logic;
 					thread_id_out : out thread_id_t;
 					id_write_enable_out: out std_logic);
 			
