@@ -32,7 +32,7 @@ package defines is
 
   subtype opcode_t is std_logic_vector(6 downto 0); -- Placeholder
   subtype alu_op_t is std_logic_vector(4 downto 0); -- Placeholder
-
+  
 
   type sram_bus_control_t is
     record

@@ -26,7 +26,11 @@ entity register_directory is
 						
 						--LSU
 						lsu_address_out: out memory_address_t;
-						lsu_write_data_out: out word_t
+						lsu_write_data_out: out word_t;
+            
+            --Predicate
+            predicate_out: out std_logic
+
 						
 		);
 		
