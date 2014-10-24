@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 use work.defines.all;
 
 entity streaming_processor is
-    port ( clock_in             : in  std_logic;
+    port ( clock                : in  std_logic;
            read_reg_1_in        : in  register_address_t;
            read_reg_2_in        : in  register_address_t;
            write_reg_in         : in  register_address_t;
@@ -22,9 +22,39 @@ entity streaming_processor is
 end streaming_processor;
 
 architecture rtl of streaming_processor is
+    signal reg_dir_lsu_address_out_i  : memory_address_t;
+    signal reg_dir_lsu_data_out_i     : word_t;
+    
+    signal reg_dir_read_data_1_i      : word_t;
+    signal reg_dir_read_data_2_i      : word_t;
+    
+    signal reg_dir_write_data_i       : word_t;
 
 begin
 
-    --do gpu
+  reg_dir : entity work.register_directory
+  port map( clk => clock
+          , read_register_1_in  => read_reg_1_in
+          , read_register_2_in  => read_reg_2_in
+          , write_register_in   => write_reg_in
+          , write_data_in       => reg_dir_write_data_i
+          , register_write_enable_in => reg_write_enable_in
+
+            
+          , id_register_write_enable_in => id_write_enable_in
+          , ids_in              => id_data_in
+            
+          , read_data_1         => reg_dir_read_data_1_i
+          , read_data_2         => reg_dir_read_data_2_i
+          , return_register_write_enable_in => return_write_enable_in
+          , return_register_file_in => return_barrel_select_in
+          , return_data_in      => return_data_in
+          , barrel_row_select_in => barrel_select_in
+          , lsu_address_out     => reg_dir_lsu_address_out_i
+          , lsu_write_data_out  => reg_dir_lsu_data_out_i
+          );
+          
+            
+            
 end rtl;
 

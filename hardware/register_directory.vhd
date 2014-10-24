@@ -15,7 +15,7 @@ entity register_directory is
 						
 						-- ID registers
 						id_register_write_enable_in:in std_logic;
-						ids_in: in register_directory_ids_t;
+						ids_in: in thread_id_t;
 						
 						--Return registers
 						return_register_write_enable_in: in std_logic;
