@@ -4,23 +4,22 @@ use work.defines.all;
 
 entity load_store_unit is
   Port ( -- Input wires
-         request_memory_read_in : in  std_logic;
-         request_memory_write_in : in  std_logic;
+         request_sram_bus_read_in : in  std_logic;
+         request_sram_bus_write_in : in  std_logic;
          register_file_select_in : in barrel_row_t;
-         sp_memory_addresses_in : in sp_memory_addresses_t;
-         sp_memory_datas_in : in sp_memory_datas_t;
+         sp_sram_bus_addresses_in : in sp_sram_addresses_t;
+         sp_sram_bus_datas_in : in sp_sram_datas_t;
 
          -- Memory wires
-         memory_address_out : out instruction_address_t;
-         memory_data_inout : inout word_t;
-         memory_lbub_out : out std_logic_vector (1 downto 0);
-         memory_write_enable_out : out std_logic;
-         memory_chip_enable_out : out std_logic;
+         sram_bus_data_1_inout : inout sram_bus_data_t;
+         sram_bus_control_1_out : out sram_bus_control_t;
+         sram_bus_data_2_inout : inout sram_bus_data_t;
+         sram_bus_control_2_out : out sram_bus_control_t;
 
          -- Streaming processor wires
          registers_file_select_out : out barrel_row_t;
          registers_write_enable_out : out  std_logic;
-         sp_memory_data_out : out sp_memory_datas_t );
+         sp_sram_bus_data_out : out sp_sram_datas_t );
 end load_store_unit;
 
 architecture Behavioral of load_store_unit is

@@ -4,6 +4,7 @@ use work.defines.all;
 
 entity control_unit is
   Port (  clk : in std_logic;
+          reset: in std_logic;
           opcode_in: in opcode_t;
           register_write_enable_out: out std_logic;
           read_register_1_out: out std_logic;
@@ -24,7 +25,8 @@ begin
 
   warp_drive: entity work.warp_drive
   port map(
-            clk => clk,
+            tick => clk,
+            reset => reset,
             pc_write_enable_out => pc_write_enable_out,
             active_barrel_row_out => active_barrel_row_out
           );
