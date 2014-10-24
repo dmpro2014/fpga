@@ -8,15 +8,18 @@ entity Processor is
          clk : in STD_LOGIC;
 
          -- SRAM
-         sram_1_data : inout sram_bus_data_t;
-         sram_1_control : out sram_bus_control_t;
+         sram_bus_data_1_inout : inout sram_bus_data_t;
+         sram_bus_control_1_out : out sram_bus_control_t;
 
-         sram_2_data : inout sram_bus_data_t;
-         sram_2_control : out sram_bus_control_t;
+         sram_bus_data_2_inout : inout sram_bus_data_t;
+         sram_bus_control_2_out : out sram_bus_control_t;
 
          -- HDMI && VGA
-         hdmi_out : out STD_LOGIC_VECTOR (18 downto 0);
-         vga_out : out STD_LOGIC_VECTOR (15 downto 0);
+         hdmi_bus_data_inout : inout sram_bus_data_t;
+         hdmi_bus_control_in : in sram_bus_control_t;
+
+         vga_bus_data_inout : inout sram_bus_control_t;
+         vga_bus_control_in : in sram_bus_data_t;
 
          -- MC
          mc_ebi_bus : inout ebi_bus_t;
@@ -37,7 +40,7 @@ architecture Behavioral of Processor is
   signal comm_sram_override_out : STD_LOGIC;
   signal comm_sram_flip_out : STD_LOGIC;
 
-  signal comm_sram_bus_data_out : sram_bus_data_t;
+  signal comm_sram_bus_data_inout : sram_bus_data_t;
   signal comm_sram_bus_control_out : sram_bus_control_t;
 
   signal comm_instruction_data_out : word_t;
@@ -59,8 +62,8 @@ architecture Behavioral of Processor is
   signal ts_thread_done_in : std_logic;
 
   -- Streaming processor (SP)
-  signal sp_memory_addresses_out : sp_memory_addresses_t;
-  signal sp_memory_datas_out : sp_memory_datas_t;
+  signal sp_sram_bus_addresses_out : sp_sram_addresses_t;
+  signal sp_sram_bus_datas_out : sp_sram_datas_t;
 
   -- MUX units
   signal mux_pc_in_out : STD_LOGIC_VECTOR(15 downto 0);
@@ -83,15 +86,14 @@ architecture Behavioral of Processor is
   signal ctrl_lsu_write_enable_out: std_logic;
 
   -- Load / Store unit
-  signal load_store_memory_address_out : instruction_address_t;
-  signal load_store_memory_data_inout : word_t;
-  signal load_store_memory_lbub_out : std_logic_vector(1 downto 0);
-  signal load_store_memory_write_enable_out : std_logic;
-  signal load_store_memory_chip_enable_out : std_logic;
+  signal load_store_sram_bus_data_1_inout : sram_bus_data_t;
+  signal load_store_sram_bus_control_1_out : sram_bus_control_t;
+  signal load_store_sram_bus_data_2_inout : sram_bus_data_t;
+  signal load_store_sram_bus_control_2_out : sram_bus_control_t;
 
   signal load_store_registers_file_select_out : barrel_row_t;
   signal load_store_registers_write_enable_out : std_logic;
-  signal load_store_sp_memory_data_out : sp_memory_datas_t;
+  signal load_store_sp_sram_data_out : sp_sram_datas_t;
 
 begin
 
@@ -140,7 +142,7 @@ begin
             instruction_address_out => comm_instruction_address_out,
             instruction_write_enable_out => comm_instruction_write_enable_out,
 
-            sram_bus_data_inout => comm_sram_bus_data_out,
+            sram_bus_data_inout => comm_sram_bus_data_inout,
             sram_bus_control_out => comm_sram_bus_control_out,
 
             kernel_number_of_threads_out => comm_kernel_number_of_threads_out,
@@ -152,23 +154,46 @@ begin
   load_store_unit : entity work.load_store_unit
   port map(
             -- Input wires
-            request_memory_read_in => ctrl_lsu_load_enable_out,
-            request_memory_write_in => ctrl_lsu_write_enable_out,
+            request_sram_bus_read_in => ctrl_lsu_load_enable_out,
+            request_sram_bus_write_in => ctrl_lsu_write_enable_out,
             register_file_select_in => ctrl_active_barrel_row_out,
-            sp_memory_addresses_in => sp_memory_addresses_out,
-            sp_memory_datas_in => sp_memory_datas_out,
+            sp_sram_bus_addresses_in => sp_sram_bus_addresses_out,
+            sp_sram_bus_datas_in => sp_sram_bus_datas_out,
 
             --Memory wires
-            memory_address_out => load_store_memory_address_out,
-            memory_data_inout => load_store_memory_data_inout,
-            memory_lbub_out => load_store_memory_lbub_out,
-            memory_write_enable_out => load_store_memory_write_enable_out,
-            memory_chip_enable_out => load_store_memory_chip_enable_out,
+            sram_bus_data_1_inout => load_store_sram_bus_data_1_inout,
+            sram_bus_control_1_out => load_store_sram_bus_control_1_out,
+            sram_bus_data_2_inout => load_store_sram_bus_data_2_inout,
+            sram_bus_control_2_out => load_store_sram_bus_control_2_out,
 
             --Streaming processor wires
             registers_file_select_out => load_store_registers_file_select_out,
             registers_write_enable_out => load_store_registers_write_enable_out,
-            sp_memory_data_out => load_store_sp_memory_data_out
+            sp_sram_bus_data_out => load_store_sp_sram_data_out
+          );
+
+  sram_arbiter : entity work.sram_arbiter
+  port map( -- LSU wires
+            lsu_sram_bus_control_1_in => load_store_sram_bus_control_1_out,
+            lsu_sram_bus_data_1_inout => load_store_sram_bus_data_1_inout,
+            lsu_sram_bus_control_2_in => load_store_sram_bus_control_2_out,
+            lsu_sram_bus_data_2_inout => load_store_sram_bus_data_2_inout,
+
+            -- VGA / HDMI wires
+            vga_hdmi_sram_bus_control_in => hdmi_bus_control_in,
+            vga_hdmi_sram_bus_data_inout => hdmi_bus_data_inout,
+
+            -- Communication unit wires
+            comm_sram_bus_control_in => comm_sram_bus_control_out,
+            comm_sram_bus_data_inout => comm_sram_bus_data_inout,
+            comm_sram_override => comm_sram_override_out,
+            comm_sram_flip_in => comm_sram_flip_out,
+
+            -- SRAM wires
+            sram_bus_control_1_out => sram_bus_control_1_out,
+            sram_bus_data_1_inout => sram_bus_data_1_inout,
+            sram_bus_control_2_out => sram_bus_control_2_out,
+            sram_bus_data_2_inout => sram_bus_data_2_inout
           );
 
   pc : entity work.pc
