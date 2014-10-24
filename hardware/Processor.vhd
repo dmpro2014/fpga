@@ -33,6 +33,7 @@ end Processor;
 
 architecture Behavioral of Processor is
 
+
   -- PC
   signal pc_out : std_logic_vector (15 downto 0);
  
@@ -101,6 +102,7 @@ begin
   control_unit : entity work.control_unit
   port map(
             clk => clk,
+            reset => comm_reset_system_out,
             opcode_in => ctrl_opcode_in,
             register_write_enable_out => ctrl_register_write_enable_out,
             read_register_1_out => ctrl_read_register_1_out,
@@ -138,6 +140,7 @@ begin
 
             command_sram_override_out => comm_sram_override_out,
             command_sram_flip_out => comm_sram_flip_out,
+            system_reset_out => comm_reset_system_out,
 
             instruction_data_out => comm_instruction_data_out,
             instruction_address_out => comm_instruction_address_out,
