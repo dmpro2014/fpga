@@ -80,7 +80,7 @@
         wait for clk_period*14;
       
         assert_equals('1', four_pc_write_enable_out, "PC write should be high every n rows");
-        assert_equals("0", four_active_barrel_row_out, "Row count should wrap around to 0");
+        assert_equals("0000", four_active_barrel_row_out, "Row count should wrap around to 0");
 
 
         wait; 
