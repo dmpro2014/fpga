@@ -228,7 +228,7 @@ begin
             clk => clk,
             reset => comm_reset_system_out,
             write_enable => CTRL_pc_write_enable_out,
-            pc_in => mux_pc_in_out,
+            pc_in => TS_pc_out,
 						pc_input_select_in => TS_pc_input_select_out,
             pc_out => pc_out);
 
