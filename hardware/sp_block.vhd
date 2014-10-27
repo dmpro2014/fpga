@@ -1,6 +1,8 @@
     library ieee;
 use ieee.std_logic_1164.all;
 use work.defines.all;
+use ieee.numeric_std.all;
+
 
 entity sp_block is
     Port ( clock                : in  std_logic
@@ -22,11 +24,17 @@ entity sp_block is
 end sp_block;
 
 architecture Behavioral of sp_block is
-
+  type sp_ids_t is array(0 to NUMBER_OF_STREAMING_PROCESSORS - 1) of  thread_id_t;
+  signal sp_ids : sp_ids_t;
 begin
+
+  
 
   gen_sp:
   for i in 0 to NUMBER_OF_STREAMING_PROCESSORS - 1 generate
+
+    sp_ids(i) <= thread_id_t(signed(id_data_in) + (i * BARREL_HEIGHT));
+
     streaming_processor :
     entity work.streaming_processor
       port map(
@@ -37,7 +45,7 @@ begin
               reg_write_enable_in => reg_write_enable_in,
               mask_enable_in => mask_enable_in,
               alu_function_in => alu_function_in,
-              id_data_in => id_data_in, --TODO fix automatic increments
+              id_data_in => sp_ids(i),
               id_write_enable_in => id_write_enable_in,
               barrel_select_in =>  barrel_select_in,
               return_write_enable_in => return_write_enable_in,
