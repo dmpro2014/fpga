@@ -23,7 +23,10 @@ entity register_file is
 												
 						--LSU
 						lsu_address_out: out memory_address_t;
-						lsu_write_data_out: out word_t
+						lsu_write_data_out: out word_t;
+            
+            -- Constant storage
+            constant_value_in: in word_t
 						
 		);
 		
