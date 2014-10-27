@@ -15,7 +15,7 @@ entity register_directory is
 						
 						-- ID registers
 						id_register_write_enable_in:in std_logic;
-						ids_in: in register_directory_ids_t;
+						ids_in: in thread_id_t;
 						
 						--Return registers
 						return_register_write_enable_in: in std_logic;
@@ -26,7 +26,11 @@ entity register_directory is
 						
 						--LSU
 						lsu_address_out: out memory_address_t;
-						lsu_write_data_out: out word_t
+						lsu_write_data_out: out word_t;
+            
+            --Predicate
+            predicate_out: out std_logic
+
 						
 		);
 		
