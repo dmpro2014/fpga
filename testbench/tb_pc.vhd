@@ -28,7 +28,9 @@
             pc_out => pc_out
       );
 
+
    -- Clock process definitions
+      
       clk_process :process
       begin
       clk <= '0';
@@ -40,6 +42,7 @@
   --  test bench statements
        tb : process
        begin
+          pc_in <= (others => '0');
           reset <= '1';
           wait for 100 ns; 
           reset <= '0';
