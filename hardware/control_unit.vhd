@@ -24,6 +24,7 @@ architecture rtl of control_unit is
 begin
 
   warp_drive: entity work.warp_drive
+  generic map( barrel_bit_width => BARREL_HEIGHT_BIT_WIDTH)
   port map(
             tick => clk,
             reset => reset,

@@ -36,7 +36,7 @@ package body test_utils is
   message : string) is
   begin
     assert expected = received
-    report message & " [Expected " & to_string(expected) & " but was " & to_string(received) & "]";
+    report message & " [Expected " & to_string(expected) & " but was " & to_string(received) & "]" severity failure;
 
     test_i:=test_i+1;
     report "Passed test [" & integer'image(test_i) & "]";
@@ -48,7 +48,7 @@ package body test_utils is
   message : string) is
   begin
     assert expected = received
-    report message & " [Expected " & std_logic'image(expected) & " but was " & std_logic'image(received) & "]";
+    report message & " [Expected " & std_logic'image(expected) & " but was " & std_logic'image(received) & "]" severity failure;
 
     test_i:=test_i+1;
     report "Passed test [" & integer'image(test_i) & "]";
