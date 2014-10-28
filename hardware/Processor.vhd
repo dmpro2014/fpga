@@ -44,7 +44,7 @@ architecture Behavioral of Processor is
   signal comm_sram_bus_data_inout : sram_bus_data_t;
   signal comm_sram_bus_control_out : sram_bus_control_t;
 
-  signal comm_instruction_data_out : word_t;
+  signal comm_instruction_data_out : instruction_t;
   signal comm_instruction_address_out : STD_LOGIC_VECTOR(15 downto 0);
   signal comm_instruction_write_enable_out : STD_LOGIC;
 
@@ -75,15 +75,12 @@ architecture Behavioral of Processor is
   signal mux_instruction_memory_address_in_out : STD_LOGIC_VECTOR(15 downto 0);
 
   -- Instruction memory
-  signal instruction_data_out : std_logic_vector(15 downto 0);
+  signal instruction_data_out : instruction_t;
 
   -- Control(CTRL)
   signal ctrl_pc_write_enable_out: std_logic;
   signal ctrl_opcode_in: opcode_t;
   signal ctrl_register_write_enable_out: std_logic;
-  signal ctrl_read_register_1_out: register_address_t;
-  signal ctrl_read_register_2_out: register_address_t;
-  signal ctrl_write_register_out:  register_address_t;
   signal ctrl_mask_enable_out: std_logic;
   signal ctrl_alu_op_out: alu_funct_t;
   signal ctrl_active_barrel_row_out: barrel_row_t;
@@ -101,6 +98,16 @@ architecture Behavioral of Processor is
   signal load_store_registers_write_enable_out : std_logic;
   signal load_store_sp_sram_data_out : sp_sram_datas_t;
   
+
+  -- Instruction decode
+  signal instruction_decode_opcode_out: opcode_t;
+  signal instruction_decode_operand_rs_out: register_address_t;
+  signal instruction_decode_operand_rt_out: register_address_t;
+  signal instruction_decode_immediate_operand_out: immediate_value_t; 
+  alias instruction_decode_operand_rd_out: register_address_t is 
+  instruction_decode_immediate_operand_out(INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH -1 downto  INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH -REGISTER_COUNT_BIT_WIDTH);
+
+
   -- Constant storage
   signal constant_storage_value_out: word_t;
   
@@ -109,6 +116,18 @@ architecture Behavioral of Processor is
   signal instruction_decode_constant_select_in:  std_logic_vector(CONSTANT_ADDRESS_BIT_WIDTH -1 downto 0);
 
 begin
+
+  -- Instruction decode
+  instruction_decode: entity work.instruction_decode
+  port map(
+      instruction_in => instruction_data_out,
+      opcode_out => instruction_decode_opcode_out,
+      operand_rs_out => instruction_decode_operand_rs_out,
+      operand_rt_out => instruction_decode_operand_rt_out,
+      immediate_operand_out => instruction_decode_immediate_operand_out
+  );
+  
+
 
   -- Constant storage
   constant_storage: entity work.constant_storage
@@ -122,16 +141,14 @@ begin
             constant_select_in => instruction_decode_constant_select_in
   );
 
+
   -- Control unit
   control_unit : entity work.control_unit
   port map(
             clk => clk,
             reset => comm_reset_system_out,
-            opcode_in => ctrl_opcode_in,
+            opcode_in => instruction_decode_opcode_out,
             register_write_enable_out => ctrl_register_write_enable_out,
-            read_register_1_out => ctrl_read_register_1_out,
-            read_register_2_out => ctrl_read_register_2_out,
-            write_register_out  => ctrl_write_register_out,
             mask_enable_out => ctrl_mask_enable_out,
             alu_op_out => ctrl_alu_op_out,
             pc_write_enable_out => ctrl_pc_write_enable_out,
@@ -146,9 +163,10 @@ begin
  streaming_processors : entity work.sp_block
   port map(
             clock => clk,
-            read_reg_1_in => ctrl_read_register_1_out,
-            read_reg_2_in => ctrl_read_register_2_out,
-            write_reg_in  => ctrl_write_register_out,
+            read_reg_1_in => instruction_decode_operand_rs_out,
+            read_reg_2_in => instruction_decode_operand_rt_out,
+            write_reg_in  => instruction_decode_operand_rd_out,
+            immediate_in => instruction_decode_immediate_operand_out,
             reg_write_enable_in => ctrl_register_write_enable_out,
             mask_enable_in => ctrl_mask_enable_out,
             alu_function_in => ctrl_alu_op_out,
