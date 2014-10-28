@@ -112,7 +112,10 @@ begin
 
   -- Constant storage
   constant_storage: entity work.constant_storage
-  generic map( MEMORY_DEPTH_BITS => CONSTANT_ADDRESS_BIT_WIDTH)
+  generic map(
+               DEPTH => 8,
+               LOG_DEPTH => CONSTANT_ADDRESS_BIT_WIDTH
+              )
   port map(
             clk => clk,
             write_constant_in => comm_constant_out,
