@@ -29,7 +29,10 @@ entity register_directory is
 						lsu_write_data_out: out word_t;
             
             --Predicate
-            predicate_out: out std_logic
+            predicate_out: out std_logic;
+            
+            -- Constant storage
+            constant_value_in: word_t
 
 						
 		);
