@@ -52,6 +52,10 @@ architecture Behavioral of Processor is
   signal comm_kernel_start_out: std_logic;
   signal comm_kernel_address_out: instruction_address_t;
   signal comm_kernel_number_of_threads_out: thread_id_t;
+  
+  signal comm_constant_address_out: std_logic_vector(CONSTANT_ADDRESS_BIT_WIDTH -1 downto 0);
+  signal comm_constant_write_enable_out: std_logic;
+  signal comm_constant_out: word_t;
 
   -- Thread spawner(TS)
   signal ts_kernel_complete_out : std_logic;
@@ -94,6 +98,7 @@ architecture Behavioral of Processor is
   signal load_store_registers_write_enable_out : std_logic;
   signal load_store_sp_sram_data_out : sp_sram_datas_t;
   
+
   -- Instruction decode
   signal instruction_decode_opcode_out: opcode_t;
   signal instruction_decode_operand_rs_out: register_address_t;
@@ -101,6 +106,14 @@ architecture Behavioral of Processor is
   signal instruction_decode_immediate_operand_out: immediate_value_t; 
   alias instruction_decode_operand_rd_out: register_address_t is 
   instruction_decode_immediate_operand_out(INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH -1 downto  INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH -REGISTER_COUNT_BIT_WIDTH);
+
+
+  -- Constant storage
+  signal constant_storage_value_out: word_t;
+  
+  
+  -- Instruction decode
+  signal instruction_decode_constant_select_in:  std_logic_vector(CONSTANT_ADDRESS_BIT_WIDTH -1 downto 0);
 
 begin
 
@@ -114,6 +127,20 @@ begin
       immediate_operand_out => instruction_decode_immediate_operand_out
   );
   
+
+
+  -- Constant storage
+  constant_storage: entity work.constant_storage
+  generic map( MEMORY_DEPTH_BITS => CONSTANT_ADDRESS_BIT_WIDTH)
+  port map(
+            clk => clk,
+            write_constant_in => comm_constant_out,
+            write_enable_in => comm_constant_write_enable_out,
+            write_address_in => comm_constant_address_out,
+            constant_value_out => constant_storage_value_out,
+            constant_select_in => instruction_decode_constant_select_in
+  );
+
 
   -- Control unit
   control_unit : entity work.control_unit
@@ -150,7 +177,8 @@ begin
             return_barrel_select_in => load_store_registers_file_select_out,
             return_data_in => load_store_sp_sram_data_out,
             lsu_write_data_out => sp_sram_bus_data_out,
-            lsu_address_out     => sp_sram_bus_addresses_out
+            lsu_address_out     => sp_sram_bus_addresses_out,
+            constant_value_in => constant_storage_value_out
            );
 
   -- Thread Spawner
@@ -169,6 +197,9 @@ begin
           );
 
   communication_unit : entity work.communication_unit
+  generic map(
+               CONSTANT_ADDRESS_WIDTH => CONSTANT_ADDRESS_BIT_WIDTH
+  )
   port map(
             clk => clk,
             ebi_bus_in => mc_ebi_bus,
@@ -189,7 +220,10 @@ begin
             kernel_number_of_threads_out => comm_kernel_number_of_threads_out,
             kernel_start_out => comm_kernel_start_out,
             kernel_address_out => comm_kernel_address_out,
-            comm_reset_system_out => comm_reset_system_out
+            comm_reset_system_out => comm_reset_system_out,
+            constant_address_out => comm_constant_address_out,
+            constant_write_enable_out => comm_constant_write_enable_out,
+            constant_out => comm_constant_out 
           );
 
   load_store_unit : entity work.load_store_unit

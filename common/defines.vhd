@@ -17,7 +17,8 @@ package defines is
   -- Barell
   constant BARREL_HEIGHT: integer := 1;
   constant BARREL_HEIGHT_BIT_WIDTH: integer := 1;
-
+  
+  constant CONSTANT_ADDRESS_BIT_WIDTH: integer := 2;
 
   subtype word_t is std_logic_vector(WORD_WIDTH - 1 downto 0);
   subtype ebi_bus_t is std_logic_vector(49 downto 0);

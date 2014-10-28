@@ -3,6 +3,9 @@ use IEEE.STD_LOGIC_1164.ALL;
 use work.defines.all;
 
 entity communication_unit is
+  generic ( 
+            CONSTANT_ADDRESS_WIDTH: integer := 4
+  );
   Port ( clk : in  STD_LOGIC;
          system_reset_out: out STD_LOGIC;
          kernel_complete_in : in  STD_LOGIC;
@@ -26,7 +29,12 @@ entity communication_unit is
          command_sram_override_out : out  STD_LOGIC;
          command_sram_flip_out : out  STD_LOGIC;
          sram_bus_data_inout : inout sram_bus_data_t;
-         sram_bus_control_out: out sram_bus_control_t
+         sram_bus_control_out: out sram_bus_control_t;
+         
+         -- Constant_storage
+         constant_address_out: out std_logic_vector(CONSTANT_ADDRESS_WIDTH -1 downto 0);
+         constant_write_enable_out: out std_logic;
+         constant_out: out word_t
        );
 end communication_unit;
 
