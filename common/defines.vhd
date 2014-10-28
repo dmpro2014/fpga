@@ -11,6 +11,7 @@ package defines is
   constant DATA_ADDRESS_WIDTH: integer := 20;
   constant DATA_WIDTH: integer := 19;
   constant WORD_WIDTH: integer := 16;
+  constant INSTRUCTION_WIDTH : integer := 32;
 
   constant NUMBER_OF_STREAMING_PROCESSORS: integer := 2;
   -- Barell
@@ -26,6 +27,7 @@ package defines is
   subtype thread_id_t is std_logic_vector(DATA_WIDTH -1 downto 0);
   subtype register_address_t is std_logic_vector(REGISTER_COUNT_BIT_WIDTH - 1 downto 0);
   subtype immediate_value_t is std_logic_vector(INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH -1 downto 0);
+  subtype instruction_t is std_logic_vector(INSTRUCTION_WIDTH -1 downto 0);
   type sp_sram_addresses_t is array(NUMBER_OF_STREAMING_PROCESSORS - 1 downto 0) of memory_address_t;
   type sp_sram_datas_t is array(NUMBER_OF_STREAMING_PROCESSORS - 1 downto 0) of word_t;
   type register_directory_ids_t is array(BARREL_HEIGHT-1 downto 0) of  thread_id_t;

@@ -18,7 +18,7 @@ entity communication_unit is
          spi_bus_in : in  spi_bus_t;
 
          -- Instruction memory
-         instruction_data_out : out word_t;
+         instruction_data_out : out instruction_t;
          instruction_address_out : out  STD_LOGIC_VECTOR (15 downto 0);
          instruction_write_enable_out : out  STD_LOGIC;
 

@@ -44,7 +44,7 @@ architecture Behavioral of Processor is
   signal comm_sram_bus_data_inout : sram_bus_data_t;
   signal comm_sram_bus_control_out : sram_bus_control_t;
 
-  signal comm_instruction_data_out : word_t;
+  signal comm_instruction_data_out : instruction_t;
   signal comm_instruction_address_out : STD_LOGIC_VECTOR(15 downto 0);
   signal comm_instruction_write_enable_out : STD_LOGIC;
 
@@ -71,7 +71,7 @@ architecture Behavioral of Processor is
   signal mux_instruction_memory_address_in_out : STD_LOGIC_VECTOR(15 downto 0);
 
   -- Instruction memory
-  signal instruction_data_out : std_logic_vector(15 downto 0);
+  signal instruction_data_out : instruction_t;
 
   -- Control(CTRL)
   signal ctrl_pc_write_enable_out: std_logic;

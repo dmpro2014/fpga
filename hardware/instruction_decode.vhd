@@ -6,7 +6,7 @@ use work.defines.all;
 
 entity instruction_decode is
   port(
-         instruction_in : in word_t;
+         instruction_in : in instruction_t;
          opcode_out: out opcode_t;
          operand_rs_out: out register_address_t;
          operand_rt_out: out register_address_t;
