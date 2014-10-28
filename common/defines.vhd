@@ -3,7 +3,9 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 package defines is
 
-  constant REGISTER_COUNT_BIT_WIDTH: integer := 4;
+  constant REGISTER_COUNT_BIT_WIDTH: integer := 5;
+  constant DECODE_OPERAND_OPERAND_3_BIT_WIDTH: integer := 16;
+  constant OPCODE_BIT_WIDTH : integer := 6;
 
   constant INSTRUCTION_ADDRESS_WIDTH: integer := 16;
   constant DATA_ADDRESS_WIDTH: integer := 20;
@@ -30,7 +32,7 @@ package defines is
 
   subtype barrel_row_t is std_logic_vector(BARREL_HEIGHT_BIT_WIDTH -1 downto 0);
 
-  subtype opcode_t is std_logic_vector(6 downto 0); -- Placeholder
+  subtype opcode_t is std_logic_vector(OPCODE_BIT_WIDTH -1 downto 0); -- Placeholder
   subtype alu_funct_t is std_logic_vector(4 downto 0); -- Placeholder
   
 

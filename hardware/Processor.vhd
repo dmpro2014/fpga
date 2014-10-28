@@ -77,9 +77,6 @@ architecture Behavioral of Processor is
   signal ctrl_pc_write_enable_out: std_logic;
   signal ctrl_opcode_in: opcode_t;
   signal ctrl_register_write_enable_out: std_logic;
-  signal ctrl_read_register_1_out: register_address_t;
-  signal ctrl_read_register_2_out: register_address_t;
-  signal ctrl_write_register_out:  register_address_t;
   signal ctrl_mask_enable_out: std_logic;
   signal ctrl_alu_op_out: alu_funct_t;
   signal ctrl_active_barrel_row_out: barrel_row_t;
@@ -96,19 +93,35 @@ architecture Behavioral of Processor is
   signal load_store_registers_file_select_out : barrel_row_t;
   signal load_store_registers_write_enable_out : std_logic;
   signal load_store_sp_sram_data_out : sp_sram_datas_t;
-
+  
+  -- Instruction decode
+  signal instruction_decode_opcode_out: opcode_t;
+  signal instruction_decode_operand_1_out: register_address_t;
+  signal instruction_decode_operand_2_out: register_address_t;
+  signal instruction_decode_operand_3_out: register_address_t;
+  signal instruction_decode_immediate_operand_out: std_logic_vector(DECODE_OPERAND_OPERAND_3_BIT_WIDTH -1 downto 0);
+  
 begin
+
+  -- Instruction decode
+  instruction_decode: entity work.instruction_decode
+  port map(
+      instruction_in => instruction_data_out,
+      opcode_out => instruction_decode_opcode_out,
+      operand_1_out => instruction_decode_operand_1_out,
+      operand_2_out => instruction_decode_operand_2_out,
+      operand_3_out => instruction_decode_operand_3_out,
+      immediate_operand_out => instruction_decode_immediate_operand_out
+  );
+  
 
   -- Control unit
   control_unit : entity work.control_unit
   port map(
             clk => clk,
             reset => comm_reset_system_out,
-            opcode_in => ctrl_opcode_in,
+            opcode_in => instruction_decode_opcode_out,
             register_write_enable_out => ctrl_register_write_enable_out,
-            read_register_1_out => ctrl_read_register_1_out,
-            read_register_2_out => ctrl_read_register_2_out,
-            write_register_out  => ctrl_write_register_out,
             mask_enable_out => ctrl_mask_enable_out,
             alu_op_out => ctrl_alu_op_out,
             pc_write_enable_out => ctrl_pc_write_enable_out,
@@ -123,9 +136,9 @@ begin
  streaming_processors : entity work.sp_block
   port map(
             clock => clk,
-            read_reg_1_in => ctrl_read_register_1_out,
-            read_reg_2_in => ctrl_read_register_2_out,
-            write_reg_in  => ctrl_write_register_out,
+            read_reg_1_in => instruction_decode_operand_1_out,
+            read_reg_2_in => instruction_decode_operand_2_out,
+            write_reg_in  => instruction_decode_operand_3_out,
             reg_write_enable_in => ctrl_register_write_enable_out,
             mask_enable_in => ctrl_mask_enable_out,
             alu_function_in => ctrl_alu_op_out,
