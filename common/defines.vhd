@@ -4,7 +4,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 package defines is
 
   constant REGISTER_COUNT_BIT_WIDTH: integer := 5;
-  constant DECODE_OPERAND_OPERAND_3_BIT_WIDTH: integer := 16;
+  constant INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH: integer := 16;
   constant OPCODE_BIT_WIDTH : integer := 6;
 
   constant INSTRUCTION_ADDRESS_WIDTH: integer := 16;
@@ -25,7 +25,7 @@ package defines is
   subtype memory_address_t is std_logic_vector(DATA_ADDRESS_WIDTH -1 downto 0);
   subtype thread_id_t is std_logic_vector(DATA_WIDTH -1 downto 0);
   subtype register_address_t is std_logic_vector(REGISTER_COUNT_BIT_WIDTH - 1 downto 0);
-
+  subtype immediate_value_t is std_logic_vector(INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH -1 downto 0);
   type sp_sram_addresses_t is array(NUMBER_OF_STREAMING_PROCESSORS - 1 downto 0) of memory_address_t;
   type sp_sram_datas_t is array(NUMBER_OF_STREAMING_PROCESSORS - 1 downto 0) of word_t;
   type register_directory_ids_t is array(BARREL_HEIGHT-1 downto 0) of  thread_id_t;

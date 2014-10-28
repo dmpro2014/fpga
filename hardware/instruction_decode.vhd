@@ -10,8 +10,7 @@ entity instruction_decode is
          opcode_out: out opcode_t;
          operand_1_out: out register_address_t;
          operand_2_out: out register_address_t;
-         operand_3_out: out register_address_t;
-         immediate_operand_out: out std_logic_vector(DECODE_OPERAND_OPERAND_3_BIT_WIDTH -1 downto 0)
+         immediate_operand_out: out immediate_value_t
   );
 end instruction_decode;
 

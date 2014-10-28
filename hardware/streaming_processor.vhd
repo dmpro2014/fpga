@@ -7,6 +7,7 @@ entity streaming_processor is
          ; read_reg_1_in        : in  register_address_t
          ; read_reg_2_in        : in  register_address_t
          ; write_reg_in         : in  register_address_t
+         ; immediate_in         : in  immediate_value_t
          ; reg_write_enable_in  : in  std_logic
          ; mask_enable_in       : in  std_logic
          ; alu_function_in      : in  alu_funct_t

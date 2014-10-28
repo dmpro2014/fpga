@@ -98,9 +98,10 @@ architecture Behavioral of Processor is
   signal instruction_decode_opcode_out: opcode_t;
   signal instruction_decode_operand_1_out: register_address_t;
   signal instruction_decode_operand_2_out: register_address_t;
-  signal instruction_decode_operand_3_out: register_address_t;
-  signal instruction_decode_immediate_operand_out: std_logic_vector(DECODE_OPERAND_OPERAND_3_BIT_WIDTH -1 downto 0);
-  
+  signal instruction_decode_immediate_operand_out: immediate_value_t; 
+  alias instruction_decode_operand_3_out: register_address_t is 
+  instruction_decode_immediate_operand_out(INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH -1 downto  INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH -REGISTER_COUNT_BIT_WIDTH);
+
 begin
 
   -- Instruction decode
@@ -110,7 +111,6 @@ begin
       opcode_out => instruction_decode_opcode_out,
       operand_1_out => instruction_decode_operand_1_out,
       operand_2_out => instruction_decode_operand_2_out,
-      operand_3_out => instruction_decode_operand_3_out,
       immediate_operand_out => instruction_decode_immediate_operand_out
   );
   
@@ -139,6 +139,7 @@ begin
             read_reg_1_in => instruction_decode_operand_1_out,
             read_reg_2_in => instruction_decode_operand_2_out,
             write_reg_in  => instruction_decode_operand_3_out,
+            immediate_in => instruction_decode_immediate_operand_out,
             reg_write_enable_in => ctrl_register_write_enable_out,
             mask_enable_in => ctrl_mask_enable_out,
             alu_function_in => ctrl_alu_op_out,
