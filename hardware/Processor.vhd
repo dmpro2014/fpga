@@ -96,10 +96,10 @@ architecture Behavioral of Processor is
   
   -- Instruction decode
   signal instruction_decode_opcode_out: opcode_t;
-  signal instruction_decode_operand_1_out: register_address_t;
-  signal instruction_decode_operand_2_out: register_address_t;
+  signal instruction_decode_operand_rs_out: register_address_t;
+  signal instruction_decode_operand_rt_out: register_address_t;
   signal instruction_decode_immediate_operand_out: immediate_value_t; 
-  alias instruction_decode_operand_3_out: register_address_t is 
+  alias instruction_decode_operand_rd_out: register_address_t is 
   instruction_decode_immediate_operand_out(INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH -1 downto  INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH -REGISTER_COUNT_BIT_WIDTH);
 
 begin
@@ -109,8 +109,8 @@ begin
   port map(
       instruction_in => instruction_data_out,
       opcode_out => instruction_decode_opcode_out,
-      operand_1_out => instruction_decode_operand_1_out,
-      operand_2_out => instruction_decode_operand_2_out,
+      operand_rs_out => instruction_decode_operand_rs_out,
+      operand_rt_out => instruction_decode_operand_rt_out,
       immediate_operand_out => instruction_decode_immediate_operand_out
   );
   
@@ -136,9 +136,9 @@ begin
  streaming_processors : entity work.sp_block
   port map(
             clock => clk,
-            read_reg_1_in => instruction_decode_operand_1_out,
-            read_reg_2_in => instruction_decode_operand_2_out,
-            write_reg_in  => instruction_decode_operand_3_out,
+            read_reg_1_in => instruction_decode_operand_rs_out,
+            read_reg_2_in => instruction_decode_operand_rt_out,
+            write_reg_in  => instruction_decode_operand_rd_out,
             immediate_in => instruction_decode_immediate_operand_out,
             reg_write_enable_in => ctrl_register_write_enable_out,
             mask_enable_in => ctrl_mask_enable_out,
