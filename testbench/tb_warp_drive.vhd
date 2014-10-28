@@ -76,7 +76,7 @@
         wait for clk_period*2;
         
         assert_equals('0', four_pc_write_enable_out, "PC write should be low unless we are at row 0");
-        assert_equals("0100", four_active_barrel_row_out, "Row count should be incremented once per tick");
+        assert_equals("0010", four_active_barrel_row_out, "Row count should be incremented once per tick");
         wait for clk_period*14;
       
         assert_equals('1', four_pc_write_enable_out, "PC write should be high every n rows");
