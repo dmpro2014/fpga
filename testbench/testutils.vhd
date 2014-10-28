@@ -1,4 +1,4 @@
-library IEEE;
+    library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use ieee.numeric_std.all;
 
@@ -6,6 +6,7 @@ package test_utils is
   procedure assert_equals(expected : std_logic_vector; received : std_logic_vector; message : string);
   procedure assert_equals(expected : signed; received : signed; message : string);
   procedure assert_equals(expected : std_logic; received : std_logic; message : string);
+  procedure assert_equals(expected : integer; received : integer; message : string);
 end;
 
 package body test_utils is
@@ -53,4 +54,16 @@ package body test_utils is
     test_i:=test_i+1;
     report "Passed test [" & integer'image(test_i) & "]";
   end;
-end;
+  
+  procedure assert_equals(
+  expected : integer;
+  received : integer; 
+  message : string) is
+  begin
+    assert expected = received
+    report message & " [Expected " & integer'image(expected) & " but was " & integer'image(received) & "]" severity failure;
+
+    test_i:=test_i+1;
+    report "Passed test [" & integer'image(test_i) & "]";
+  end;
+  end;
