@@ -53,19 +53,23 @@
           write_address_in  <= "10";
           constant_select_in <= "10";
           write_enable_in <= '1';
-          wait for 1 ns;
+          wait for clk_period;
           
           assert_equals("01", constant_value_out, "Memory should contain 01 at address 10");
           write_constant_in <= "11";
           write_address_in  <= "11";
           constant_select_in <= "11";      
-          wait for 1 ns;
+          wait for clk_period;
           
           assert_equals("11", constant_value_out, "Memory should contain 11 at address 11");
           write_enable_in <= '0';
           write_constant_in <= "10";
-          wait for 1 ns;
+          wait for clk_period;
           assert_equals("11", constant_value_out, "Memory should only write when write enable is high");
+          
+          wait for 1 ns;
+          constant_select_in <= "10";
+          assert_equals("01", constant_value_out, "Output should not require a clock cycle to change");
           
           wait;
        end process tb;
