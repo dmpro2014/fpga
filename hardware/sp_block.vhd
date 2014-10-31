@@ -30,8 +30,6 @@ architecture Behavioral of sp_block is
   signal sp_ids : sp_ids_t;
 begin
 
-  
-
   gen_sp:
   for i in 0 to NUMBER_OF_STREAMING_PROCESSORS - 1 generate
 
