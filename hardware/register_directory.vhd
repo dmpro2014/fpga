@@ -29,12 +29,13 @@ entity register_directory is
 
          --LSU
          lsu_address_out: out memory_address_t;
-         lsu_datas_inout: inout word_t;
+         lsu_write_data_out: out word_t;
 
          --Predicate
          predicate_out: out std_logic;
 
          -- Constant storage
+         constant_write_enable_in : in std_logic;
          constant_value_in: in word_t
        );
 
@@ -50,7 +51,7 @@ architecture rtl of register_directory is
   signal return_register_write_enables : std_logic_vector(0 to BARREL_HEIGHT - 1);
   signal predicates_out : std_logic_vector(0 to BARREL_HEIGHT - 1);
   signal lsu_addresses_out : lsu_addresses_out_t;
-  signal lsu_datas_inout : barrel_words_t;
+  signal lsu_datas : barrel_words_t;
 
   signal read_registers_1 : barrel_words_t;
   signal read_registers_2 : barrel_words_t;
@@ -93,15 +94,13 @@ begin
               id_register_write_enable_in => id_register_write_enable_in,
               id_register_in => reg_file_ids(i),
 
-              --Return registers
-              return_register_write_enable_in => return_register_write_enables(i),
-              return_data_in => return_data_in,
-
               --LSU
+              return_register_write_enable_in => return_register_write_enables(i),
               lsu_address_out => lsu_addresses_out(i),
-              lsu_data_inout => lsu_datas_inout(i),
+              lsu_data_inout => lsu_datas(i),
 
               -- Constant storage
+              constant_write_enable_in => constant_write_enable_in,
               constant_value_in => constant_value_in,
 
               -- Predicate bit
@@ -114,6 +113,6 @@ begin
 
   predicate_out <= predicates_out(to_integer(unsigned(barrel_row_select_in)));
   lsu_address_out <= lsu_addresses_out(to_integer(unsigned(barrel_row_select_in)));
-  lsu_datas_inout <= lsu_datas_inout(to_integer(unsigned(barrel_row_select_in)));
+  lsu_write_data_out <= lsu_datas(to_integer(unsigned(barrel_row_select_in)));
 
 end rtl;

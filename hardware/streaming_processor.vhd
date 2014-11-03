@@ -19,6 +19,7 @@ entity streaming_processor is
          ; return_data_in       : in word_t
          ; lsu_write_data_out   : out  word_t
          ; lsu_address_out      : out  memory_address_t
+         ; constant_write_enable_in : in std_logic
          ; constant_value_in    : in word_t
          );
 end streaming_processor;
@@ -62,6 +63,7 @@ begin
           , lsu_write_data_out  => lsu_write_data_out
           
           , predicate_out  => reg_dir_predicate_i
+          , constant_write_enable_in => constant_write_enable_in
           , constant_value_in => constant_value_in
           );
           

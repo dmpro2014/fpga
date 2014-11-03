@@ -43,7 +43,7 @@ architecture rtl of register_file is
   signal general_registers : register_file_t := (others => (others => '0'));
 
   signal id_lo : word_t;
-  signal id_hi : word_t;
+  signal id_hi : word_t := (others => '0');
   
   signal address_lo : word_t;
   signal address_hi : word_t;
