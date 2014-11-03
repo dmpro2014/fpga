@@ -26,9 +26,8 @@ architecture behavior of tb_register_file is
   signal id_register_in: thread_id_t;
   
   -- Return Registers
-  signal return_register_write_enable_in: std_logic;
-  signal return_data_in : word_t;
   signal lsu_data_inout: word_t;
+  signal return_register_write_enable_in: std_logic;
   
   -- Masking
   signal predicate_out: std_logic;
@@ -36,7 +35,7 @@ architecture behavior of tb_register_file is
   
   -- Constant storage
   signal constant_value_in: word_t;
-  
+  signal constant_write_enable_in: std_logic;
   function get_reg_addr(reg: integer) return std_logic_vector is
     begin
       return std_logic_vector(to_unsigned(reg, reg_addr_bits));
@@ -67,10 +66,10 @@ architecture behavior of tb_register_file is
               id_register_write_enable_in => id_register_write_enable_in,
               id_register_in => id_register_in,
               return_register_write_enable_in => return_register_write_enable_in,
-              return_data_in => return_data_in,
               lsu_data_inout => lsu_data_inout,
               constant_value_in => constant_value_in,
-              predicate_out => predicate_out
+              predicate_out => predicate_out,
+              constant_write_enable_in => constant_write_enable_in
         );
 
   clk_process :process
