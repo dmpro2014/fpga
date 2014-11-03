@@ -104,20 +104,28 @@ architecture behavior of tb_register_file is
       id_register_in <= "1111111111111111111"; 
       read_register_1_in <= get_reg_addr(1);
       read_register_2_in <= get_reg_addr(1);
-      write_register_in <= get_reg_addr(1);
       wait for clk_period;
       assert_equals(make_word(7), read_data_1_out, "ID value should be split into high and low registers.");
       assert_equals(make_word(7), read_data_2_out, "ID value should be split into high and low registers.");
+      write_register_in <= get_reg_addr(1);
+      write_data_in <= make_word(4);
+      register_write_enable_in <= '1';
+      wait for clk_period;
+      assert_equals(make_word(7), read_data_1_out, "ID should be readonly.");
+      assert_equals(make_word(7), read_data_2_out, "ID should be readonly.");
       
       -- Register $2 ID LOW
       read_register_1_in <= get_reg_addr(2);
       read_register_2_in <= get_reg_addr(2);
+      wait for clk_period;
+      assert_equals("1111111111111111", read_data_1_out, "ID value should be split into high and low registers.");
+      assert_equals("1111111111111111", read_data_2_out, "ID value should be split into high and low registers.");
       write_data_in <= make_word(30);
       write_register_in <= get_reg_addr(2);
+      register_write_enable_in <= '1';
       wait for clk_period;
       assert_equals("1111111111111111", read_data_1_out, "Register $2 should be readonly.");
       assert_equals("1111111111111111", read_data_2_out, "Register $2 should be readonly.");
-     
       
       
       -- add user defined stimulus here
