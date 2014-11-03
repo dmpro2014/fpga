@@ -11,6 +11,8 @@ architecture behavior of tb_register_file is
 
   constant reg_addr_bits: integer := 4;
   constant num_registers: integer := 16;
+  constant clk_period: time := 10 ns;
+    
   -- General registers
   signal clk: std_logic;
   signal read_register_1_in: std_logic_vector(reg_addr_bits -1 downto 0);
@@ -32,7 +34,7 @@ architecture behavior of tb_register_file is
   
   -- Masking
   signal predicate_out: std_logic;
-  constant clk_period: time := 10 ns;
+
   
   -- Constant storage
   signal constant_value_in: word_t;
