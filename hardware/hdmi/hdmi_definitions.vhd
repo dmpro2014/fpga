@@ -17,13 +17,13 @@ package hdmi_definitions is
 
     type video_mode_sync_spec_t is record
         start  : natural;
-        width  : natural;
+        stop   : natural;
         active : std_logic;
     end record;
 
     type video_mode_dimension_t is record
         total      : natural;
-        resoultion : natural;
+        resolution : natural;
         sync       : video_mode_sync_spec_t;
     end record;
 
@@ -32,9 +32,32 @@ package hdmi_definitions is
         v : video_mode_dimension_t;
     end record;
 
+    type video_control_t is record
+        blank : std_logic;
+        vsync : std_logic;
+        hsync : std_logic;
+    end record;
+
+    -- These timings where gathered from CEA-861-D.
     constant video_640x480_60Hz : video_mode_t :=
-        ( h => (total => 800, resolution => 640, sync => (start => 16, width => 96, active => '0'))
-        , v => (total => 490, resolution => 480, sync => (start => 10, width => 2,  active => '0'))
+        ( h => (total => 800, resolution => 640, sync => (start => 656, stop => 752, active => '0'))
+        , v => (total => 490, resolution => 480, sync => (start => 490, stop => 492, active => '0'))
         );
+
+    function to_std_logic(p: boolean) return std_logic;
+
+end hdmi_definitions;
+
+package body hdmi_definitions is
+
+    function to_std_logic(p: boolean)
+        return std_logic
+    is begin
+        if p then
+            return '1';
+        else
+            return '0';
+        end if;
+    end;
 
 end hdmi_definitions;
