@@ -77,6 +77,7 @@ architecture Behavioral of ghettocuda is
   signal ctrl_thread_done_out: std_logic;
   signal ctrl_lsu_load_enable_out: std_logic;
   signal ctrl_lsu_write_enable_out: std_logic;
+  signal ctrl_constant_write_enable_out: std_logic;
 
   -- Load / Store unit
   signal load_store_registers_file_select_out : barrel_row_t;
@@ -163,6 +164,7 @@ begin
             return_data_in => load_store_sp_sram_data_out,
             lsu_write_data_out => sp_sram_bus_data_out,
             lsu_address_out     => sp_sram_bus_addresses_out,
+            constant_write_enable_in => ctrl_constant_write_enable_out,
             constant_value_in => constant_storage_value_out
            );
 

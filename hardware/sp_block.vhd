@@ -21,6 +21,7 @@ entity sp_block is
          ; return_data_in       : in sp_sram_datas_t
          ; lsu_write_data_out   : out  sp_sram_datas_t
          ; lsu_address_out      : out  sp_sram_addresses_t
+         ; constant_write_enable_in : in std_logic
          ; constant_value_in    : in word_t
       );
 end sp_block;
@@ -54,6 +55,7 @@ begin
               return_data_in => return_data_in(i),
               lsu_write_data_out => lsu_write_data_out(i),
               lsu_address_out     => lsu_address_out(i),
+              constant_write_enable_in => constant_write_enable_in,
               constant_value_in => constant_value_in
              );
   end generate gen_sp;
