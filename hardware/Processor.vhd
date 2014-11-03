@@ -286,7 +286,7 @@ begin
   instruction_memory : entity work.instruction_memory
   port map(
             clk => clk, reset => comm_reset_system_out,
-            write_enable => comm_instruction_write_enable_out,
+            write_enable_in => comm_instruction_write_enable_out,
             address_in => mux_instruction_memory_address_in_out,
             data_in => comm_instruction_data_out,
             data_out => instruction_data_out);
