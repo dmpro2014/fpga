@@ -6,7 +6,7 @@ use ieee.numeric_std.all;
 entity register_file is
   Generic(
            DEPTH: integer := 8;
-           LOG_DEPTH : integer := 3
+           LOG_DEPTH : integer := 4
          );
   Port (  clk : in std_logic;
           -- General registers
@@ -22,15 +22,13 @@ entity register_file is
           id_register_write_enable_in:in std_logic;
           id_register_in: in thread_id_t;
 
-          --Return registers
-          return_register_write_enable_in: in std_logic;
-          return_data_in : in word_t;
-
           --LSU
+          return_register_write_enable_in: in std_logic;
           lsu_address_out: out memory_address_t;
           lsu_data_inout: inout word_t;
 
           -- Constant storage
+          constant_write_enable_in : in std_logic;
           constant_value_in: in word_t;
 
           -- Predicate bit
@@ -53,6 +51,8 @@ architecture rtl of register_file is
   signal lsu_data : word_t;
   
   signal mask : std_logic;
+
+  signal data_to_write : word_t;
 
 begin
 
@@ -82,34 +82,38 @@ begin
     & address_lo;
   lsu_data_inout <= lsu_data;
 
-  update_id : process(id_register_write_enable_in, id_register_in)
-  begin
-    if id_register_write_enable_in = '1' then
-      id_hi(DATA_WIDTH - WORD_WIDTH - 1 downto 0)
-        <= id_register_in(DATA_WIDTH - 1 downto WORD_WIDTH);
-      id_lo <= id_register_in(WORD_WIDTH - 1 downto 0);
-    end if;
-  end process; -- update_id
+  with constant_write_enable_in select
+    data_to_write <= constant_value_in when '1',
+                     write_data_in when others;
 
   registers: process (clk) is
   begin
 
     if rising_edge(clk) then
+      if return_register_write_enable_in = '1' then
+        lsu_data <= lsu_data_inout;
+      end if;
+
+      if id_register_write_enable_in = '1' then
+        id_hi(DATA_WIDTH - WORD_WIDTH - 1 downto 0)
+          <= id_register_in(DATA_WIDTH - 1 downto WORD_WIDTH);
+        id_lo <= id_register_in(WORD_WIDTH - 1 downto 0);
+      end if;
 
       if register_write_enable_in = '1' then
         case to_integer(unsigned(write_register_in)) is
           when register_zero | register_id_hi | register_id_lo =>
             null;
           when register_address_hi =>
-            address_hi <= write_data_in;
+            address_hi <= data_to_write;
           when register_address_lo =>
-            address_lo <= write_data_in;
+            address_lo <= data_to_write;
           when register_lsu_data =>
-            lsu_data <= write_data_in;
+            lsu_data <= data_to_write;
           when register_mask =>
-            mask <= write_data_in(0);
+            mask <= data_to_write(0);
           when others =>
-            general_registers(to_integer(unsigned(write_register_in))) <= write_data_in;
+            general_registers(to_integer(unsigned(write_register_in))) <= data_to_write;
         end case;
       end if;
     end if;
