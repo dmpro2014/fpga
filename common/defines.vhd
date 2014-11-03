@@ -21,7 +21,6 @@ package defines is
   constant CONSTANT_ADDRESS_BIT_WIDTH: integer := 2;
 
   subtype word_t is std_logic_vector(WORD_WIDTH - 1 downto 0);
-  subtype ebi_bus_t is std_logic_vector(49 downto 0);
   subtype spi_bus_t is std_logic_vector(4 downto 0);
   subtype instruction_address_t is std_logic_vector(INSTRUCTION_ADDRESS_WIDTH - 1 downto 0);
   subtype memory_address_t is std_logic_vector(DATA_ADDRESS_WIDTH - 1 downto 0);
@@ -29,6 +28,10 @@ package defines is
   subtype register_address_t is std_logic_vector(REGISTER_COUNT_BIT_WIDTH - 1 downto 0);
   subtype immediate_value_t is std_logic_vector(INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH -1 downto 0);
   subtype instruction_t is std_logic_vector(INSTRUCTION_WIDTH - 1 downto 0);
+  
+  -- MC EBI
+  subtype ebi_data_t is std_logic_vector(15 downto 0);
+
   type sp_sram_addresses_t is array(NUMBER_OF_STREAMING_PROCESSORS - 1 downto 0) of memory_address_t;
   type sp_sram_datas_t is array(NUMBER_OF_STREAMING_PROCESSORS - 1 downto 0) of word_t;
   type register_directory_ids_t is array(BARREL_HEIGHT-1 downto 0) of  thread_id_t;
@@ -50,6 +53,15 @@ package defines is
   type sram_bus_data_t is
     record
       data : std_logic_vector(15 downto 0);
+    end record;
+  
+  type ebi_control_t is 
+    record
+      address : std_logic_vector(DATA_ADDRESS_WIDTH - 1 downto 0);
+      write_enable : std_logic;
+      read_enable : std_logic;
+      chip_select_fpga : std_logic;
+      chip_select_sram : std_logic;
     end record;
 
 end package defines;

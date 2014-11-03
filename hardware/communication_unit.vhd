@@ -8,7 +8,6 @@ entity communication_unit is
   );
   Port ( clk : in  STD_LOGIC;
          system_reset_out: out STD_LOGIC;
-         kernel_complete_in : in  STD_LOGIC;
          comm_reset_system_out : out STD_LOGIC;
 
          -- Thread Spawner signals
@@ -17,8 +16,8 @@ entity communication_unit is
          kernel_number_of_threads_out: out thread_id_t;
 
          -- MC busses
-         ebi_bus_in : in  ebi_bus_t;
-         spi_bus_in : in  spi_bus_t;
+         ebi_data_inout : inout ebi_data_t;
+         ebi_control_in : in ebi_control_t;
 
          -- Instruction memory
          instruction_data_out : out instruction_t;
