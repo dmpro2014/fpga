@@ -24,6 +24,7 @@ architecture behavior of tb_register_file is
   -- ID register
   signal id_register_write_enable_in: std_logic;
   signal id_register_in: thread_id_t;
+  signal lsu_address_out: memory_address_t;
   
   -- Return Registers
   signal lsu_data_inout: word_t;
@@ -45,7 +46,7 @@ architecture behavior of tb_register_file is
    begin
     return std_logic_vector(to_unsigned(word, WORD_WIDTH));
  end;
- 
+
  begin
 
 -- component instantiation
@@ -67,6 +68,7 @@ architecture behavior of tb_register_file is
               id_register_in => id_register_in,
               return_register_write_enable_in => return_register_write_enable_in,
               lsu_data_inout => lsu_data_inout,
+              lsu_address_out => lsu_address_out,
               constant_value_in => constant_value_in,
               predicate_out => predicate_out,
               constant_write_enable_in => constant_write_enable_in
@@ -83,6 +85,7 @@ architecture behavior of tb_register_file is
 
 --  test bench statements
   tb : process
+     constant ALL_BITS_HIGH: memory_address_t := (others => '1');
     begin
 
       -- Test special registers first
@@ -99,36 +102,46 @@ architecture behavior of tb_register_file is
       assert_equals(make_word(0), read_data_2_out, "Register $0 should be write only.");
       
 
-      -- Register $1 ID HI      
+      -- Register $1,$2 ID HI,LOW      
       id_register_write_enable_in <= '1';
       id_register_in <= "1111111111111111111"; 
       read_register_1_in <= get_reg_addr(1);
-      read_register_2_in <= get_reg_addr(1);
+      read_register_2_in <= get_reg_addr(2);
       wait for clk_period;
       assert_equals(make_word(7), read_data_1_out, "ID value should be split into high and low registers.");
-      assert_equals(make_word(7), read_data_2_out, "ID value should be split into high and low registers.");
+      assert_equals("1111111111111111", read_data_2_out, "ID value should be split into high and low registers.");
       write_register_in <= get_reg_addr(1);
       write_data_in <= make_word(4);
       register_write_enable_in <= '1';
       wait for clk_period;
+      write_register_in <= get_reg_addr(2);
+      wait for clk_period;
       assert_equals(make_word(7), read_data_1_out, "ID should be readonly.");
       assert_equals(make_word(7), read_data_2_out, "ID should be readonly.");
-      
-      -- Register $2 ID LOW
-      read_register_1_in <= get_reg_addr(2);
-      read_register_2_in <= get_reg_addr(2);
-      wait for clk_period;
-      assert_equals("1111111111111111", read_data_1_out, "ID value should be split into high and low registers.");
-      assert_equals("1111111111111111", read_data_2_out, "ID value should be split into high and low registers.");
-      write_data_in <= make_word(30);
-      write_register_in <= get_reg_addr(2);
-      register_write_enable_in <= '1';
-      wait for clk_period;
-      assert_equals("1111111111111111", read_data_1_out, "Register $2 should be readonly.");
-      assert_equals("1111111111111111", read_data_2_out, "Register $2 should be readonly.");
-      
-      
+        
+      -- Address high/low can be treaded as general purpose registers.
+      -- Only difference is that their out should also be in lsu_data.
+      -- Register $3 address high
+      -- Test general purpose first
       -- add user defined stimulus here
+      register_write_enable_in <= '1';
+      read_register_1_in <= get_reg_addr(3);
+      read_register_2_in <= get_reg_addr(4);
+      write_register_in <= get_reg_addr(3);
+      write_data_in <= (others => '1');
+      wait for clk_period;
+      write_register_in <= get_reg_addr(4);
+      -- Write to both registers
+      wait for clk_period;
+      assert_equals(write_data_in, read_register_1_in, "Should be treaded as a general purpose register.");
+      assert_equals(write_data_in, read_register_2_in, "Should be treaded as a general purpose register.");
+      -- Test special feature
+      assert_equals(ALL_BITS_HIGH, lsu_address_out, "LSU address should consist of Address low and high bits from address high."); 
+  
+      
+      
+      
+      
 
       wait; -- will wait forever
    end process tb;
