@@ -75,8 +75,6 @@ architecture Behavioral of ghettocuda is
   signal ctrl_alu_op_out: alu_funct_t;
   signal ctrl_active_barrel_row_out: barrel_row_t;
   signal ctrl_thread_done_out: std_logic;
-  signal ctrl_lsu_load_enable_out: std_logic;
-  signal ctrl_lsu_write_enable_out: std_logic;
   signal ctrl_constant_write_enable_out: std_logic;
 
   -- Load / Store unit
@@ -92,6 +90,9 @@ architecture Behavioral of ghettocuda is
   signal instruction_decode_operand_rd_out: register_address_t;
   signal instruction_decode_shamt_out: std_logic_vector(4 downto 0);
   signal instruction_decode_immediate_operand_out: immediate_value_t; 
+  signal decode_lsu_load_enable_out: std_logic;
+  signal decode_lsu_write_enable_out: std_logic;
+
 
   -- Constant storage
   signal constant_storage_value_out: word_t;
@@ -99,16 +100,20 @@ architecture Behavioral of ghettocuda is
   -- Instruction decode
   signal instruction_decode_constant_select_in:  std_logic_vector(CONSTANT_ADDRESS_BIT_WIDTH -1 downto 0);
 
-begin
-
+begin          
   -- Instruction decode
   instruction_decode: entity work.instruction_decode
   port map(
       instruction_in => instruction_data_out,
-      opcode_out => instruction_decode_opcode_out,
       operand_rs_out => instruction_decode_operand_rs_out,
       operand_rt_out => instruction_decode_operand_rt_out,
       operand_rd_out => instruction_decode_operand_rd_out,
+      alu_funct_out => ctrl_alu_op_out,
+      register_write_enable_out => ctrl_register_write_enable_out,
+      lsu_load_enable_out => decode_lsu_load_enable_out,
+      lsu_write_enable_out => decode_lsu_write_enable_out,
+      mask_enable_out => ctrl_mask_enable_out,
+      thread_done_out => ctrl_thread_done_out,
       shamt_out => instruction_decode_shamt_out,
       immediate_operand_out => instruction_decode_immediate_operand_out
   );
@@ -129,23 +134,15 @@ begin
   );
 
 
-  -- Control unit
-  control_unit : entity work.control_unit
+
+  warp_drive: entity work.warp_drive
+  generic map( barrel_bit_width => BARREL_HEIGHT_BIT_WIDTH)
   port map(
-            clk => clk,
+            tick => clk,
             reset => reset,
-            opcode_in => instruction_decode_opcode_out,
-            register_write_enable_out => ctrl_register_write_enable_out,
-            mask_enable_out => ctrl_mask_enable_out,
-            alu_op_out => ctrl_alu_op_out,
             pc_write_enable_out => ctrl_pc_write_enable_out,
-            active_barrel_row_out =>ctrl_active_barrel_row_out,
-            thread_done_out => ctrl_thread_done_out,
-            lsu_load_enable_out => ctrl_lsu_load_enable_out,
-            lsu_write_enable => ctrl_lsu_write_enable_out
+            active_barrel_row_out => ctrl_active_barrel_row_out
           );
-          
-          
           -- Replace with array of SPs
   streaming_processors : entity work.sp_block
   port map(
@@ -188,12 +185,12 @@ begin
   load_store_unit : entity work.load_store_unit
   port map(
             -- Input wires
-            request_sram_bus_read_in => ctrl_lsu_load_enable_out,
-            request_sram_bus_write_in => ctrl_lsu_write_enable_out,
+            request_sram_bus_read_in => decode_lsu_load_enable_out,
+            request_sram_bus_write_in => decode_lsu_write_enable_out,
             register_file_select_in => ctrl_active_barrel_row_out,
             sp_sram_bus_addresses_in => sp_sram_bus_addresses_out,
             sp_sram_bus_datas_in => sp_sram_bus_data_out,
-
+            
             --Memory wires
             sram_bus_data_1_inout => load_store_sram_bus_data_1_inout,
             sram_bus_control_1_out => load_store_sram_bus_control_1_out,
