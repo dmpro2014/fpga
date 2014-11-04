@@ -42,6 +42,11 @@ architecture rtl of streaming_processor is
 begin
 
   reg_dir : entity work.register_directory
+  generic map( DEPTH => REGISTER_COUNT
+             , LOG_DEPTH => REGISTER_COUNT_BIT_WIDTH
+             , NUMBER_OF_REGISTER_FILES => BARREL_HEIGHT
+             , LOG_NUMBER_OF_REGISTER_FILES => BARREL_HEIGHT_BIT_WIDTH
+             )
   port map( clk => clock
           , read_register_1_in  => read_reg_1_in
           , read_register_2_in  => read_reg_2_in
@@ -53,8 +58,8 @@ begin
           , id_register_write_enable_in => id_write_enable_in
           , id_in               => id_data_in
             
-          , read_data_1         => reg_dir_read_data_1_i
-          , read_data_2         => reg_dir_read_data_2_i
+          , read_data_1_out         => reg_dir_read_data_1_i
+          , read_data_2_out         => reg_dir_read_data_2_i
           , return_register_write_enable_in => return_write_enable_in
           , return_register_file_in => return_barrel_select_in
           , return_data_in      => return_data_in

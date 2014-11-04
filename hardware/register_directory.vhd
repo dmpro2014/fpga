@@ -4,17 +4,23 @@ use work.defines.all;
 use ieee.numeric_std.all;
 
 entity register_directory is
+  Generic(
+           DEPTH: integer := 8;
+           LOG_DEPTH : integer := 4;
+           NUMBER_OF_REGISTER_FILES: integer := 4;
+           LOG_NUMBER_OF_REGISTER_FILES : integer := 2
+         );
   Port (
          clk : in std_logic;
 
          -- General registers
-         read_register_1_in: in std_logic_vector(REGISTER_COUNT_BIT_WIDTH -1 downto 0);
-         read_register_2_in: in std_logic_vector(REGISTER_COUNT_BIT_WIDTH -1 downto 0);
-         write_register_in: in std_logic_vector(REGISTER_COUNT_BIT_WIDTH -1 downto 0);
+         read_register_1_in: in std_logic_vector(LOG_NUMBER_OF_REGISTER_FILES -1 downto 0);
+         read_register_2_in: in std_logic_vector(LOG_NUMBER_OF_REGISTER_FILES -1 downto 0);
+         write_register_in: in std_logic_vector(LOG_NUMBER_OF_REGISTER_FILES -1 downto 0);
          write_data_in: in word_t;
          register_write_enable_in: in std_logic;
-         read_data_1: out word_t;
-         read_data_2: out word_t;
+         read_data_1_out: out word_t;
+         read_data_2_out: out word_t;
 
          -- ID registers
          id_register_write_enable_in:in std_logic;
@@ -42,13 +48,13 @@ entity register_directory is
 end register_directory;
 
 architecture rtl of register_directory is
-  type lsu_addresses_out_t is array(0 to BARREL_HEIGHT - 1) of memory_address_t;
-  type barrel_words_t is array(0 to BARREL_HEIGHT - 1) of word_t;
+  type lsu_addresses_out_t is array(0 to NUMBER_OF_REGISTER_FILES - 1) of memory_address_t;
+  type barrel_words_t is array(0 to NUMBER_OF_REGISTER_FILES - 1) of word_t;
 
-  signal register_write_enables : std_logic_vector(0 to BARREL_HEIGHT - 1);
-  signal return_register_write_enables : std_logic_vector(0 to BARREL_HEIGHT - 1);
-  signal id_register_write_enables : std_logic_vector(0 to BARREL_HEIGHT - 1);
-  signal predicates_out : std_logic_vector(0 to BARREL_HEIGHT - 1);
+  signal register_write_enables : std_logic_vector(0 to NUMBER_OF_REGISTER_FILES - 1);
+  signal return_register_write_enables : std_logic_vector(0 to NUMBER_OF_REGISTER_FILES - 1);
+  signal id_register_write_enables : std_logic_vector(0 to NUMBER_OF_REGISTER_FILES - 1);
+  signal predicates_out : std_logic_vector(0 to NUMBER_OF_REGISTER_FILES - 1);
   signal lsu_addresses_out : lsu_addresses_out_t;
   signal lsu_datas : barrel_words_t;
 
@@ -75,12 +81,12 @@ begin
   end process;
 
   register_files:
-  for i in 0 to BARREL_HEIGHT - 1 generate
+  for i in 0 to NUMBER_OF_REGISTER_FILES - 1 generate
 
     register_file : entity work.register_file
     generic map(
-                 DEPTH => REGISTER_COUNT,
-                 LOG_DEPTH => REGISTER_COUNT_BIT_WIDTH
+                 DEPTH => DEPTH,
+                 LOG_DEPTH => LOG_DEPTH
                 )
     port map( -- General registers
               clk => clk,
@@ -111,8 +117,8 @@ begin
             );
   end generate register_files;
 
-  read_data_1 <= read_registers_1(to_integer(unsigned(barrel_row_select_in)));
-  read_data_2 <= read_registers_2(to_integer(unsigned(barrel_row_select_in)));
+  read_data_1_out <= read_registers_1(to_integer(unsigned(barrel_row_select_in)));
+  read_data_2_out <= read_registers_2(to_integer(unsigned(barrel_row_select_in)));
 
   predicate_out <= predicates_out(to_integer(unsigned(barrel_row_select_in)));
   lsu_address_out <= lsu_addresses_out(to_integer(unsigned(barrel_row_select_in)));
