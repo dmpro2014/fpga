@@ -275,12 +275,7 @@ architecture behavior of tb_register_directory is
       
       -- Test correct persistence between register files
       for reg_file in 0 to num_register_files -1 loop
-        
-        --barrel_row_select_in <= make_row(reg_file);
-        --id_register_write_enable_in <= '1';
-        --id_register_in <= max_id;
-        --wait for clk_period;
-        --id_register_write_enable_in <= '0';
+        -- Write to return register
         return_register_file_in <= make_row(reg_file);
         return_data_in <= make_word(reg_file*100 + 5);
         return_register_write_enable_in <= '1';
@@ -294,11 +289,7 @@ architecture behavior of tb_register_directory is
       report "Set up all barrels for persistence test!";
       wait for clk_period;
       for reg_file in 0 to num_register_files -1 loop
-       --barrel_row_select_in <= make_row(reg_file);
-       --read_register_1_in <= get_reg_addr(register_id_hi);
-       --read_register_2_in <= get_reg_addr(register_id_lo);
-       --wait for clk_period;
-       --assert_equals(
+       -- Make sure the return register hasnt been overwritten.
        barrel_row_select_in <= make_row(reg_file);
        wait for clk_period;
        assert_equals(make_word(reg_file*100 +5), lsu_write_data_out, "LSU data register should be persisted between barrel rolls.");
