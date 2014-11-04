@@ -3,20 +3,21 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 package defines is
 
-  constant REGISTER_COUNT_BIT_WIDTH: integer := 5;
+  constant REGISTER_COUNT: integer := 16;
+  constant REGISTER_COUNT_BIT_WIDTH: integer := 4;
   constant INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH: integer := 16;
   constant OPCODE_BIT_WIDTH : integer := 6;
 
   constant INSTRUCTION_ADDRESS_WIDTH: integer := 16;
-  constant DATA_ADDRESS_WIDTH: integer := 20;
+  constant DATA_ADDRESS_WIDTH: integer := 19;
   constant DATA_WIDTH: integer := 19;
   constant WORD_WIDTH: integer := 16;
   constant INSTRUCTION_WIDTH : integer := 32;
 
-  constant NUMBER_OF_STREAMING_PROCESSORS: integer := 2;
+  constant NUMBER_OF_STREAMING_PROCESSORS: integer := 16;
   -- Barell
-  constant BARREL_HEIGHT: integer := 1;
-  constant BARREL_HEIGHT_BIT_WIDTH: integer := 1;
+  constant BARREL_HEIGHT: integer := 4;
+  constant BARREL_HEIGHT_BIT_WIDTH: integer := 3;
   
   constant CONSTANT_ADDRESS_BIT_WIDTH: integer := 2;
 
@@ -40,11 +41,11 @@ package defines is
 
   subtype opcode_t is std_logic_vector(OPCODE_BIT_WIDTH - 1 downto 0); -- Placeholder
   subtype alu_funct_t is std_logic_vector(4 downto 0); -- Placeholder
-  
+
 
   type sram_bus_control_t is
     record
-      address : instruction_address_t;
+      address : std_logic_vector(18 downto 0);
       lbub : std_logic_vector(1 downto 0);
       write_enable : std_logic;
       chip_select : std_logic;
@@ -63,5 +64,13 @@ package defines is
       chip_select_fpga : std_logic;
       chip_select_sram : std_logic;
     end record;
+
+  constant register_zero : integer := 0;
+  constant register_id_hi : integer := 1;
+  constant register_id_lo : integer := 2;
+  constant register_address_hi : integer := 3;
+  constant register_address_lo : integer := 4;
+  constant register_lsu_data : integer := 5;
+  constant register_mask : integer := 6;
 
 end package defines;

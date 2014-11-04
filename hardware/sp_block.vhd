@@ -21,6 +21,7 @@ entity sp_block is
          ; return_data_in       : in sp_sram_datas_t
          ; lsu_write_data_out   : out  sp_sram_datas_t
          ; lsu_address_out      : out  sp_sram_addresses_t
+         ; constant_write_enable_in : in std_logic
          ; constant_value_in    : in word_t
       );
 end sp_block;
@@ -30,12 +31,10 @@ architecture Behavioral of sp_block is
   signal sp_ids : sp_ids_t;
 begin
 
-  
-
   gen_sp:
   for i in 0 to NUMBER_OF_STREAMING_PROCESSORS - 1 generate
 
-    sp_ids(i) <= thread_id_t(signed(id_data_in) + (i * BARREL_HEIGHT));
+    sp_ids(i) <= thread_id_t(signed(id_data_in) + i);
 
     streaming_processor :
     entity work.streaming_processor
@@ -56,6 +55,7 @@ begin
               return_data_in => return_data_in(i),
               lsu_write_data_out => lsu_write_data_out(i),
               lsu_address_out     => lsu_address_out(i),
+              constant_write_enable_in => constant_write_enable_in,
               constant_value_in => constant_value_in
              );
   end generate gen_sp;
