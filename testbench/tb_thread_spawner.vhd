@@ -89,18 +89,20 @@ BEGIN
       wait for clk_period;
       kernel_start_in <= '1';
       wait for clk_period; --Thread spawner activate next clock cycle
-                           --      Check that the PC is set correctly
+
+--      Check that the PC is set correctly
       assert_equals(pc_start_out, kernel_addr, "PC start address set correctly");
       assert_equals(pc_input_select_out, '1', "Set pc_input_select_out correctly when starting new threads");
 
+      kernel_start_in <= '0';
 
-      --      Check that the IDs are set correctly
+      --      Check that the IDs are set correctly when spawning first threads
       for i in 0 to BARREL_HEIGHT loop
         assert_equals(signed(thread_id_out), to_signed(i * NUMBER_OF_STREAMING_PROCESSORS, 19), "ID should be set correctly");
         wait for clk_period;
       end loop;
 
-      --      Kill a barrel of warps.
+--    Spawn all threads except the last round
       for barrels in 0 to integer(ceil(real(thread_count)/(real(NUMBER_OF_STREAMING_PROCESSORS)*real(BARREL_HEIGHT))) - real(1)) loop
         for i in 0 to BARREL_HEIGHT loop
           thread_done_in <= '1';
@@ -121,7 +123,9 @@ BEGIN
         thread_done_in <= '0';
         assert_equals(pc_input_select_out, '1', "PC address should overriden when new threads start");
       end loop;
-      --    Spawn the last barrel of warps
+      
+      
+--    Spawn the last barrel of warps
       for i in 0 to BARREL_HEIGHT loop
         thread_done_in <= '1';
 
@@ -138,6 +142,8 @@ BEGIN
 
         wait for clk_period / 2;
       end loop;
+      
+      
       thread_done_in <= '0';
       assert_equals(pc_input_select_out, '1', "PC address should overriden when new threads start");
       wait for 10 * clk_period;
@@ -156,8 +162,6 @@ BEGIN
 
     wait for clk_period*10;
 
-    wait for 10 * clk_period;
-
     test_kernel("0101010101010101", BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS * 2 + 1 );
 
     report "-------------- Run a new kernel --------------";
@@ -165,8 +169,10 @@ BEGIN
       --    Start a new kernel with different parameters
 
     test_kernel("0011001100111001", BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS * 5 + 1 );
-    test_kernel(std_logic_vector(to_unsigned(1337,16)), BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS * 5 + 1 );
+    
+    report "-------------- Run a third kernel --------------";
 
+    test_kernel(std_logic_vector(to_unsigned(1337,16)), BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS * 5 + 1 );
 
     wait;
   end process;
