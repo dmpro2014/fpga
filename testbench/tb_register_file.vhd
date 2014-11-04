@@ -121,8 +121,8 @@ architecture behavior of tb_register_file is
       -- Only difference is that their out should also be in lsu_data.
       -- Register $3 address high
       -- Test general purpose first
-      assert_generic(to_integer(unsigned(max_int)), 3, read_register_1_in, read_data_1_out, " $3(Address high) Should be treated as a general purpose register."); 
-      assert_generic(to_integer(unsigned(max_int)), 4, read_register_1_in, read_data_1_out, " $3(Address high) Should be treated as a general purpose register."); 
+      assert_generic(to_integer(unsigned(max_int)), register_address_hi, read_register_1_in, read_data_1_out, " $3(Address high) Should be treated as a general purpose register."); 
+      assert_generic(to_integer(unsigned(max_int)), register_address_lo, read_register_1_in, read_data_1_out, " $3(Address high) Should be treated as a general purpose register."); 
       
       -- Test special feature
       --assert_equals(ALL_BITS_HIGH, lsu_address_out, "LSU address should consist of Address low and high bits from address high."); 
@@ -131,12 +131,12 @@ architecture behavior of tb_register_file is
     procedure assert_zero_reg is
      begin
 
-      read_register_1_in <= get_reg_addr(0);
-      read_register_2_in <= get_reg_addr(0);
+      read_register_1_in <= get_reg_addr(register_zero);
+      read_register_2_in <= get_reg_addr(register_zero);
       wait for clk_period;
       assert_equals(make_word(0), read_data_1_out, "Register $0 should be zero.");
       assert_equals(make_word(0), read_data_2_out, "Register $0 should be zero.");
-      write_register_in <= get_reg_addr(0);
+      write_register_in <= get_reg_addr(register_zero);
       write_data_in <= make_word(1);
       wait for clk_period;
       assert_equals(make_word(0), read_data_1_out, "Register $0 should be write only.");
@@ -149,16 +149,16 @@ architecture behavior of tb_register_file is
       -- Register $1,$2 ID HI,LOW      
       id_register_write_enable_in <= '1';
       id_register_in <= "1111111111111111111"; 
-      read_register_1_in <= get_reg_addr(1);
-      read_register_2_in <= get_reg_addr(2);
+      read_register_1_in <= get_reg_addr(register_id_hi);
+      read_register_2_in <= get_reg_addr(register_id_lo);
       wait for clk_period;
       assert_equals(make_word(7), read_data_1_out, "ID value should be split into high and low registers.");
       assert_equals("1111111111111111", read_data_2_out, "ID value should be split into high and low registers.");
-      write_register_in <= get_reg_addr(1);
+      write_register_in <= get_reg_addr(register_id_hi);
       write_data_in <= make_word(4);
       register_write_enable_in <= '1';
       wait for clk_period;
-      write_register_in <= get_reg_addr(2);
+      write_register_in <= get_reg_addr(register_id_lo);
       wait for clk_period;
       assert_equals(make_word(7), read_data_1_out, "ID should be readonly.");
       assert_equals("1111111111111111", read_data_2_out, "ID should be readonly.");
@@ -171,7 +171,7 @@ architecture behavior of tb_register_file is
      
       --Test write from lsu
       register_write_enable_in <= '0';
-      read_register_1_in <= get_reg_addr(5);
+      read_register_1_in <= get_reg_addr(register_lsu_data);
       return_register_write_enable_in <= '1';
       return_data_in <= make_word(9);
       wait for clk_period;
@@ -189,7 +189,7 @@ architecture behavior of tb_register_file is
     procedure assert_mask_register is
      begin
       register_write_enable_in <= '1';
-      write_register_in <= get_reg_addr(6);
+      write_register_in <= get_reg_addr(register_mask);
       write_data_in <= make_word(1);
       wait for clk_period;
       assert_equals('1', predicate_out, "Predicate should be writable.");
