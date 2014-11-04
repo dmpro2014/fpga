@@ -25,7 +25,8 @@ entity register_file is
           --LSU
           return_register_write_enable_in: in std_logic;
           lsu_address_out: out memory_address_t;
-          lsu_data_inout: inout word_t;
+          lsu_write_data_out: out word_t;
+          return_data_in: in word_t;
 
           -- Constant storage
           constant_write_enable_in : in std_logic;
@@ -42,19 +43,26 @@ architecture rtl of register_file is
   type register_file_t is array(7 to 7 + DEPTH - 1) of word_t;
   signal general_registers : register_file_t := (others => (others => '0'));
 
+  signal id_register : thread_id_t;
+  signal id_hi : word_t;
   signal id_lo : word_t;
-  signal id_hi : word_t := (others => '0');
-  
+
   signal address_lo : word_t;
   signal address_hi : word_t;
-  
+
   signal lsu_data : word_t;
-  
-  signal mask : std_logic;
+
+  signal mask : std_logic := '0';
 
   signal data_to_write : word_t;
 
 begin
+
+  predicate_out <= mask;
+  id_hi <= std_logic_vector(resize(unsigned(id_register(DATA_WIDTH - 1 downto WORD_WIDTH)), WORD_WIDTH));
+  id_lo <= id_register(WORD_WIDTH -1 downto 0);
+  lsu_address_out <= address_hi(DATA_WIDTH - WORD_WIDTH - 1 downto 0) & address_lo;
+  lsu_write_data_out <= lsu_data;
 
   -- Wire out registers
   with to_integer(unsigned(read_register_1_in)) select
@@ -77,11 +85,6 @@ begin
                        (others => '0') when register_mask,
                        general_registers(to_integer(unsigned(read_register_2_in))) when others;
 
-  predicate_out <= mask;
-  lsu_address_out <= address_hi(DATA_WIDTH - WORD_WIDTH - 1 downto 0)
-    & address_lo;
-  lsu_data_inout <= lsu_data;
-
   with constant_write_enable_in select
     data_to_write <= constant_value_in when '1',
                      write_data_in when others;
@@ -91,13 +94,11 @@ begin
 
     if rising_edge(clk) then
       if return_register_write_enable_in = '1' then
-        lsu_data <= lsu_data_inout;
+        lsu_data <= return_data_in;
       end if;
 
       if id_register_write_enable_in = '1' then
-        id_hi(DATA_WIDTH - WORD_WIDTH - 1 downto 0)
-          <= id_register_in(DATA_WIDTH - 1 downto WORD_WIDTH);
-        id_lo <= id_register_in(WORD_WIDTH - 1 downto 0);
+        id_register <= id_register_in;
       end if;
 
       if register_write_enable_in = '1' then

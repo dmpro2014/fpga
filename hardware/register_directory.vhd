@@ -18,7 +18,7 @@ entity register_directory is
 
          -- ID registers
          id_register_write_enable_in:in std_logic;
-         ids_in: in thread_id_t;
+         id_in: in thread_id_t;
 
          --Return registers
          return_register_write_enable_in: in std_logic;
@@ -42,13 +42,12 @@ entity register_directory is
 end register_directory;
 
 architecture rtl of register_directory is
-  type reg_file_ids_t is array(0 to BARREL_HEIGHT -1) of thread_id_t;
   type lsu_addresses_out_t is array(0 to BARREL_HEIGHT - 1) of memory_address_t;
   type barrel_words_t is array(0 to BARREL_HEIGHT - 1) of word_t;
 
-  signal reg_file_ids : reg_file_ids_t;
   signal register_write_enables : std_logic_vector(0 to BARREL_HEIGHT - 1);
   signal return_register_write_enables : std_logic_vector(0 to BARREL_HEIGHT - 1);
+  signal id_register_write_enables : std_logic_vector(0 to BARREL_HEIGHT - 1);
   signal predicates_out : std_logic_vector(0 to BARREL_HEIGHT - 1);
   signal lsu_addresses_out : lsu_addresses_out_t;
   signal lsu_datas : barrel_words_t;
@@ -57,7 +56,7 @@ architecture rtl of register_directory is
   signal read_registers_2 : barrel_words_t;
 begin
   
-  process (barrel_row_select_in, register_write_enable_in, return_register_file_in, return_register_write_enable_in)
+  process (barrel_row_select_in, register_write_enable_in, return_register_file_in, return_register_write_enable_in, id_register_write_enable_in)
   begin
     register_write_enables <= (others => '0');
     return_register_write_enables <= (others => '0');
@@ -65,15 +64,18 @@ begin
     if register_write_enable_in = '1' then
       register_write_enables(to_integer(unsigned(barrel_row_select_in))) <= '1';
     end if;
-    
+
     if return_register_write_enable_in = '1' then
       return_register_write_enables(to_integer(unsigned(return_register_file_in))) <= '1';
+    end if;
+
+    if id_register_write_enable_in = '1' then
+      id_register_write_enables(to_integer(unsigned(barrel_row_select_in))) <= '1';
     end if;
   end process;
 
   register_files:
   for i in 0 to BARREL_HEIGHT - 1 generate
-    reg_file_ids(i) <= thread_id_t(signed(ids_in) + i);
 
     register_file : entity work.register_file
     generic map(
@@ -91,13 +93,14 @@ begin
               read_data_2_out => read_registers_2(i),
 
               -- ID registers
-              id_register_write_enable_in => id_register_write_enable_in,
-              id_register_in => reg_file_ids(i),
+              id_register_write_enable_in => id_register_write_enables(i),
+              id_register_in => id_in,
 
               --LSU
               return_register_write_enable_in => return_register_write_enables(i),
+              return_data_in => return_data_in,
               lsu_address_out => lsu_addresses_out(i),
-              lsu_data_inout => lsu_datas(i),
+              lsu_write_data_out => lsu_datas(i),
 
               -- Constant storage
               constant_write_enable_in => constant_write_enable_in,

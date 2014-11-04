@@ -29,7 +29,9 @@ architecture behavior of tb_register_file is
   signal lsu_address_out: memory_address_t;
   
   -- Return Registers
-  signal lsu_data_inout: word_t;
+
+  signal lsu_write_data_out: word_t;
+  signal return_data_in: word_t;
   signal return_register_write_enable_in: std_logic;
   
   -- Masking
@@ -47,7 +49,10 @@ architecture behavior of tb_register_file is
   function make_word(word: integer) return std_logic_vector is
    begin
     return std_logic_vector(to_unsigned(word, WORD_WIDTH));
-  end;
+
+
+ end;
+
  begin
 
 -- component instantiation
@@ -68,7 +73,10 @@ architecture behavior of tb_register_file is
               id_register_write_enable_in => id_register_write_enable_in,
               id_register_in => id_register_in,
               return_register_write_enable_in => return_register_write_enable_in,
-              lsu_data_inout => lsu_data_inout,
+
+              return_data_in => return_data_in,
+              lsu_write_data_out => lsu_write_data_out,
+
               lsu_address_out => lsu_address_out,
               constant_value_in => constant_value_in,
               predicate_out => predicate_out,
@@ -122,6 +130,7 @@ architecture behavior of tb_register_file is
     
     procedure assert_zero_reg is
      begin
+
       read_register_1_in <= get_reg_addr(0);
       read_register_2_in <= get_reg_addr(0);
       wait for clk_period;
@@ -132,10 +141,12 @@ architecture behavior of tb_register_file is
       wait for clk_period;
       assert_equals(make_word(0), read_data_1_out, "Register $0 should be write only.");
       assert_equals(make_word(0), read_data_2_out, "Register $0 should be write only.");
+
      end assert_zero_reg;
      
     procedure assert_id_registers is
      begin
+      -- Register $1,$2 ID HI,LOW      
       id_register_write_enable_in <= '1';
       id_register_in <= "1111111111111111111"; 
       read_register_1_in <= get_reg_addr(1);
@@ -162,23 +173,26 @@ architecture behavior of tb_register_file is
       register_write_enable_in <= '0';
       read_register_1_in <= get_reg_addr(5);
       return_register_write_enable_in <= '1';
-      lsu_data_inout <= make_word(9);
+      return_data_in <= make_word(9);
       wait for clk_period;
       assert_equals(make_word(9), read_data_1_out, "LSU should be able to write result");
      end assert_lsu_data_register;
      
     procedure assert_general_purpose_registers is
      begin
-       register_write_enable_in <= '1';
        --Test other general registers
        for i in 7 to num_registers -1 loop
-        assert_generic(30 + i, i,  read_register_1_in, read_data_1_out);
+        assert_generic(i, 30 + i, read_register_1_in, read_data_1_out);
       end loop;
     end procedure assert_general_purpose_registers;
     
     procedure assert_mask_register is
      begin
-      --assert_generic(1, 6, read_register_1_in, resize(to_unsigned(predicate_out & "", 1), WORD_WIDTH), "Predicate should be writable.");
+      register_write_enable_in <= '1';
+      write_register_in <= get_reg_addr(6);
+      write_data_in <= make_word(1);
+      wait for clk_period;
+      assert_equals('1', predicate_out, "Predicate should be writable.");
     end procedure assert_mask_register;
     begin
 
@@ -189,13 +203,12 @@ architecture behavior of tb_register_file is
         
       assert_lsu_address_registers;
     
-      --assert_lsu_data_register;
+      assert_lsu_data_register;
       
-     --Mask register
-     
-      --assert_mask_register;
+      assert_mask_register;
    
       assert_general_purpose_registers;
+
       wait; -- will wait forever
    end process tb;
   --  end test bench 

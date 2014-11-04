@@ -51,7 +51,7 @@ begin
 
             
           , id_register_write_enable_in => id_write_enable_in
-          , ids_in              => id_data_in
+          , id_in               => id_data_in
             
           , read_data_1         => reg_dir_read_data_1_i
           , read_data_2         => reg_dir_read_data_2_i

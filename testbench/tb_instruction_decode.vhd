@@ -41,6 +41,7 @@ begin
            tb_operand_rt(3 downto 0) <= "0100";
            tb_immediate_operand(3 downto 0) <= "1100";
            instruction_in <= tb_opcode & tb_operand_rs & tb_operand_rt & tb_immediate_operand;
+           wait for 1 ns;
            -- Make sure the instruction length constants are correct.
            instruction_length := opcode_out'length + operand_rs_out'length + operand_rt_out'length + immediate_operand_out'length;
            assert_equals(INSTRUCTION_WIDTH, instruction_length, "The length of instruction decode out signals should sum to instruction width");
