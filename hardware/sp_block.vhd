@@ -10,6 +10,7 @@ entity sp_block is
          ; read_reg_2_in        : in  register_address_t
          ; write_reg_in         : in  register_address_t
          ; immediate_in         : in  immediate_value_t
+         ; shamt_in             : in  std_logic_vector(4 downto 0)
          ; reg_write_enable_in  : in  std_logic
          ; mask_enable_in       : in  std_logic
          ; alu_function_in      : in  alu_funct_t
@@ -44,6 +45,7 @@ begin
               read_reg_2_in => read_reg_2_in,
               write_reg_in  => write_reg_in,
               immediate_in => immediate_in,
+              shamt_in => shamt_in,
               reg_write_enable_in => reg_write_enable_in,
               mask_enable_in => mask_enable_in,
               alu_function_in => alu_function_in,

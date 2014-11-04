@@ -89,10 +89,9 @@ architecture Behavioral of ghettocuda is
   signal instruction_decode_opcode_out: opcode_t;
   signal instruction_decode_operand_rs_out: register_address_t;
   signal instruction_decode_operand_rt_out: register_address_t;
+  signal instruction_decode_operand_rd_out: register_address_t;
+  signal instruction_decode_shamt_out: std_logic_vector(4 downto 0);
   signal instruction_decode_immediate_operand_out: immediate_value_t; 
-  alias instruction_decode_operand_rd_out: register_address_t is 
-  instruction_decode_immediate_operand_out(INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH -1 downto  INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH -REGISTER_COUNT_BIT_WIDTH);
-
 
   -- Constant storage
   signal constant_storage_value_out: word_t;
@@ -109,6 +108,8 @@ begin
       opcode_out => instruction_decode_opcode_out,
       operand_rs_out => instruction_decode_operand_rs_out,
       operand_rt_out => instruction_decode_operand_rt_out,
+      operand_rd_out => instruction_decode_operand_rd_out,
+      shamt_out => instruction_decode_shamt_out,
       immediate_operand_out => instruction_decode_immediate_operand_out
   );
 
@@ -153,6 +154,7 @@ begin
             read_reg_2_in => instruction_decode_operand_rt_out,
             write_reg_in  => instruction_decode_operand_rd_out,
             immediate_in => instruction_decode_immediate_operand_out,
+            shamt_in => instruction_decode_shamt_out,
             reg_write_enable_in => ctrl_register_write_enable_out,
             mask_enable_in => ctrl_mask_enable_out,
             alu_function_in => ctrl_alu_op_out,
