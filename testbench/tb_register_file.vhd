@@ -116,16 +116,17 @@ architecture behavior of tb_register_file is
     
     procedure assert_lsu_address_registers is
       constant max_int: std_logic_vector(WORD_WIDTH-1 downto 0):= (others => '1');
+      constant max_address : std_logic_vector(DATA_ADDRESS_WIDTH -1 downto 0) := (others => '1');
      begin
       -- Address high/low can be treated as general purpose registers.
       -- Only difference is that their out should also be in lsu_data.
       -- Register $3 address high
       -- Test general purpose first
-      assert_generic(to_integer(unsigned(max_int)), register_address_hi, read_register_1_in, read_data_1_out, " $3(Address high) Should be treated as a general purpose register."); 
-      assert_generic(to_integer(unsigned(max_int)), register_address_lo, read_register_1_in, read_data_1_out, " $3(Address high) Should be treated as a general purpose register."); 
+      assert_generic(register_address_hi, to_integer(unsigned(max_int)), read_register_1_in, read_data_1_out, " $3(Address high) Should be treated as a general purpose register."); 
+      assert_generic(register_address_lo, to_integer(unsigned(max_int)), read_register_1_in, read_data_1_out, " $3(Address high) Should be treated as a general purpose register."); 
       
-      -- Test special feature
-      --assert_equals(ALL_BITS_HIGH, lsu_address_out, "LSU address should consist of Address low and high bits from address high."); 
+      --Test lsu address = hi & low
+      assert_equals(max_address, lsu_address_out, "LSU address should consist of Address low and high bits from address high."); 
     end assert_lsu_address_registers;
     
     procedure assert_zero_reg is
@@ -186,6 +187,17 @@ architecture behavior of tb_register_file is
       end loop;
     end procedure assert_general_purpose_registers;
     
+    procedure assert_constant_register_write is
+     begin
+      constant_write_enable_in <= '1';
+      constant_value_in <= make_word(99);
+      write_register_in <= get_reg_addr(7);
+      read_register_1_in <= get_reg_addr(7);
+      wait for clk_period;
+      assert_equals(make_word(99), read_data_1_out, "Should be able to write constants to registers");
+      constant_write_enable_in <= '0'; 
+    end procedure assert_constant_register_write;
+    
     procedure assert_mask_register is
      begin
       register_write_enable_in <= '1';
@@ -207,6 +219,8 @@ architecture behavior of tb_register_file is
       
       assert_mask_register;
    
+      assert_constant_register_write;
+      
       assert_general_purpose_registers;
 
       wait; -- will wait forever

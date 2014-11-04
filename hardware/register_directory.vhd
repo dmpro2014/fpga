@@ -5,8 +5,8 @@ use ieee.numeric_std.all;
 
 entity register_directory is
   Generic(
-           DEPTH: integer := 8;
-           LOG_DEPTH : integer := 4;
+           NUMBER_OF_REGISTERS: integer := 8;
+           LOG_NUMBER_OF_REGISTERS : integer := 4;
            NUMBER_OF_REGISTER_FILES: integer := 4;
            LOG_NUMBER_OF_REGISTER_FILES : integer := 2
          );
@@ -14,9 +14,9 @@ entity register_directory is
          clk : in std_logic;
 
          -- General registers
-         read_register_1_in: in std_logic_vector(LOG_NUMBER_OF_REGISTER_FILES -1 downto 0);
-         read_register_2_in: in std_logic_vector(LOG_NUMBER_OF_REGISTER_FILES -1 downto 0);
-         write_register_in: in std_logic_vector(LOG_NUMBER_OF_REGISTER_FILES -1 downto 0);
+         read_register_1_in: in std_logic_vector(LOG_NUMBER_OF_REGISTERS -1 downto 0);
+         read_register_2_in: in std_logic_vector(LOG_NUMBER_OF_REGISTERS -1 downto 0);
+         write_register_in: in std_logic_vector(LOG_NUMBER_OF_REGISTERS -1 downto 0);
          write_data_in: in word_t;
          register_write_enable_in: in std_logic;
          read_data_1_out: out word_t;
@@ -24,7 +24,7 @@ entity register_directory is
 
          -- ID registers
          id_register_write_enable_in:in std_logic;
-         id_in: in thread_id_t;
+         id_register_in: in thread_id_t;
 
          --Return registers
          return_register_write_enable_in: in std_logic;
@@ -85,8 +85,8 @@ begin
 
     register_file : entity work.register_file
     generic map(
-                 DEPTH => DEPTH,
-                 LOG_DEPTH => LOG_DEPTH
+                 DEPTH => NUMBER_OF_REGISTERS,
+                 LOG_DEPTH => LOG_NUMBER_OF_REGISTERS
                 )
     port map( -- General registers
               clk => clk,
@@ -100,7 +100,7 @@ begin
 
               -- ID registers
               id_register_write_enable_in => id_register_write_enables(i),
-              id_register_in => id_in,
+              id_register_in => id_register_in,
 
               --LSU
               return_register_write_enable_in => return_register_write_enables(i),
