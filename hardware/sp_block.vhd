@@ -34,7 +34,7 @@ begin
   gen_sp:
   for i in 0 to NUMBER_OF_STREAMING_PROCESSORS - 1 generate
 
-    sp_ids(i) <= thread_id_t(signed(id_data_in) + (i * BARREL_HEIGHT));
+    sp_ids(i) <= thread_id_t(signed(id_data_in) + i);
 
     streaming_processor :
     entity work.streaming_processor
