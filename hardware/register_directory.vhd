@@ -6,7 +6,7 @@ use ieee.numeric_std.all;
 entity register_directory is
   Generic(
            NUMBER_OF_REGISTERS: integer := 8;
-           LOG_NUMBER_OF_REGISTERS : integer := 4;
+           LOG_NUMBER_OF_REGISTERS : integer := 3;
            NUMBER_OF_REGISTER_FILES: integer := 4;
            LOG_NUMBER_OF_REGISTER_FILES : integer := 2
          );

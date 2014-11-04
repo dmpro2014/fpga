@@ -59,7 +59,7 @@ architecture behavior of tb_register_directory is
   
   function make_row(row: integer) return std_logic_vector is
    begin
-    return std_logic_vector(to_unsigned(row, BARREL_HEIGHT));
+     return std_logic_vector(to_unsigned(row, BARREL_HEIGHT_BIT_WIDTH));
   end;
 
  begin
@@ -115,7 +115,6 @@ architecture behavior of tb_register_directory is
       write_register_in <= get_reg_addr(reg);
       write_data_in <= make_word(value);
       wait for clk_period;
-      assert_equals(make_word(value), out_signal, message);
       assert_equals(make_word(value), out_signal, message);
     end assert_generic;
    
@@ -178,7 +177,7 @@ architecture behavior of tb_register_directory is
     procedure assert_lsu_data_register is
      begin
       --Return register($5) is also a general purpose register
-      assert_generic(12, 5, read_register_1_in, read_data_1_out, "$5 should be treated as a general register.");
+      assert_generic(register_lsu_data, 12, read_register_1_in, read_data_1_out, "$5 should be treated as a general register.");
      
       --Test write from lsu
       register_write_enable_in <= '0';
@@ -188,13 +187,16 @@ architecture behavior of tb_register_directory is
       wait for clk_period;
       assert_equals(make_word(9), read_data_1_out, "LSU should be able to write result");
      end assert_lsu_data_register;
-     
+    
     procedure assert_general_purpose_registers is
      begin
        --Test other general registers
        for i in 7 to num_registers -1 loop
+        report "reg is " & integer'image(i);
         assert_generic(i, 30 + i, read_register_1_in, read_data_1_out);
       end loop;
+      
+      --
     end procedure assert_general_purpose_registers;
     
     procedure assert_mask_register is
@@ -222,20 +224,89 @@ architecture behavior of tb_register_directory is
       barrel_row_select_in <= make_row(file_number);
       return_register_file_in <= make_row(file_number);
       assert_zero_reg;
-      assert_id_registers;
-      assert_lsu_address_registers;
-      assert_lsu_data_register;
-      assert_mask_register;
-      assert_constant_register_write;
-      assert_general_purpose_registers;
-   end procedure assert_register_file;
-   
-    begin
+      report "Asserted zero_reg";
 
-      -- Test special registers first
+      assert_id_registers;
+      report "Asserted zero_reg";
+
+      assert_lsu_address_registers;
+      report "Asserted address registers";
+
+      assert_lsu_data_register;
+      report "Asserted data register";
+
+      assert_mask_register;
+      report "Asserted mask register";
+
+      assert_constant_register_write;
+      report "Asserted constant register write";
+
+      assert_general_purpose_registers;
+      report "Asserted general purpose registers";
+   end procedure assert_register_file;
+
+   procedure write_register(register_file: integer;  reg: integer; value:integer) is
+    begin
+     barrel_row_select_in <= make_row(register_file);
+     register_write_enable_in <= '1';
+     write_register_in <= get_reg_addr(reg);
+     write_data_in <= make_word(value);
+     wait for clk_period;
+     register_write_enable_in <= '0';
+   end procedure write_register;
+   
+   procedure assert_register_file_read(register_file: integer; reg:integer; expected: integer) is
+    begin
+     barrel_row_select_in <= make_row(register_file);
+     read_register_1_in <= get_reg_addr(reg);
+     wait for clk_period;
+     
+     assert_equals(make_word(expected), read_data_1_out, "Registers should be persisted between barrel rolls.");
+   end;
+   constant max_id : std_logic_vector(DATA_WIDTH -1 downto 0) := (others => '1');
+    begin
+    
       for i in 0 to num_register_files -1 loop
+        report "Asserting register file " & integer'image(i);
         assert_register_file(i);
       end loop;
+
+      report "Tested all register files!";
+      
+      -- Test correct persistence between register files
+      for reg_file in 0 to num_register_files -1 loop
+        
+        --barrel_row_select_in <= make_row(reg_file);
+        --id_register_write_enable_in <= '1';
+        --id_register_in <= max_id;
+        --wait for clk_period;
+        --id_register_write_enable_in <= '0';
+        return_register_file_in <= make_row(reg_file);
+        return_data_in <= make_word(reg_file*100 + 5);
+        return_register_write_enable_in <= '1';
+        wait for clk_period;
+        return_register_write_enable_in <= '0';
+        
+        for reg in 7 to num_registers -1 loop
+          write_register(reg_file, reg, reg + reg_file*100);
+        end loop;
+      end loop;
+      report "Set up all barrels for persistence test!";
+      wait for clk_period;
+      for reg_file in 0 to num_register_files -1 loop
+       --barrel_row_select_in <= make_row(reg_file);
+       --read_register_1_in <= get_reg_addr(register_id_hi);
+       --read_register_2_in <= get_reg_addr(register_id_lo);
+       --wait for clk_period;
+       --assert_equals(
+       barrel_row_select_in <= make_row(reg_file);
+       wait for clk_period;
+       assert_equals(make_word(reg_file*100 +5), lsu_write_data_out, "LSU data register should be persisted between barrel rolls.");
+       for reg in 7 to num_registers -1 loop
+          assert_register_file_read(reg_file, reg, reg + reg_file*100);
+       end loop;
+      end loop;
+      
       
       wait; -- will wait forever
    end process tb;

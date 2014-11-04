@@ -168,7 +168,7 @@ architecture behavior of tb_register_file is
     procedure assert_lsu_data_register is
      begin
       --Return register($5) is also a general purpose register
-      assert_generic(12, 5, read_register_1_in, read_data_1_out, "$5 should be treated as a general register.");
+      assert_generic(register_lsu_data, 12, read_register_1_in, read_data_1_out, "$5 should be treated as a general register.");
      
       --Test write from lsu
       register_write_enable_in <= '0';

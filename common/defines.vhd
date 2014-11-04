@@ -17,7 +17,7 @@ package defines is
   constant NUMBER_OF_STREAMING_PROCESSORS: integer := 16;
   -- Barell
   constant BARREL_HEIGHT: integer := 4;
-  constant BARREL_HEIGHT_BIT_WIDTH: integer := 3;
+  constant BARREL_HEIGHT_BIT_WIDTH: integer := 2;
   
   constant CONSTANT_ADDRESS_BIT_WIDTH: integer := 2;
 
