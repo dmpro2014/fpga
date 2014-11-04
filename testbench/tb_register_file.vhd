@@ -29,7 +29,8 @@ architecture behavior of tb_register_file is
   signal lsu_address_out: memory_address_t;
   
   -- Return Registers
-  signal lsu_data_inout: word_t;
+  signal lsu_write_data_out: word_t;
+  signal return_data_in: word_t;
   signal return_register_write_enable_in: std_logic;
   
   -- Masking
@@ -69,7 +70,8 @@ architecture behavior of tb_register_file is
               id_register_write_enable_in => id_register_write_enable_in,
               id_register_in => id_register_in,
               return_register_write_enable_in => return_register_write_enable_in,
-              lsu_data_inout => lsu_data_inout,
+              return_data_in => return_data_in,
+              lsu_write_data_out => lsu_write_data_out,
               lsu_address_out => lsu_address_out,
               constant_value_in => constant_value_in,
               predicate_out => predicate_out,
@@ -152,12 +154,12 @@ architecture behavior of tb_register_file is
      write_register_in <= get_reg_addr(0);
      register_write_enable_in <= '0';
      return_register_write_enable_in <= '1';
-     lsu_data_inout <= make_word(9);
+     return_data_in <= make_word(9);
      wait for clk_period;
      assert_equals(make_word(9), read_data_1_out, "LSU should be able to write result");
       
      --Mask register
-     read_register_1_in <= get_reg_addr(6);
+     write_register_in <= get_reg_addr(6);
      register_write_enable_in <= '1';
      write_data_in <= make_word(1);
      wait for clk_period;
@@ -165,7 +167,7 @@ architecture behavior of tb_register_file is
      
      register_write_enable_in <= '1';
      --Test other general registers
-      for i in 6 to num_registers loop
+      for i in 7 to num_registers - 1 loop
         read_register_1_in <= get_reg_addr(i);
         read_register_2_in <= get_reg_addr(i);
         write_register_in <= get_reg_addr(i);

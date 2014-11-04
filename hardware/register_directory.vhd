@@ -96,8 +96,9 @@ begin
 
               --LSU
               return_register_write_enable_in => return_register_write_enables(i),
+              return_data_in => return_data_in,
               lsu_address_out => lsu_addresses_out(i),
-              lsu_data_inout => lsu_datas(i),
+              lsu_write_data_out => lsu_datas(i),
 
               -- Constant storage
               constant_write_enable_in => constant_write_enable_in,
