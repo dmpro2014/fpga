@@ -6,6 +6,7 @@ use ieee.numeric_std.all;
 use work.defines.all;
 use work.utils.all;
 use work.test_utils.all;
+use work.alu_defines.all;
 
 entity tb_streaming_processor is
 end tb_streaming_processor;
@@ -75,13 +76,77 @@ begin
 
 --  test bench statements
    tb : process
+    procedure load_immediate_to(reg:integer; value:integer) is
+     begin
+      read_reg_1_in <= get_reg_addr(register_zero);
+      write_reg_in <= get_reg_addr(reg);
+      immediate_in <= make_word(value);
+      immediate_enable_in <= '1';
+      reg_write_enable_in <= '1';
+      alu_function_in <= ALU_FUNCTION_ADD;
+      wait for clk_period;
+      immediate_enable_in <= '0';
+      reg_write_enable_in <= '0';
+    end procedure load_immediate_to;
+   procedure execute_arithmetic_op(op: alu_funct_t; read_reg_1: integer; read_reg_2: integer; write_reg: integer) is
+    begin
+     read_reg_1_in <= get_reg_addr(read_reg_1);
+     read_reg_2_in <= get_reg_addr(read_reg_2);
+     write_reg_in <= get_reg_addr(write_reg);
+     alu_function_in <= op;
+     reg_write_enable_in <= '1';
+     wait for clk_period;
+     reg_write_enable_in <= '0';
+     
+   end procedure execute_arithmetic_op;
+   procedure assert_special_registers is
+    begin
+      for row in 0 to BARREL_HEIGHT -1 loop
+       barrel_select_in <= make_row(row);
+       load_immediate_to(register_address_lo, 31457 + row);       
+      end loop;
+
+      for row in 0 to BARREL_HEIGHT -1 loop
+        barrel_select_in <= make_row(row);
+        load_immediate_to(register_address_hi, row);       
+      end loop;
+      
+      for row in 0 to BARREL_HEIGHT -1 loop
+        barrel_select_in <= make_row(row);
+        wait for 1 ns;
+        assert_equals(make_word(31457 + row), lsu_address_out(WORD_WIDTH -1 downto 0), "Address low should contain the value loaded using add imm.");
+        assert_equals(to_logic_vector(row, 3), lsu_address_out(DATA_ADDRESS_WIDTH-1 downto WORD_WIDTH), "Address high should contain the value loaded using add imm.");
+      end loop;
+      
+      -- "Move" register address into data
+      for row in 0 to BARREL_HEIGHT -1 loop
+       barrel_select_in <= make_row(row);
+       execute_arithmetic_op(ALU_FUNCTION_ADD, 0, register_address_lo, register_lsu_data);
+      end loop;
+      
+      for row in 0 to BARREL_HEIGHT -1 loop
+       barrel_select_in <= make_row(row);
+       wait for 1 ns;
+       assert_equals(make_word(31457 + row), lsu_write_data_out, "Address low should have been moved into lsu data out.");
+      end loop;
+
+      for row in 0 to BARREL_HEIGHT -1 loop
+       barrel_select_in <= make_row(row);
+       execute_arithmetic_op(ALU_FUNCTION_ADD, 0, register_address_hi, register_lsu_data);
+      end loop;
+      
+      for row in 0 to BARREL_HEIGHT -1 loop
+       barrel_select_in <= make_row(row);
+       wait for 1 ns;
+       assert_equals(make_word(row), lsu_write_data_out, "Address hi should have been moved into lsu data out.");
+      end loop;
+      
+ 
+   end procedure assert_special_registers;
    begin
       -- Begin by loading registers with immediate values 
-      write_reg_in <= get_reg_addr(register_address_lo);
-      immediate_in <= make_word(31457);
-      immediate_enable_in <= '1';
-      wait for clk_period*5;
-      assert_equals(immediate_in, lsu_address_out(WORD_WIDTH -1 downto 0), "blablabla");
+      -- Simluate barrel rolls
+      assert_special_registers;
       wait for 100 ns; 
 
       -- add user defined stimulus here
