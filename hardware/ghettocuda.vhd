@@ -82,6 +82,7 @@ architecture Behavioral of ghettocuda is
   signal decode_operand_rd_out: register_address_t;
   signal decode_shamt_out: std_logic_vector(4 downto 0);
   signal decode_immediate_operand_out: immediate_value_t; 
+  signal decode_immediate_enable_out: std_logic; 
   signal decode_lsu_load_enable_out: std_logic;
   signal decode_lsu_write_enable_out: std_logic;
   signal decode_constant_write_enable_out: std_logic;
@@ -116,7 +117,8 @@ begin
       thread_done_out => decode_thread_done_out,
       alu_shamt_out => decode_shamt_out,
       constant_write_enable_out => decode_constant_write_enable_out,
-      immediate_operand_out => decode_immediate_operand_out
+      immediate_operand_out => decode_immediate_operand_out,
+      immediate_enable_out => decode_immediate_enable_out
   );
 
   -- Constant storage
@@ -152,6 +154,7 @@ begin
             read_reg_2_in => decode_operand_rt_out,
             write_reg_in  => decode_operand_rd_out,
             immediate_in => decode_immediate_operand_out,
+            immediate_enable_in => decode_immediate_enable_out,
             shamt_in => decode_shamt_out,
             reg_write_enable_in => decode_register_write_enable_out,
             mask_enable_in => decode_mask_enable_out,

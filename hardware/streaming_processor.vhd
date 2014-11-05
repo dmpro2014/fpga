@@ -8,6 +8,7 @@ entity streaming_processor is
          ; read_reg_2_in        : in  register_address_t
          ; write_reg_in         : in  register_address_t
          ; immediate_in         : in  immediate_value_t
+         ; immediate_enable_in  : in  std_logic
          ; shamt_in             : in  std_logic_vector(4 downto 0)
          ; reg_write_enable_in  : in  std_logic
          ; mask_enable_in       : in  std_logic
@@ -38,6 +39,7 @@ architecture rtl of streaming_processor is
     
     -- ALU out
     signal alu_result_i               : word_t;
+    signal alu_operand_b_i            : word_t;
 
 
 begin
@@ -75,7 +77,7 @@ begin
           
 alu : entity work.alu
   port map( operand_a_in    => reg_dir_read_data_1_i
-          , operand_b_in    => reg_dir_read_data_2_i
+          , operand_b_in    => alu_operand_b_i
           , funct_in        => alu_function_in
           , result_out      => alu_result_i
           );
@@ -85,6 +87,9 @@ alu : entity work.alu
                       and (not mask_enable_in 
                            or (mask_enable_in and reg_dir_predicate_i)
                       );
+                      
+alu_operand_b_i <=  immediate_in when immediate_enable_in = '1'
+                     else reg_dir_read_data_2_i;
             
             
 end rtl;
