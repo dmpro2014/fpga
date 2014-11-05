@@ -13,6 +13,7 @@ entity instruction_decode is
          alu_shamt_out: out std_logic_vector(ALU_SHAMT_WIDTH -1 downto 0); --Shift amount
          alu_funct_out: out alu_funct_t;
          immediate_operand_out: out immediate_value_t;
+         immediate_enable_out: out std_logic;
          mask_enable_out: out std_logic;
          register_write_enable_out: out std_logic;
          lsu_load_enable_out: out std_logic;
@@ -41,15 +42,19 @@ architecture rtl of instruction_decode is
   
 begin
   operand_rs_out <= instruction_in(21 + REGISTER_COUNT_BIT_WIDTH - 1 downto 21);
+  
   operand_rt_out <= instruction_in(16 + REGISTER_COUNT_BIT_WIDTH - 1 downto 16);
   
   operand_rd_out <= instruction_in(11 + REGISTER_COUNT_BIT_WIDTH - 1 downto 11)  when opcode = r_opcode
                else instruction_in(16 + REGISTER_COUNT_BIT_WIDTH - 1 downto 16);
                
   alu_funct_out <= instruction_in(ALU_FUNCT_WIDTH -1 downto 0);
+  
   alu_shamt_out <= instruction_in(6 + ALU_SHAMT_WIDTH -1 downto 6);
   
   immediate_operand_out <= instruction_in(15 downto 0);
+  
+  immediate_enable_out <= instruction_in(0); --TODO implement
   
   mask_enable_out <= instruction_in(31);
   
@@ -58,6 +63,7 @@ begin
   
   lsu_load_enable_out <= '1' when opcode = load_opcode
                           else '0';
+                          
   lsu_write_enable_out <= '1' when opcode = store_opcode
                           else '0';
   
@@ -66,6 +72,8 @@ begin
                                 
   thread_done_out <= '1' when opcode = start_end_opcode
                 else '0';
+                
+  
 
 end rtl;
 
