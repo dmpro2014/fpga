@@ -10,23 +10,6 @@ entity tb_thread_spawner is
 
 architecture behavior of tb_thread_spawner is 
 
-    -- component declaration for the unit under test (uut)
-
-  component thread_spawner
-    port(
-          clk : in  std_logic;
-          thread_done_in : in  std_logic;
-          kernel_start_in : in  std_logic;
-          kernel_addr_in : in  std_logic_vector(15 downto 0);
-          kernel_complete_out : out  std_logic;
-          num_threads_in : in  std_logic_vector(18 downto 0);
-          pc_start_out : out  std_logic_vector(15 downto 0);
-          pc_input_select_out : out  std_logic;
-          thread_id_out : out  std_logic_vector(18 downto 0);
-          id_write_enable_out : out  std_logic
-        );
-  end component;
-
 
    --Inputs
   signal clk : std_logic := '0';
@@ -48,18 +31,19 @@ architecture behavior of tb_thread_spawner is
 BEGIN
 
    -- Instantiate the Unit Under Test (UUT)
-  uut: thread_spawner PORT MAP (
-                                 clk => clk,
-                                 thread_done_in => thread_done_in,
-                                 kernel_start_in => kernel_start_in,
-                                 kernel_addr_in => kernel_addr_in,
-                                 kernel_complete_out => kernel_complete_out,
-                                 num_threads_in => num_threads_in,
-                                 pc_start_out => pc_start_out,
-                                 pc_input_select_out => pc_input_select_out,
-                                 thread_id_out => thread_id_out,
-                                 id_write_enable_out => id_write_enable_out
-                               );
+  uut: entity work.thread_spawner 
+              port map (
+                         clk => clk,
+                         thread_done_in => thread_done_in,
+                         kernel_start_in => kernel_start_in,
+                         kernel_addr_in => kernel_addr_in,
+                         kernel_complete_out => kernel_complete_out,
+                         num_threads_in => num_threads_in,
+                         pc_start_out => pc_start_out,
+                         pc_input_select_out => pc_input_select_out,
+                         thread_id_out => thread_id_out,
+                         id_write_enable_out => id_write_enable_out
+                        );
 
    -- Clock process definitions
   clk_process :process
