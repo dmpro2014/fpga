@@ -49,6 +49,7 @@ package defines is
 
   type sram_bus_data_t is
     record
+      data_valid : std_logic;
       data : std_logic_vector(15 downto 0);
     end record;
 
