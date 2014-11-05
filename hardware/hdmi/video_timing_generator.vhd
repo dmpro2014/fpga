@@ -17,6 +17,7 @@ entity video_timing_generator is
 
 end video_timing_generator;
 
+
 -- This architecture has been hard-coded with a minimal
 -- data-with for the counters. An increase is nessesary
 -- if it is be used with a larger framesize.

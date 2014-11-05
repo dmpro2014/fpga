@@ -11,6 +11,7 @@ entity gearbox_10to5 is
 
 end gearbox_10to5;
 
+
 architecture Behavioral of gearbox_10to5 is
 
     signal upper : boolean := false;
