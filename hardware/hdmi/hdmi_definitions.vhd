@@ -1,7 +1,15 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use work.defines.all;
+use work.helpers.all;
 
 package hdmi_definitions is
+
+    subtype color_data_t is std_logic_vector(7 downto 0);
+    subtype control_data_t is std_logic_vector(1 downto 0);
+    subtype tm_data_t is std_logic_vector(9 downto 0);
+    type lut_tm is array (natural range <>) of tm_data_t;
 
     type ds_pair is record
         p : std_logic;
@@ -9,10 +17,10 @@ package hdmi_definitions is
     end record;
 
     type hdmi_connector_t is record
-        clock     : ds_pair;
-        channel_0 : ds_pair;
-        channel_1 : ds_pair;
-        channel_2 : ds_pair;
+        clock    : ds_pair;
+        channel0 : ds_pair;
+        channel1 : ds_pair;
+        channel2 : ds_pair;
     end record;
 
     type video_mode_sync_spec_t is record
@@ -38,26 +46,79 @@ package hdmi_definitions is
         hsync : std_logic;
     end record;
 
+    type video_pixel_t is record
+        red   : std_logic_vector(7 downto 0);
+        green : std_logic_vector(7 downto 0);
+        blue  : std_logic_vector(7 downto 0);
+    end record;
+
     -- These timings where gathered from CEA-861-D.
     constant video_640x480_60Hz : video_mode_t :=
         ( h => (total => 800, resolution => 640, sync => (start => 656, stop => 752, active => '0'))
         , v => (total => 490, resolution => 480, sync => (start => 490, stop => 492, active => '0'))
         );
 
-    function to_std_logic(p: boolean) return std_logic;
-
+    function to_video_pixel(d: word_t) return video_pixel_t;
+    function lookup(lut: lut_tm; key: std_logic_vector) return std_logic_vector;
+    function tm_encode_color(color_data: color_data_t) return tm_data_t;
+    function tm_encode_control(control_data: control_data_t) return tm_data_t;
+    
 end hdmi_definitions;
 
 package body hdmi_definitions is
 
-    function to_std_logic(p: boolean)
-        return std_logic
+    constant tm_2_to_8_lut : lut_tm :=
+        ( "1101010100"
+        , "0010101011"
+        , "0101010100"
+        , "1010101011"
+        );
+
+
+    constant tm_4_to_8_lut : lut_tm :=
+        ( "1010011100"
+        , "1001100011"
+        , "1011100100"
+        , "1011100010"
+        , "0101110001"
+        , "0100011110"
+        , "0110001110"
+        , "0100111100"
+        , "1011001100"
+        , "0100111001"
+        , "0110011100"
+        , "1011000110"
+        , "1010001110"
+        , "1001110001"
+        , "0101100011"
+        , "1011000011"
+        );
+
+    function to_video_pixel(d: word_t)
+        return video_pixel_t
     is begin
-        if p then
-            return '1';
-        else
-            return '0';
-        end if;
+        return ( red   => d(10 downto  5) & "000"
+               , green => d(15 downto 11) & "00"
+               , blue  => d(4  downto  0) & "000"
+               );
+    end;
+
+    function lookup(lut: lut_tm; key: std_logic_vector)
+        return std_logic_vector 
+    is begin
+        return lut(natural(to_integer(unsigned(key))));
+    end;
+
+    function tm_encode_color(color_data: color_data_t)
+        return tm_data_t
+    is begin
+        return scanl1_xor(color_data) & "00";
+    end;
+
+    function tm_encode_control(control_data: control_data_t)
+        return tm_data_t
+    is begin
+        return lookup(tm_2_to_8_lut, control_data);
     end;
 
 end hdmi_definitions;

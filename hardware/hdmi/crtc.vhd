@@ -1,5 +1,6 @@
 library ieee;
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 use work.defines.all;
 use work.hdmi_definitions.all;
 
@@ -32,13 +33,13 @@ architecture Behavioral of crtc is
     alias clock_5bit  : std_logic is clock_50MHz;
     alias clock_bit   : std_logic is clock_250MHz;
 
-    constant video_size : unsigned := video_mode.hRes * video_mode.vRes;
+    constant video_size : integer := video_mode.h.resolution * video_mode.v.resolution;
 
     signal start_address : memory_address_t;
     signal end_address : memory_address_t;
     signal want_data : std_logic := '1';
     
-    signal scanout_pixel : word_t;
+    signal scanout_pixel : video_pixel_t;
 begin
     -- todo: handle blit and vsync.
     
