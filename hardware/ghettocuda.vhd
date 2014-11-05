@@ -86,21 +86,19 @@ architecture Behavioral of ghettocuda is
   signal decode_lsu_load_enable_out: std_logic;
   signal decode_lsu_write_enable_out: std_logic;
   signal decode_constant_write_enable_out: std_logic;
-  
-  -- Control(CTRL)
-  signal warp_drive_pc_write_enable_out: std_logic;
   signal decode_register_write_enable_out: std_logic;
   signal decode_mask_enable_out: std_logic;
   signal decode_alu_funct_out: alu_funct_t;
-  signal ctrl_active_barrel_row_out: barrel_row_t;
   signal decode_thread_done_out: std_logic;
+
+
+  -- Warp Drve(CTRL)
+  signal warp_drive_pc_write_enable_out: std_logic;
+  signal warp_drive_active_barrel_row_out: barrel_row_t;
 
   -- Constant storage
   signal constant_storage_value_out: word_t;
   
-  -- Instruction decode
-  signal decode_constant_select_in:  std_logic_vector(CONSTANT_ADDRESS_BIT_WIDTH -1 downto 0);
-
 begin          
   -- Instruction decode
   instruction_decode: entity work.instruction_decode
@@ -133,7 +131,7 @@ begin
             write_enable_in => constant_write_enable_in,
             write_address_in => constant_write_address_in,
             constant_value_out => constant_storage_value_out,
-            constant_select_in => decode_constant_select_in
+            constant_select_in => decode_immediate_operand_out
   );
 
 
@@ -144,7 +142,7 @@ begin
             tick => clk,
             reset => reset,
             pc_write_enable_out => warp_drive_pc_write_enable_out,
-            active_barrel_row_out => ctrl_active_barrel_row_out
+            active_barrel_row_out => warp_drive_active_barrel_row_out
           );
           -- Replace with array of SPs
   streaming_processors : entity work.sp_block
@@ -161,7 +159,7 @@ begin
             alu_function_in => decode_alu_funct_out,
             id_data_in => TS_thread_id_out,
             id_write_enable_in => TS_id_write_enable_out,
-            barrel_select_in =>  ctrl_active_barrel_row_out,
+            barrel_select_in =>  warp_drive_active_barrel_row_out,
             return_write_enable_in => load_store_registers_write_enable_out,
             return_barrel_select_in => load_store_registers_file_select_out,
             return_data_in => load_store_sp_sram_data_out,
@@ -191,7 +189,7 @@ begin
             -- Input wires
             request_sram_bus_read_in => decode_lsu_load_enable_out,
             request_sram_bus_write_in => decode_lsu_write_enable_out,
-            register_file_select_in => ctrl_active_barrel_row_out,
+            register_file_select_in => warp_drive_active_barrel_row_out,
             sp_sram_bus_addresses_in => sp_sram_bus_addresses_out,
             sp_sram_bus_datas_in => sp_sram_bus_data_out,
             

@@ -23,7 +23,8 @@ package defines is
   constant BARREL_HEIGHT: integer := 4;
   constant BARREL_HEIGHT_BIT_WIDTH: integer := 2;
   
-  constant CONSTANT_ADDRESS_BIT_WIDTH: integer := 2;
+  --Max value: 16
+  constant CONSTANT_ADDRESS_BIT_WIDTH: integer := 16; 
 
 
   -- ALU
