@@ -1,3 +1,7 @@
+
+
+
+
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -12,7 +16,7 @@ package defines is
   constant DATA_ADDRESS_WIDTH: integer := 19;
   constant DATA_WIDTH: integer := 19;
   constant WORD_WIDTH: integer := 16;
-  constant INSTRUCTION_WIDTH : integer := 32;
+  constant INSTRUCTION_WIDTH : integer := 32; 
 
   constant NUMBER_OF_STREAMING_PROCESSORS: integer := 16;
   -- Barell
@@ -21,6 +25,10 @@ package defines is
   
   constant CONSTANT_ADDRESS_BIT_WIDTH: integer := 2;
 
+
+  -- ALU
+  constant ALU_SHAMT_WIDTH : integer := 5;
+  constant ALU_FUNCT_WIDTH : integer := 5;
   subtype word_t is std_logic_vector(WORD_WIDTH - 1 downto 0);
   subtype spi_bus_t is std_logic_vector(4 downto 0);
   subtype instruction_address_t is std_logic_vector(INSTRUCTION_ADDRESS_WIDTH - 1 downto 0);
@@ -40,9 +48,9 @@ package defines is
   subtype barrel_row_t is std_logic_vector(BARREL_HEIGHT_BIT_WIDTH - 1 downto 0);
 
   subtype opcode_t is std_logic_vector(OPCODE_BIT_WIDTH - 1 downto 0); -- Placeholder
-  subtype alu_funct_t is std_logic_vector(4 downto 0); -- Placeholder
+  subtype alu_funct_t is std_logic_vector(ALU_FUNCT_WIDTH -1 downto 0); -- Placeholder
 
-
+  
   type sram_bus_control_t is
     record
       address : std_logic_vector(18 downto 0);
