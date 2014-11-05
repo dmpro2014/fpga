@@ -77,13 +77,16 @@ BEGIN
     ( kernel_addr : in instruction_address_t
     ; thread_count : in integer
   )
-    is begin
+  
+    is 
+     variable n_barrels_of_warps : integer := integer(ceil(real(thread_count)/(real(NUMBER_OF_STREAMING_PROCESSORS)*real(BARREL_HEIGHT))));
+    begin
 
       --      Set start pc.
       kernel_addr_in <= kernel_addr;
 
       --      Set nr of threads.
-      num_threads_in <= std_logic_vector(to_unsigned(thread_count, 19)); --This should run 3*BARREL_HEIGHT warps.
+      num_threads_in <= std_logic_vector(to_unsigned(thread_count, 19));
 
       --      Start thread spawner.
       wait for clk_period;
@@ -97,14 +100,17 @@ BEGIN
       kernel_start_in <= '0';
 
       --      Check that the IDs are set correctly when spawning first threads
-      for i in 0 to BARREL_HEIGHT loop
+      for i in 0 to BARREL_HEIGHT -1 loop
         assert_equals(signed(thread_id_out), to_signed(i * NUMBER_OF_STREAMING_PROCESSORS, 19), "ID should be set correctly");
         wait for clk_period;
+        assert_equals(pc_input_select_out, '0', "Set pc_input_select_out low after PC has been updated");
       end loop;
-
+      
+      assert_equals(kernel_complete_out, '0', "Kernel_complete_out should be set to 0 while threads are still running");
 --    Spawn all threads except the last round
-      for barrels in 0 to integer(ceil(real(thread_count)/(real(NUMBER_OF_STREAMING_PROCESSORS)*real(BARREL_HEIGHT))) - real(1)) loop
-        for i in 0 to BARREL_HEIGHT loop
+      for barrels in 1 to n_barrels_of_warps - 2 loop
+       wait for clk_period*10*BARREL_HEIGHT;-- threads are runnin, yo.
+        for i in 0 to BARREL_HEIGHT - 1 loop
           thread_done_in <= '1';
 
           wait for clk_period / 2;
@@ -121,49 +127,44 @@ BEGIN
           wait for clk_period / 2;
         end loop;
         thread_done_in <= '0';
-        assert_equals(pc_input_select_out, '1', "PC address should overriden when new threads start");
+        wait for 1 ns;
+        assert_equals(pc_input_select_out, '0', "Set pc_input_select_out low after a new set of threads are spawned");
+        assert_equals(kernel_complete_out, '0', "Kernel_complete_out should be set to 0 while threads are still running");
       end loop;
       
+      wait for clk_period*10*BARREL_HEIGHT;-- Last threads are runnin, yo.      
       
---    Spawn the last barrel of warps
-      for i in 0 to BARREL_HEIGHT loop
+--    Kill the last barrel of warps
+      for i in 0 to BARREL_HEIGHT - 1 loop
+        
+        assert_equals(kernel_complete_out, '0', "Kernel_complete_out should be set to 0 while threads are still running");
+
+        
         thread_done_in <= '1';
 
         wait for clk_period / 2;
-        --      Check that new threads with correct ids are started
-        assert_equals(signed(thread_id_out)
-        , to_signed(NUMBER_OF_STREAMING_PROCESSORS*2 + i * NUMBER_OF_STREAMING_PROCESSORS, 19)
-        , "ID should be set correctly when killing warps");
-        assert_equals(id_write_enable_out, '1', "ID write enable should be 1 when threads die and new threads are spawned");
-
-        --      Check that pc is reset
-        assert_equals(pc_start_out, kernel_addr, "PC address should not change when spawning threads");
-        assert_equals(pc_input_select_out, '1', "PC address should overriden when new threads start");
+        --      Check that new threads are not spawned
+        assert_equals(id_write_enable_out, '0', "Do not write new ID after all threads have been executed");
 
         wait for clk_period / 2;
       end loop;
       
       
       thread_done_in <= '0';
-      assert_equals(pc_input_select_out, '1', "PC address should overriden when new threads start");
-      wait for 10 * clk_period;
-      --    No more threads to spawn, so the next threads_done marks the completion of the kernel.
-      thread_done_in <= '0';
-      wait for clk_period;
-
+      
       assert_equals(kernel_complete_out, '1', "Kernel_complete_out should be set to 1 when all threads are done");
 
-    end procedure;
+    end procedure test_kernel;
 
   begin		
       --Set up default values
 
     wait for 100 ns;	
-
     wait for clk_period*10;
-
-    test_kernel("0101010101010101", BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS * 2 + 1 );
-
+ 
+    for i in 0 to 140000 loop
+      test_kernel(std_logic_vector(to_unsigned(i,19)), i);
+    end loop;
     report "-------------- Run a new kernel --------------";
 
       --    Start a new kernel with different parameters
