@@ -6,7 +6,7 @@ use ieee.numeric_std.all;
 entity register_file is
   Generic(
            DEPTH: integer := 8;
-           LOG_DEPTH : integer := 4
+           LOG_DEPTH : integer := 3
          );
   Port (  clk : in std_logic;
           -- General registers

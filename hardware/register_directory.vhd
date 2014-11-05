@@ -66,6 +66,7 @@ begin
   begin
     register_write_enables <= (others => '0');
     return_register_write_enables <= (others => '0');
+    id_register_write_enables <= (others => '0');
 
     if register_write_enable_in = '1' then
       register_write_enables(to_integer(unsigned(barrel_row_select_in))) <= '1';
