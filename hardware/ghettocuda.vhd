@@ -84,6 +84,7 @@ architecture Behavioral of ghettocuda is
   signal decode_immediate_operand_out: immediate_value_t; 
   signal decode_lsu_load_enable_out: std_logic;
   signal decode_lsu_write_enable_out: std_logic;
+  signal decode_constant_write_enable_out: std_logic;
   
   -- Control(CTRL)
   signal warp_drive_pc_write_enable_out: std_logic;
@@ -92,7 +93,6 @@ architecture Behavioral of ghettocuda is
   signal decode_alu_funct_out: alu_funct_t;
   signal ctrl_active_barrel_row_out: barrel_row_t;
   signal decode_thread_done_out: std_logic;
-  signal ctrl_constant_write_enable_out: std_logic;
 
   -- Constant storage
   signal constant_storage_value_out: word_t;
@@ -114,7 +114,8 @@ begin
       lsu_write_enable_out => decode_lsu_write_enable_out,
       mask_enable_out => decode_mask_enable_out,
       thread_done_out => decode_thread_done_out,
-      shamt_out => decode_shamt_out,
+      alu_shamt_out => decode_shamt_out,
+      constant_write_enable_out => decode_constant_write_enable_out,
       immediate_operand_out => decode_immediate_operand_out
   );
 
@@ -163,7 +164,7 @@ begin
             return_data_in => load_store_sp_sram_data_out,
             lsu_write_data_out => sp_sram_bus_data_out,
             lsu_address_out     => sp_sram_bus_addresses_out,
-            constant_write_enable_in => ctrl_constant_write_enable_out,
+            constant_write_enable_in => decode_constant_write_enable_out,
             constant_value_in => constant_storage_value_out
            );
 
