@@ -29,6 +29,7 @@ architecture behavior of tb_register_file is
   signal lsu_address_out: memory_address_t;
   
   -- Return Registers
+
   signal lsu_write_data_out: word_t;
   signal return_data_in: word_t;
   signal return_register_write_enable_in: std_logic;
@@ -48,6 +49,8 @@ architecture behavior of tb_register_file is
   function make_word(word: integer) return std_logic_vector is
    begin
     return std_logic_vector(to_unsigned(word, WORD_WIDTH));
+
+
  end;
 
  begin
@@ -70,8 +73,10 @@ architecture behavior of tb_register_file is
               id_register_write_enable_in => id_register_write_enable_in,
               id_register_in => id_register_in,
               return_register_write_enable_in => return_register_write_enable_in,
+
               return_data_in => return_data_in,
               lsu_write_data_out => lsu_write_data_out,
+
               lsu_address_out => lsu_address_out,
               constant_value_in => constant_value_in,
               predicate_out => predicate_out,
@@ -89,93 +94,135 @@ architecture behavior of tb_register_file is
 
 --  test bench statements
   tb : process
-     constant ALL_BITS_HIGH: memory_address_t := (others => '1');
-    begin
+    constant ALL_BITS_HIGH: memory_address_t := (others => '1');
 
-      -- Test special registers first
-      -- Register $0
-      read_register_1_in <= get_reg_addr(0);
-      read_register_2_in <= get_reg_addr(0);
+    
+   procedure assert_generic(reg: integer; value:integer; signal in_signal: register_address_t; signal out_signal: word_t ; message:string) is
+    begin
+      read_register_1_in <= get_reg_addr(reg);
+      register_write_enable_in <= '1';
+      read_register_2_in <= get_reg_addr(reg);
+      write_register_in <= get_reg_addr(reg);
+      write_data_in <= make_word(value);
+      wait for clk_period;
+      assert_equals(make_word(value), out_signal, message);
+      assert_equals(make_word(value), out_signal, message);
+    end assert_generic;
+   
+    procedure assert_generic(reg: integer; value:integer; signal in_signal: register_address_t; signal out_signal: word_t ) is
+     begin
+      assert_generic(reg, value, in_signal, out_signal, "Should be able to read/write general purpose register.");
+    end assert_generic;
+    
+    procedure assert_lsu_address_registers is
+      constant max_int: std_logic_vector(WORD_WIDTH-1 downto 0):= (others => '1');
+      constant max_address : std_logic_vector(DATA_ADDRESS_WIDTH -1 downto 0) := (others => '1');
+     begin
+      -- Address high/low can be treated as general purpose registers.
+      -- Only difference is that their out should also be in lsu_data.
+      -- Register $3 address high
+      -- Test general purpose first
+      assert_generic(register_address_hi, to_integer(unsigned(max_int)), read_register_1_in, read_data_1_out, " $3(Address high) Should be treated as a general purpose register."); 
+      assert_generic(register_address_lo, to_integer(unsigned(max_int)), read_register_1_in, read_data_1_out, " $3(Address high) Should be treated as a general purpose register."); 
+      
+      --Test lsu address = hi & low
+      assert_equals(max_address, lsu_address_out, "LSU address should consist of Address low and high bits from address high."); 
+    end assert_lsu_address_registers;
+    
+    procedure assert_zero_reg is
+     begin
+
+      read_register_1_in <= get_reg_addr(register_zero);
+      read_register_2_in <= get_reg_addr(register_zero);
       wait for clk_period;
       assert_equals(make_word(0), read_data_1_out, "Register $0 should be zero.");
       assert_equals(make_word(0), read_data_2_out, "Register $0 should be zero.");
-      write_register_in <= get_reg_addr(0);
+      write_register_in <= get_reg_addr(register_zero);
       write_data_in <= make_word(1);
       wait for clk_period;
       assert_equals(make_word(0), read_data_1_out, "Register $0 should be write only.");
       assert_equals(make_word(0), read_data_2_out, "Register $0 should be write only.");
-      
 
+     end assert_zero_reg;
+     
+    procedure assert_id_registers is
+     begin
       -- Register $1,$2 ID HI,LOW      
       id_register_write_enable_in <= '1';
       id_register_in <= "1111111111111111111"; 
-      read_register_1_in <= get_reg_addr(1);
-      read_register_2_in <= get_reg_addr(2);
+      read_register_1_in <= get_reg_addr(register_id_hi);
+      read_register_2_in <= get_reg_addr(register_id_lo);
       wait for clk_period;
       assert_equals(make_word(7), read_data_1_out, "ID value should be split into high and low registers.");
       assert_equals("1111111111111111", read_data_2_out, "ID value should be split into high and low registers.");
-      write_register_in <= get_reg_addr(1);
+      write_register_in <= get_reg_addr(register_id_hi);
       write_data_in <= make_word(4);
       register_write_enable_in <= '1';
       wait for clk_period;
-      write_register_in <= get_reg_addr(2);
+      write_register_in <= get_reg_addr(register_id_lo);
       wait for clk_period;
       assert_equals(make_word(7), read_data_1_out, "ID should be readonly.");
       assert_equals("1111111111111111", read_data_2_out, "ID should be readonly.");
-        
-      -- Address high/low can be treaded as general purpose registers.
-      -- Only difference is that their out should also be in lsu_data.
-      -- Register $3 address high
-      -- Test general purpose first
-      -- add user defined stimulus here
-      register_write_enable_in <= '1';
-      read_register_1_in <= get_reg_addr(3);
-      read_register_2_in <= get_reg_addr(4);
-      write_register_in <= get_reg_addr(3);
-      write_data_in <= (others => '1');
-      wait for clk_period;
-      write_register_in <= get_reg_addr(4);
-      -- Write to both registers
-      wait for clk_period;
-      assert_equals(write_data_in, read_data_1_out, "Should be treated as a general purpose register.");
-      assert_equals(write_data_in, read_data_2_out, "Should be treated as a general purpose register.");
-      -- Test special feature
-      assert_equals(ALL_BITS_HIGH, lsu_address_out, "LSU address should consist of Address low and high bits from address high."); 
-    
-     --Return register($5) is also a general purpose register
-     --Test general purpose first
-     read_register_1_in <= get_reg_addr(5);
-     write_register_in <= get_reg_addr(5);
-     write_data_in <= make_word(23648912);
+     end assert_id_registers;
      
-     wait for clk_period;
-     assert_equals(make_word(23648912), read_data_1_out, "Should be treated as a general purpose register..");
-     --Test write from lsu
-     write_register_in <= get_reg_addr(0);
-     register_write_enable_in <= '0';
-     return_register_write_enable_in <= '1';
-     return_data_in <= make_word(9);
-     wait for clk_period;
-     assert_equals(make_word(9), read_data_1_out, "LSU should be able to write result");
-      
-     --Mask register
-     write_register_in <= get_reg_addr(6);
-     register_write_enable_in <= '1';
-     write_data_in <= make_word(1);
-     wait for clk_period;
-     assert_equals('1', predicate_out, "Predicate should be writable.");
+    procedure assert_lsu_data_register is
+     begin
+      --Return register($5) is also a general purpose register
+      assert_generic(register_lsu_data, 12, read_register_1_in, read_data_1_out, "$5 should be treated as a general register.");
      
-     register_write_enable_in <= '1';
-     --Test other general registers
-      for i in 7 to num_registers - 1 loop
-        read_register_1_in <= get_reg_addr(i);
-        read_register_2_in <= get_reg_addr(i);
-        write_register_in <= get_reg_addr(i);
-        write_data_in <= make_word(30 + i);
-        wait for clk_period;
-        assert_equals(make_word(30 + i), read_data_1_out, "Should be able to read/write general purpose register.");
-        assert_equals(make_word(30 + i), read_data_2_out, "Should be able to read/write general purpose register.");
+      --Test write from lsu
+      register_write_enable_in <= '0';
+      read_register_1_in <= get_reg_addr(register_lsu_data);
+      return_register_write_enable_in <= '1';
+      return_data_in <= make_word(9);
+      wait for clk_period;
+      assert_equals(make_word(9), read_data_1_out, "LSU should be able to write result");
+     end assert_lsu_data_register;
+     
+    procedure assert_general_purpose_registers is
+     begin
+       --Test other general registers
+       for i in 7 to num_registers -1 loop
+        assert_generic(i, 30 + i, read_register_1_in, read_data_1_out);
       end loop;
+    end procedure assert_general_purpose_registers;
+    
+    procedure assert_constant_register_write is
+     begin
+      constant_write_enable_in <= '1';
+      constant_value_in <= make_word(99);
+      write_register_in <= get_reg_addr(7);
+      read_register_1_in <= get_reg_addr(7);
+      wait for clk_period;
+      assert_equals(make_word(99), read_data_1_out, "Should be able to write constants to registers");
+      constant_write_enable_in <= '0'; 
+    end procedure assert_constant_register_write;
+    
+    procedure assert_mask_register is
+     begin
+      register_write_enable_in <= '1';
+      write_register_in <= get_reg_addr(register_mask);
+      write_data_in <= make_word(1);
+      wait for clk_period;
+      assert_equals('1', predicate_out, "Predicate should be writable.");
+    end procedure assert_mask_register;
+    begin
+
+      -- Test special registers first
+      assert_zero_reg;
+ 
+      assert_id_registers;
+        
+      assert_lsu_address_registers;
+    
+      assert_lsu_data_register;
+      
+      assert_mask_register;
+   
+      assert_constant_register_write;
+      
+      assert_general_purpose_registers;
+
       wait; -- will wait forever
    end process tb;
   --  end test bench 
