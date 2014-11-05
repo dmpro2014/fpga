@@ -80,7 +80,7 @@ begin
       write_reg_in <= get_reg_addr(register_address_lo);
       immediate_in <= make_word(31457);
       immediate_enable_in <= '1';
-      wait for clk_period;
+      wait for clk_period*5;
       assert_equals(immediate_in, lsu_address_out(WORD_WIDTH -1 downto 0), "blablabla");
       wait for 100 ns; 
 
