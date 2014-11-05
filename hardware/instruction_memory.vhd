@@ -1,19 +1,20 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 use work.defines.all;
 
 entity instruction_memory is
-    Port ( clk : in STD_LOGIC;
-           reset : in STD_LOGIC;
-           write_enable : in STD_LOGIC;
-           address_in : in  STD_LOGIC_VECTOR (15 downto 0);
+    port ( clk : in std_logic;
+           reset : in std_logic;
+           write_enable_in : in std_logic;
+           address_in : in  instruction_address_t;
            data_in : in instruction_t;
-           data_out : out instruction_t);
+           data_out : out instruction_t
+           );
 end instruction_memory;
 
-architecture Behavioral of instruction_memory is
+architecture behavioral of instruction_memory is
 
 begin
 
 
-end Behavioral;
+end behavioral;
