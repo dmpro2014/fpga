@@ -14,7 +14,7 @@ entity constant_storage is
         write_enable_in : in std_logic;
         write_address_in: in std_logic_vector(LOG_DEPTH -1 downto 0);
         constant_value_out: out word_t;
-        constant_select_in: in std_logic_vector(LOG_DEPTH -1 downto 0)
+        constant_select_in: in immediate_value_t
       );
 
 end constant_storage;

@@ -3,6 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.test_utils.all;
 use work.defines.all;
+use work.alu_defines.all;
 
 entity tb_instruction_decode is
 end tb_instruction_decode;
@@ -65,7 +66,7 @@ begin
           assert_equals(rs(REGISTER_COUNT_BIT_WIDTH -1 downto 0), operand_rs_out(REGISTER_COUNT_BIT_WIDTH -1 downto 0), "Testing r type rs decode");
           assert_equals(rt(REGISTER_COUNT_BIT_WIDTH -1 downto 0), operand_rt_out(REGISTER_COUNT_BIT_WIDTH -1 downto 0), "Testing r type rt decode");
           assert_equals(rd(REGISTER_COUNT_BIT_WIDTH -1 downto 0), operand_rd_out(REGISTER_COUNT_BIT_WIDTH -1 downto 0), "Testing r type rd decode");
-          assert_equals(sh(ALU_SHAMT_WIDTH -1 downto 0), shamt_out(ALU_SHAMT_WIDTH -1 downto 0), "Testing r type shamt decode");
+          assert_equals(  sh(ALU_SHAMT_WIDTH -1 downto 0), shamt_out(ALU_SHAMT_WIDTH -1 downto 0), "Testing r type shamt decode");
           assert_equals(funct(ALU_FUNCT_WIDTH -1 downto 0), alu_funct_out(ALU_FUNCT_WIDTH -1 downto 0), "Testing r type alu_funct decode");
         end procedure assert_r_type_decode;
         
@@ -80,9 +81,9 @@ begin
         end procedure assert_i_type_decode;
           begin
            -- Test r_type decode
-           assert_r_type_decode("1","00000", "01010", "00101", "00001", "00010", "000110");
-           assert_r_type_decode("0","00000", "01010", "11101", "01001", "00011", "000111");
-           assert_r_type_decode("1","00000", "11111", "00000", "11111", "00000", "111111");
+           assert_r_type_decode("1", R_TYPE_OPCODE, "01010", "00101", "00001", "00010", "000110");
+           assert_r_type_decode("0", R_TYPE_OPCODE, "01010", "11101", "01001", "00011", "000111");
+           assert_r_type_decode("1", R_TYPE_OPCODE, "11111", "00000", "11111", "00000", "111111");
            -- Test i_type decode
            assert_i_type_decode("0","01010", "01010", "00101","0000001001101000");
            assert_i_type_decode("1","01110", "00010", "10111","0011011001101101");
@@ -95,7 +96,7 @@ begin
          -- thread_done_out: out std_logic
          -- Assert controll signals
          -- R type first. 
-         instruction_in <= make_r_instruction("1","00000", "01010", "00101", "00001", "00010", "000110");
+         instruction_in <= make_r_instruction("1", R_TYPE_OPCODE, "01010", "00101", "00001", "00010", "000110");
          wait for 1 ns;
          assert_equals('1', register_write_enable_out, "register_write_enable_out should be high on r_type instructions.");
          assert_equals('0', lsu_load_enable_out, "lsu_load_enable_out should be low on r_type instructions.");
@@ -103,7 +104,7 @@ begin
          assert_equals('0', thread_done_out, "thread_done_out should be low on dead instructions.");   
          assert_equals('0', constant_write_enable_out, "constant_write_enable_out should be low on constant load instructions.");
          -- Test load
-         instruction_in <= "10001000000000000000000000000000";
+         instruction_in <= "0" & LW_OPCODE & "00000000000000000000000000";
          wait for 1 ns;
          assert_equals('1', lsu_load_enable_out, "lsu_load_enable_out should be high on loads.");
          assert_equals('0', register_write_enable_out, "register_write_enable_out should be low on r_type instructions.");
@@ -111,7 +112,7 @@ begin
          assert_equals('0', thread_done_out, "thread_done_out should be low on dead instructions.");   
          assert_equals('0', constant_write_enable_out, "constant_write_enable_out should be low on constant load instructions.");
          -- Test store
-         instruction_in <= "10001100000000000000000000000000";
+         instruction_in <= "1" & SW_OPCODE & "00000000000000000000000000";
          wait for 1 ns;
          assert_equals('1', lsu_write_enable_out, "lsu_write_enable_out should be high on stores.");
          assert_equals('0', lsu_load_enable_out, "lsu_load_enable_out should be low on loads.");
@@ -119,7 +120,7 @@ begin
          assert_equals('0', thread_done_out, "thread_done_out should be low on dead instructions.");    
          assert_equals('0', constant_write_enable_out, "constant_write_enable_out should be low on constant load instructions."); 
          -- Test dead/sync thingy.
-         instruction_in <="10000100000000000000000000000000";
+         instruction_in <="1" & THREAD_FINISHED_OPCODE & "00000000000000000000000000";
          wait for 1 ns;
          assert_equals('1', thread_done_out, "thread_done_out should be high on dead instructions.");
          assert_equals('0', lsu_load_enable_out, "lsu_load_enable_out should be low on loads.");
@@ -127,7 +128,7 @@ begin
          assert_equals('0', lsu_write_enable_out, "lsu_write_enable_out should be low on r_type instructions.");
          assert_equals('0', constant_write_enable_out, "constant_write_enable_out should be low on constant load instructions.");
          -- Test load constant.
-         instruction_in <= "10100100000000000000000000000000";
+         instruction_in <= "1" & LOAD_CONSTANT_OPCODE & "00000000000000000000000000";
          wait for 1 ns;
          assert_equals('1', constant_write_enable_out, "constant_write_enable_out should be high on constant load instructions.");
          assert_equals('0', lsu_load_enable_out, "lsu_load_enable_out should be low on loads.");
