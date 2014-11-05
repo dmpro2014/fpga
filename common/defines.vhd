@@ -13,6 +13,8 @@ package defines is
   constant OPCODE_BIT_WIDTH : integer := 6;
 
   constant INSTRUCTION_ADDRESS_WIDTH: integer := 16;
+  --One block ram is 576 instructions
+  constant INSTRUCTION_MEM_SIZE: integer := 576 * 10; 
   constant DATA_ADDRESS_WIDTH: integer := 19;
   constant DATA_WIDTH: integer := 19;
   constant WORD_WIDTH: integer := 16;
