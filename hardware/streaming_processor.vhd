@@ -35,14 +35,20 @@ architecture rtl of streaming_processor is
     
     --Register directory in
     signal reg_dir_write_enable_i     : std_logic;
-    
-    
+
     -- ALU out
     signal alu_result_i               : word_t;
     signal alu_operand_b_i            : word_t;
 
-
 begin
+
+ reg_dir_write_enable_i <= reg_write_enable_in
+                      and (not mask_enable_in
+                           or (mask_enable_in and reg_dir_predicate_i)
+                      );
+
+  alu_operand_b_i <= immediate_in when immediate_enable_in = '1'
+                     else reg_dir_read_data_2_i;
 
   reg_dir : entity work.register_directory
   generic map( NUMBER_OF_REGISTERS => REGISTER_COUNT
@@ -57,10 +63,9 @@ begin
           , write_data_in       => alu_result_i
           , register_write_enable_in => reg_dir_write_enable_i
 
-            
           , id_register_write_enable_in => id_write_enable_in
           , id_register_in               => id_data_in
-            
+
           , read_data_1_out         => reg_dir_read_data_1_i
           , read_data_2_out         => reg_dir_read_data_2_i
           , return_register_write_enable_in => return_write_enable_in
@@ -69,28 +74,19 @@ begin
           , barrel_row_select_in => barrel_select_in
           , lsu_address_out     => lsu_address_out
           , lsu_write_data_out  => lsu_write_data_out
-          
+
           , predicate_out  => reg_dir_predicate_i
           , constant_write_enable_in => constant_write_enable_in
           , constant_value_in => constant_value_in
           );
-          
-alu : entity work.alu
+
+  alu : entity work.alu
   port map( operand_a_in    => reg_dir_read_data_1_i
           , operand_b_in    => alu_operand_b_i
-          , funct_in        => alu_function_in
+          , alu_function_in => alu_function_in
+          , shamt_in        => shamt_in
           , result_out      => alu_result_i
           );
-          
-          
- reg_dir_write_enable_i <= reg_write_enable_in 
-                      and (not mask_enable_in 
-                           or (mask_enable_in and reg_dir_predicate_i)
-                      );
-                      
-alu_operand_b_i <=  immediate_in when immediate_enable_in = '1'
-                     else reg_dir_read_data_2_i;
-            
-            
+
 end rtl;
 

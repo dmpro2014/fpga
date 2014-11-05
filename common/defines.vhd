@@ -1,7 +1,3 @@
-
-
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -10,7 +6,7 @@ package defines is
   constant REGISTER_COUNT: integer := 16;
   constant REGISTER_COUNT_BIT_WIDTH: integer := 4;
   constant INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH: integer := 16;
-  constant OPCODE_BIT_WIDTH : integer := 6;
+  constant OPCODE_BIT_WIDTH : integer := 5;
 
   constant INSTRUCTION_ADDRESS_WIDTH: integer := 16;
   --One block ram is 576 instructions
@@ -28,7 +24,6 @@ package defines is
   --Max value: 16
   constant CONSTANT_ADDRESS_BIT_WIDTH: integer := 16; 
 
-
   -- ALU
   constant ALU_SHAMT_WIDTH : integer := 5;
   constant ALU_FUNCT_WIDTH : integer := 5;
@@ -40,6 +35,7 @@ package defines is
   subtype register_address_t is std_logic_vector(REGISTER_COUNT_BIT_WIDTH - 1 downto 0);
   subtype immediate_value_t is std_logic_vector(INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH -1 downto 0);
   subtype instruction_t is std_logic_vector(INSTRUCTION_WIDTH - 1 downto 0);
+  subtype shamt_t is std_logic_vector(ALU_SHAMT_WIDTH - 1 downto 0);
   
   -- MC EBI
   subtype ebi_data_t is std_logic_vector(15 downto 0);
