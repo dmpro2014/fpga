@@ -3,7 +3,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 use work.defines.all;
 use work.test_utils.all;
-
+use work.utils.all;
 entity tb_register_directory is
 end tb_register_directory;
 
@@ -49,18 +49,9 @@ architecture behavior of tb_register_directory is
   signal constant_write_enable_in: std_logic;
   function get_reg_addr(reg: integer) return std_logic_vector is
     begin
-      return std_logic_vector(to_unsigned(reg, reg_addr_bits));
+      return make_reg_addr(reg, reg_addr_bits);
    end;
-   
-  function make_word(word: integer) return std_logic_vector is
-   begin
-    return std_logic_vector(to_unsigned(word, WORD_WIDTH));
-  end;
   
-  function make_row(row: integer) return std_logic_vector is
-   begin
-     return std_logic_vector(to_unsigned(row, BARREL_HEIGHT_BIT_WIDTH));
-  end;
 
  begin
 
