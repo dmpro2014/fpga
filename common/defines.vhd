@@ -12,6 +12,7 @@ package defines is
   --One block ram is 576 instructions
   constant INSTRUCTION_MEM_SIZE: integer := 576 * 10; 
   constant DATA_ADDRESS_WIDTH: integer := 19;
+  constant ID_WIDTH: integer := 19;
   constant DATA_WIDTH: integer := 19;
   constant WORD_WIDTH: integer := 16;
   constant INSTRUCTION_WIDTH : integer := 32; 
