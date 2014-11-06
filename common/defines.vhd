@@ -80,6 +80,7 @@ package defines is
   constant register_lsu_data : integer := 5;
   constant register_mask : integer := 6;
 
+  constant GENERAL_REGISTERS_BASE_ADDRESS : integer := 7;
 
 
 end package defines;
