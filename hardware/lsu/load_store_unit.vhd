@@ -54,7 +54,6 @@ architecture Behavioral of load_store_unit is
             for i in sp_sram_addresses_t'range loop
                 requests(i) :=
                     ( valid        => '1'
-                    , sp           => i
                     , address      => addresses(i)
                     , write_data   => write_data(i)
                     );

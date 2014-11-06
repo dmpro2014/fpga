@@ -43,7 +43,6 @@ architecture Behavioral of mem_control is begin
 
 
             -- Outputs to response-handler.
-            read_response.sp    <= request_packet.sp;
             read_response.valid <= request_packet.valid and not write_enable;
 
         end if;

@@ -8,14 +8,12 @@ package lsu_defs is
 
     type request_t is record
         valid      : std_logic;
-        sp         : sp_number;
         address    : memory_address_t;
         write_data : word_t;
     end record;
 
     type read_response_t is record
         valid        : std_logic;
-        sp           : sp_number;
         data         : word_t;
     end record;
 
