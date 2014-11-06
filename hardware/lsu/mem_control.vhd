@@ -29,7 +29,7 @@ architecture Behavioral of mem_control is begin
     process (clock) begin
         if rising_edge(clock) then
 
-            -- Setup ram-bus. Write_enable is active-low.
+            -- Setup ram-bus. `ram_control.write_enable` is active-low.
             ram_control.address      <= request_packet.address;
             ram_control.write_enable <= not (request_packet.valid and write_enable);
 
