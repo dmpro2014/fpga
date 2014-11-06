@@ -67,10 +67,6 @@ begin
     sram_bus_control_1_out.chip_select <= '0';
     sram_bus_control_2_out.chip_select <= '0';
 
-    -- We want both the upper and lower byte. Polar-bear-stuff again?
-    sram_bus_control_1_out.lbub <= "00";
-    sram_bus_control_2_out.lbub <= "00";
-
     -- Set output enable. It's overrided automatically when writing.
     -- (Cannot. Output-enable is not exposed.)
 
