@@ -63,14 +63,6 @@ begin
     if rising_edge(clk) then
       if kernel_start_in = '1' then
         kernel_addr_reg <= kernel_addr_in;
-      end if;
-    end if;
-  end process;
-  
-  process(clk) is
-  begin
-    if rising_edge(clk) then
-      if kernel_start_in = '1' then
         thread_number_reg <= num_threads_in;
       end if;
     end if;
@@ -87,8 +79,4 @@ begin
     end if;
   end process;
   
-  
-  
-
-
 end Behavioral;
