@@ -15,7 +15,7 @@ architecture behavior of tb_constant_storage is
   signal write_enable_in : std_logic;
   signal write_address_in: std_logic_vector(2 downto 0);
   signal constant_value_out: word_t;
-  signal constant_select_in: std_logic_vector(2 downto 0);
+  signal constant_select_in: immediate_value_t;
 
   constant clk_period: time := 10 ns;
 
@@ -50,14 +50,14 @@ begin
   begin
     write_constant_in <= x"0001";
     write_address_in  <= "010";
-    constant_select_in <= "010";
+    constant_select_in <= x"0002";
     write_enable_in <= '1';
     wait for clk_period;
 
     assert_equals(x"0001", constant_value_out, "Memory should contain 01 at address 10");
     write_constant_in <= x"0003";
     write_address_in  <= "011";
-    constant_select_in <= "011";
+    constant_select_in <= x"0003";
     wait for clk_period;
 
     assert_equals(x"0003", constant_value_out, "Memory should contain 11 at address 11");
@@ -67,7 +67,7 @@ begin
     assert_equals(x"0003", constant_value_out, "Memory should only write when write enable is high");
 
     wait for 1 ns;
-    constant_select_in <= "010";
+    constant_select_in <= x"0002";
     wait for 1 ns;
     assert_equals(x"0001", constant_value_out, "Output should not require a clock cycle to change");
 

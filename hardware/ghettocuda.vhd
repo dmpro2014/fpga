@@ -18,7 +18,7 @@ entity ghettocuda is
          -- Constant memory
          constant_write_data_in : in word_t;
          constant_write_enable_in : in std_logic;
-         constant_write_address_in : in std_logic_vector(CONSTANT_ADDRESS_BIT_WIDTH - 1 downto 0);
+         constant_write_address_in : in std_logic_vector(CONSTANT_MEM_LOG_SIZE - 1 downto 0);
          
          -- Instruction memory
          instruction_memory_data_in : in instruction_t;
@@ -122,8 +122,8 @@ begin
   -- Constant storage
   constant_storage: entity work.constant_storage
   generic map(
-               DEPTH => 8,
-               LOG_DEPTH => CONSTANT_ADDRESS_BIT_WIDTH
+               DEPTH => CONSTANT_MEM_SIZE,
+               LOG_DEPTH => CONSTANT_MEM_LOG_SIZE
               )
   port map(
             clk => clk,

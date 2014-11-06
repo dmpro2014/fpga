@@ -4,7 +4,9 @@ use ieee.numeric_std.all;
 use work.defines.all;
 
 package alu_defines is
-  -- Instruction opcodes
+  -------------------------
+  -- Instruction opcodes --
+  -------------------------
   constant R_TYPE_OPCODE : opcode_t := "00000";
   constant ADD_IMMEDIATE_OPCODE : opcode_t := "00001";
   constant LOAD_CONSTANT_OPCODE : opcode_t := "00010";

@@ -31,7 +31,7 @@ begin
       when ALU_FUNCTION_OR =>
         alu_result := signed(operand_a_in) or signed(operand_b_in);
       when ALU_FUNCTION_XOR =>
-        alu_result := signed(operand_a_in) xor signed(operand_b_in);
+        alu_result := signed(unsigned(operand_a_in) xor unsigned(operand_b_in));
       when ALU_FUNCTION_SLT =>
         if signed(operand_a_in) < signed(operand_b_in) then
           alu_result := x"0001";
@@ -40,6 +40,8 @@ begin
         end if;
       when ALU_FUNCTION_SRL =>
         alu_result := signed(shift_right(unsigned(operand_b_in), to_integer(unsigned(shamt_in))));
+      when ALU_FUNCTION_SRA =>
+        alu_result := signed(shift_right(signed(operand_b_in), to_integer(unsigned(shamt_in))));
       when others => -- ALU_FUNCTION_SLL
         alu_result := signed(shift_left(unsigned(operand_b_in), to_integer(unsigned(shamt_in))));
     end case;
