@@ -4,7 +4,7 @@ use work.defines.all;
 
 package lsu_defs is
 
-    subtype sp_number is integer range 0 to NUMBER_OF_STREAMING_PROCESSORS;
+    subtype sp_number is integer range 0 to (NUMBER_OF_STREAMING_PROCESSORS - 1);
 
     type request_t is record
         valid        : std_logic;

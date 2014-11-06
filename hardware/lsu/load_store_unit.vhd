@@ -96,8 +96,7 @@ begin
     mem_request_switch:
         entity work.mem_request_switch
             port map
-                ( clock         => clock
-                , requests_all  => requests_all
+                ( requests_all  => requests_all
                 , requests_even => requests_1
                 , requests_odd  => requests_2
                 );
