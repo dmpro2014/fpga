@@ -26,7 +26,7 @@ architecture rtl of constant_storage is
 
 begin
 
-  constant_value_out <= register_file(to_integer(unsigned(constant_select_in)));
+  constant_value_out <= register_file(to_integer(unsigned(constant_select_in(LOG_DEPTH - 1 downto 0))));
 
   registers: process (clk) is
   begin
