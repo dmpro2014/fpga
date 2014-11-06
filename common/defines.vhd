@@ -80,7 +80,6 @@ package defines is
   type sram_bus_control_t is
     record
       address : std_logic_vector(18 downto 0);
-      lbub : std_logic_vector(1 downto 0);
       write_enable : std_logic;
       chip_select : std_logic;
     end record;
