@@ -34,7 +34,7 @@ architecture Behavioral of mem_control is begin
             ram_control.write_enable <= not (request_packet.valid and write_enable);
 
             -- Handle the half-duplex data-bus to ram.
-            -- When write_enable is low, disconnect it from load using a TBUF.
+            -- When write_enable is low, disconnect it from load using a BUFT.
             if write_enable = '1' then
                 ram_data.data <= request_packet.write_data;
             else
