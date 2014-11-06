@@ -53,7 +53,7 @@ architecture Behavioral of System is
   signal comm_kernel_address_out: instruction_address_t;
   signal comm_kernel_number_of_threads_out: thread_id_t;
   
-  signal comm_constant_address_out: std_logic_vector(CONSTANT_ADDRESS_BIT_WIDTH -1 downto 0);
+  signal comm_constant_address_out: std_logic_vector(CONSTANT_MEM_LOG_SIZE -1 downto 0);
   signal comm_constant_write_enable_out: std_logic;
   signal comm_constant_out: word_t;
   
@@ -98,7 +98,7 @@ begin
 
   communication_unit : entity work.communication_unit
   generic map(
-               CONSTANT_ADDRESS_WIDTH => CONSTANT_ADDRESS_BIT_WIDTH
+               CONSTANT_ADDRESS_WIDTH => CONSTANT_MEM_LOG_SIZE
   )
   port map(
             clk => clk,
