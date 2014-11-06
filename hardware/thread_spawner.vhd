@@ -29,6 +29,8 @@ architecture Behavioral of thread_spawner is
   signal update_next_id   : std_logic;
   signal last_spawned     : std_logic;
   signal spawn_new_threads: std_logic;
+  signal kernel_start_in_prev : std_logic := '0';
+
 begin
 
   update_next_id <= kernel_start_in or thread_done_in;
@@ -53,8 +55,8 @@ begin
   pc_input_select_out <= spawn_new_threads;
   id_write_enable_out <= spawn_new_threads;
   
-  next_id_in <= next_id_reg when update_next_id = '1'
-           else std_logic_vector(unsigned(next_id_reg) + to_unsigned(BARREL_HEIGHT, ID_WIDTH)); 
+  next_id_in <= next_id_reg when update_next_id = '0'
+           else std_logic_vector(unsigned(next_id_reg) + to_unsigned(NUMBER_OF_STREAMING_PROCESSORS, ID_WIDTH)); 
 
   process(clk) is
   begin
@@ -78,9 +80,10 @@ begin
   begin
     if rising_edge(clk) then
       next_id_reg <= next_id_in;
-      if kernel_start_in = '1' then
+      if kernel_start_in_prev = '0' and kernel_start_in = '1' then
         next_id_reg <= (others => '0');
       end if;
+      kernel_start_in_prev <= kernel_start_in;
     end if;
   end process;
   

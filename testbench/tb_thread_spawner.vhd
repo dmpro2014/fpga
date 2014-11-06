@@ -103,21 +103,24 @@ BEGIN
         assert_equals(signed(thread_id_out), to_signed(i * NUMBER_OF_STREAMING_PROCESSORS, 19), "ID should be set correctly");
         wait for clk_period;
       end loop;
-      assert_equals(pc_input_select_out, '0', "Set pc_input_select_out low after PC has been updated");
-
+      
       kernel_start_in <= '0';
+
+      wait for clk_period/2;
+      assert_equals(pc_input_select_out, '0', "Set pc_input_select_out low after PC has been updated");
+      wait for clk_period/2;
 
       assert_equals(kernel_complete_out, '0', "Kernel_complete_out should be set to 0 while threads are still running");
 --    Spawn all threads except the last round
-      for barrels in 1 to n_barrels_of_warps - 2 loop
-       wait for clk_period*10*BARREL_HEIGHT;-- threads are runnin, yo.
+      for barrels in 1 to n_barrels_of_warps - 1 loop
+       wait for clk_period*2*BARREL_HEIGHT;-- threads are runnin, yo.
         for i in 0 to BARREL_HEIGHT - 1 loop
           thread_done_in <= '1';
 
           wait for clk_period / 2;
           --      Check that new threads with correct ids are started
           assert_equals(signed(thread_id_out)
-          , to_signed(NUMBER_OF_STREAMING_PROCESSORS*barrels + i * NUMBER_OF_STREAMING_PROCESSORS, 19)
+          , to_signed(NUMBER_OF_STREAMING_PROCESSORS*BARREL_HEIGHT*barrels + i * NUMBER_OF_STREAMING_PROCESSORS, 19)
           , "ID should be set correctly when killing warps");
           assert_equals(id_write_enable_out, '1', "ID write enable should be 1 when threads die and new threads are spawned");
 
@@ -128,7 +131,7 @@ BEGIN
           wait for clk_period / 2;
         end loop;
         thread_done_in <= '0';
-        wait for 1 ns;
+        wait for clk_period;
         assert_equals(pc_input_select_out, '0', "Set pc_input_select_out low after a new set of threads are spawned");
         assert_equals(kernel_complete_out, '0', "Kernel_complete_out should be set to 0 while threads are still running");
       end loop;
@@ -137,23 +140,23 @@ BEGIN
       
 --    Kill the last barrel of warps
       for i in 0 to BARREL_HEIGHT - 1 loop
-        
-        assert_equals(kernel_complete_out, '0', "Kernel_complete_out should be set to 0 while threads are still running");
-
-        
-        thread_done_in <= '1';
+       thread_done_in <= '1';
 
         wait for clk_period / 2;
+ 
+        assert_equals(kernel_complete_out, '0', "Kernel_complete_out should be set to 0 while threads are still running");
+
         --      Check that new threads are not spawned
         assert_equals(id_write_enable_out, '0', "Do not write new ID after all threads have been executed");
 
         wait for clk_period / 2;
       end loop;
       
-      
-      thread_done_in <= '0';
-      
       assert_equals(kernel_complete_out, '1', "Kernel_complete_out should be set to 1 when all threads are done");
+      
+      wait for clk_period;
+      thread_done_in <= '0';
+
 
     end procedure test_kernel;
 
@@ -163,19 +166,10 @@ BEGIN
     wait for 100 ns;	
     wait for clk_period*10;
  
-    for i in 1 to 140000 loop
+    for i in 16 to 140000 loop
+      report "-------------- Run a new kernel --------------";
       test_kernel(std_logic_vector(to_unsigned(i,19)), i);
     end loop;
-    report "-------------- Run a new kernel --------------";
-
-      --    Start a new kernel with different parameters
-
-    test_kernel("0011001100111001", BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS * 5 + 1 );
-    
-    report "-------------- Run a third kernel --------------";
-
-    test_kernel(std_logic_vector(to_unsigned(1337,16)), BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS * 5 + 1 );
-
     wait;
   end process;
 
