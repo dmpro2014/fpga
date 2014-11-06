@@ -34,10 +34,13 @@ begin
                else instruction_in(16 + REGISTER_COUNT_BIT_WIDTH - 1 downto 16);
 
   alu_shamt_out <= instruction_in(6 + ALU_SHAMT_WIDTH -1 downto 6);
+  
   alu_funct_out <= ALU_FUNCTION_ADD when opcode = ADD_IMMEDIATE_OPCODE
                    else instruction_in(ALU_FUNCT_WIDTH -1 downto 0);
 
-  immediate_enable_out <= instruction_in(0);
+  immediate_enable_out <= '1' when opcode = ADD_IMMEDIATE_OPCODE
+                     else '0';
+  
   immediate_operand_out <= instruction_in(15 downto 0);
 
   mask_enable_out <= instruction_in(31);
