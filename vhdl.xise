@@ -32,8 +32,8 @@
       <association xil_pn:name="Implementation"/>
     </file>
     <file xil_pn:name="common/defines.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation"/>
-      <association xil_pn:name="Implementation"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqIDinc="5"/>
+      <association xil_pn:name="Implementation" xil_pn:seqIDinc="5"/>
     </file>
     <file xil_pn:name="hardware/mux_2.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation"/>
@@ -179,8 +179,8 @@
       <association xil_pn:name="PostTranslateSimulation"/>
     </file>
     <file xil_pn:name="common/utils.vhd" xil_pn:type="FILE_VHDL">
-      <association xil_pn:name="BehavioralSimulation"/>
-      <association xil_pn:name="Implementation"/>
+      <association xil_pn:name="BehavioralSimulation" xil_pn:seqIDinc="37"/>
+      <association xil_pn:name="Implementation" xil_pn:seqIDinc="37"/>
     </file>
     <file xil_pn:name="ipcore_dir/ip_memory.xise" xil_pn:type="FILE_COREGENISE">
       <association xil_pn:name="Implementation"/>
