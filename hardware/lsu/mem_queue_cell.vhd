@@ -14,6 +14,11 @@ entity mem_queue_cell is
 
 end mem_queue_cell;
 
+-- On clock-rise, latch source, unless set_val is active.
+-- If it is, latch set_val.
+--
+-- This intended use for this entity is to build a shift
+-- register converting a parallel signal to serial.
 architecture Behavioral of mem_queue_cell is
 
 begin
