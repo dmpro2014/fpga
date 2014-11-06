@@ -27,9 +27,12 @@ entity sram_arbiter is
 end sram_arbiter;
 
 architecture Behavioral of sram_arbiter is
-
 begin
 
+sram_bus_control_1_out <= lsu_sram_bus_control_1_in;
+sram_bus_data_1_inout <= lsu_sram_bus_data_1_inout;
+sram_bus_control_2_out <= lsu_sram_bus_control_2_in;
+sram_bus_data_2_inout <= lsu_sram_bus_data_2_inout;
 
 end Behavioral;
 
