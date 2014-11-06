@@ -22,12 +22,10 @@ begin
 
     top_request <= queue(queue_t'high);
 
-    queue(-1) <= ( valid => '0'
-                 , barrel_line => (others => '0')
-                 , sp => 0
-                 , write_enable => '0'
-                 , address => (others => '0')
-                 , write_data => (others => '0')
+    queue(-1) <= ( valid       => '0'
+                 , sp          => 0
+                 , address     => (others => 'X')
+                 , write_data  => (others => 'X')
                  );
 
     shift_registers:
