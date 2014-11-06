@@ -62,11 +62,6 @@ architecture Behavioral of load_store_unit is
     end function;
 
 begin
-
-    -- Enable both rams. We don't like polar bears.
-    sram_bus_control_1_out.chip_select <= '0';
-    sram_bus_control_2_out.chip_select <= '0';
-
     -- Set output enable. It's overrided automatically when writing.
     -- (Cannot. Output-enable is not exposed.)
 
