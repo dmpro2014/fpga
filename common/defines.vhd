@@ -70,7 +70,7 @@ package defines is
   constant register_address_lo : integer := 4;
   constant register_lsu_data : integer := 5;
   constant register_mask : integer := 6;
-
+  constant GENERAL_REGISTERS_BASE_ADDRESS : integer := 7;
   -----------------------
   -- SRAM && EBI Buses --
   -----------------------
@@ -98,5 +98,5 @@ package defines is
       chip_select_fpga : std_logic;
       chip_select_sram : std_logic;
     end record;
-
+  
 end package defines;
