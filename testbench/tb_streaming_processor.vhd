@@ -88,6 +88,7 @@ begin
       immediate_enable_in <= '0';
       reg_write_enable_in <= '0';
     end procedure load_immediate_to;
+    
    procedure execute_arithmetic_op(op: alu_funct_t; read_reg_1: integer; read_reg_2: integer; write_reg: integer) is
     begin
      read_reg_1_in <= get_reg_addr(read_reg_1);
@@ -97,27 +98,24 @@ begin
      reg_write_enable_in <= '1';
      wait for clk_period;
      reg_write_enable_in <= '0';
-     
    end procedure execute_arithmetic_op;
-   procedure assert_special_registers is
+   
+   procedure load_id_registers_with(value: integer) is
     begin
+      id_write_enable_in <= '1';
+      id_data_in <= to_logic_vector(value, 19);
+      wait for clk_period;
+      id_write_enable_in <= '0';
+   end procedure load_id_registers_with;
+   
+   procedure assert_lsu_data_register_move is
+    begin
+    
       for row in 0 to BARREL_HEIGHT -1 loop
        barrel_select_in <= make_row(row);
        load_immediate_to(register_address_lo, 31457 + row);       
       end loop;
-
-      for row in 0 to BARREL_HEIGHT -1 loop
-        barrel_select_in <= make_row(row);
-        load_immediate_to(register_address_hi, row);       
-      end loop;
-      
-      for row in 0 to BARREL_HEIGHT -1 loop
-        barrel_select_in <= make_row(row);
-        wait for 1 ns;
-        assert_equals(make_word(31457 + row), lsu_address_out(WORD_WIDTH -1 downto 0), "Address low should contain the value loaded using add imm.");
-        assert_equals(to_logic_vector(row, 3), lsu_address_out(DATA_ADDRESS_WIDTH-1 downto WORD_WIDTH), "Address high should contain the value loaded using add imm.");
-      end loop;
-      
+    
       -- "Move" register address into data
       for row in 0 to BARREL_HEIGHT -1 loop
        barrel_select_in <= make_row(row);
@@ -140,17 +138,131 @@ begin
        wait for 1 ns;
        assert_equals(make_word(row), lsu_write_data_out, "Address hi should have been moved into lsu data out.");
       end loop;
+    end procedure assert_lsu_data_register_move;
+    
+   procedure assert_id_register_load is
+    begin
+      -- Test id write
+      for row in 0 to BARREL_HEIGHT -1 loop
+        barrel_select_in <= make_row(row);
+        -- First load the id registers
+        load_id_registers_with(row*10);
+        -- Then "move" the value into lsu_address
+        execute_arithmetic_op(ALU_FUNCTION_ADD, 0, register_id_hi, register_address_hi);
+        execute_arithmetic_op(ALU_FUNCTION_ADD, 0, register_id_lo, register_address_lo);
+      end loop;
       
+      for row in 0 to BARREL_HEIGHT -1 loop
+       barrel_select_in <= make_row(row);
+       wait for 1 ns;
+       assert_equals(to_logic_vector(row*10, 19), lsu_address_out, "ID should have been moved into lsu address");
+      end loop;
+   end procedure assert_id_register_load;
+   
+   procedure assert_masked_instruction is
+    begin
+     mask_enable_in <= '1';
+     -- Set the mask
+     for row in 0 to BARREL_HEIGHT -1 loop
+      barrel_select_in <= make_row(row);
+      load_immediate_to(register_lsu_data, 10);
+      load_immediate_to(register_mask, 1);
+     end loop;
+     
+     for row in 0 to BARREL_HEIGHT -1 loop
+       barrel_select_in <= make_row(row);
+       execute_arithmetic_op(ALU_FUNCTION_ADD, register_lsu_data, register_lsu_data, register_lsu_data);
+       --Since the mask is set. The add should be ignored
+       assert_equals(make_word(10), lsu_write_data_out, "The add to  should be ignored due to mask bit.");
+     end loop;
+     -- Also test the case when the mask bit is high, but masks are enabled
+     mask_enable_in <= '0';
+     wait for 1 ns;
+     
+     for row in 0 to BARREL_HEIGHT -1 loop
+       barrel_select_in <= make_row(row);
+       execute_arithmetic_op(ALU_FUNCTION_ADD, register_lsu_data, register_lsu_data, register_lsu_data);
+       -- Since masks are disabled, the add should be executed
+       assert_equals(make_word(20), lsu_write_data_out, "Masks are disabled, so the add should have been executed.");
+     end loop;
+     
+   end procedure assert_masked_instruction;
+   
+   procedure assert_lsu_address_load is
+    begin
+    
+      for row in 0 to BARREL_HEIGHT -1 loop
+       barrel_select_in <= make_row(row);
+       load_immediate_to(register_address_lo, 31457 + row);       
+      end loop;
+
+      for row in 0 to BARREL_HEIGHT -1 loop
+        barrel_select_in <= make_row(row);
+        load_immediate_to(register_address_hi, row);       
+      end loop;
+      
+      for row in 0 to BARREL_HEIGHT -1 loop
+        barrel_select_in <= make_row(row);
+        wait for 1 ns;
+        assert_equals(make_word(31457 + row), lsu_address_out(WORD_WIDTH -1 downto 0), "Address low should contain the value loaded using add imm.");
+        assert_equals(to_logic_vector(row, 3), lsu_address_out(DATA_ADDRESS_WIDTH-1 downto WORD_WIDTH), "Address high should contain the value loaded using add imm.");
+      end loop;
+   end procedure assert_lsu_address_load;
+   
+   procedure assert_general_purpose_register(reg:integer) is
+    begin
+      for row in 0 to BARREL_HEIGHT -1 loop
+        barrel_select_in <= make_row(row);
+        -- First reset the register
+        load_immediate_to(reg, 5);
+      end  loop;
+      
+      for row in 0 to BARREL_HEIGHT -1 loop
+        barrel_select_in <= make_row(row);
+        -- First reset the register
+        load_immediate_to(register_address_lo, row*10 +10);
+      end  loop;
+      
+      for row in 0 to BARREL_HEIGHT -1 loop
+        barrel_select_in <= make_row(row);
+         -- Do an operation
+        execute_arithmetic_op(ALU_FUNCTION_ADD, reg, register_address_lo, reg);
+      end loop;
+      
+      -- "Move" register address into data so it can be asserted
+      for row in 0 to BARREL_HEIGHT -1 loop
+       barrel_select_in <= make_row(row);
+       execute_arithmetic_op(ALU_FUNCTION_ADD, 0, reg, register_lsu_data);
+       assert_equals(make_word(row*10 + 10 +5), lsu_write_data_out, "lsu data should contain the result of the arithmetic operation.");
+      end loop;
+      
+   end assert_general_purpose_register;  
  
+   procedure assert_general_purpose_registers is
+    begin
+     for reg in GENERAL_REGISTERS_BASE_ADDRESS to REGISTER_COUNT -1 loop
+          assert_general_purpose_register(reg);
+     end loop;
+   end assert_general_purpose_registers;
+
+   procedure assert_special_registers is
+    begin
+
+      
+      assert_lsu_address_load;
+      assert_lsu_data_register_move;
+      assert_id_register_load;
+      assert_masked_instruction;
+      
    end procedure assert_special_registers;
    begin
       -- Begin by loading registers with immediate values 
       -- Simluate barrel rolls
-      assert_special_registers;
       wait for 100 ns; 
+      assert_general_purpose_registers;
+      assert_special_registers;
 
-      -- add user defined stimulus here
-
+      report "Test completed";
       wait; -- will wait forever
    end process tb;
 --  end test bench 

@@ -42,10 +42,7 @@ architecture rtl of streaming_processor is
 
 begin
 
- reg_dir_write_enable_i <= reg_write_enable_in
-                      and (not mask_enable_in
-                           or (mask_enable_in and reg_dir_predicate_i)
-                      );
+  reg_dir_write_enable_i <= reg_write_enable_in and not( reg_dir_predicate_i and mask_enable_in);                      
 
   alu_operand_b_i <= immediate_in when immediate_enable_in = '1'
                      else reg_dir_read_data_2_i;
