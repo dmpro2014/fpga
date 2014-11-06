@@ -186,6 +186,7 @@ begin
 
   load_store_unit : entity work.load_store_unit
   port map(
+            clock => clk,
             -- Input wires
             request_sram_bus_read_in => decode_lsu_load_enable_out,
             request_sram_bus_write_in => decode_lsu_write_enable_out,
