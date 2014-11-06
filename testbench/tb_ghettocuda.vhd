@@ -15,7 +15,7 @@ ARCHITECTURE behavior OF tb_ghettocuda IS
    signal reset : std_logic := '0';
    signal constant_write_data_in : std_logic_vector(15 downto 0) := (others => '0');
    signal constant_write_enable_in : std_logic := '0';
-   signal constant_write_address_in : std_logic_vector(15 downto 0) := (others => '0');
+   signal constant_write_address_in : std_logic_vector(CONSTANT_MEM_LOG_SIZE - 1 downto 0) := (others => '0');
    signal instruction_memory_data_in : std_logic_vector(31 downto 0) := (others => '0');
    signal instruction_memory_address_in : std_logic_vector(15 downto 0) := (others => '0');
    signal instruction_memory_write_enable_in : std_logic := '0';
@@ -77,7 +77,7 @@ ARCHITECTURE behavior OF tb_ghettocuda IS
   signal decode_operand_rt_out: register_address_t;
   signal decode_operand_rd_out: register_address_t;
   signal decode_shamt_out: std_logic_vector(4 downto 0);
-  signal decode_immediate_operand_out: immediate_value_t := (others => '0'); 
+  signal decode_immediate_operand_out: immediate_value_t; 
   signal decode_immediate_enable_out: std_logic; 
   signal decode_lsu_load_enable_out: std_logic;
   signal decode_lsu_write_enable_out: std_logic;
@@ -94,13 +94,12 @@ ARCHITECTURE behavior OF tb_ghettocuda IS
 
   -- Constant storage
   signal constant_storage_value_out: word_t;
-   
 
    -- Clock period definitions
    constant clk_period : time := 10 ns;
  
 BEGIN
-  -- Instruction decode
+-- Instruction decode
   instruction_decode: entity work.instruction_decode
   port map(
       instruction_in => instruction_data_out,
@@ -186,6 +185,7 @@ BEGIN
 
   load_store_unit : entity work.load_store_unit
   port map(
+            clock => clk,
             -- Input wires
             request_sram_bus_read_in => decode_lsu_load_enable_out,
             request_sram_bus_write_in => decode_lsu_write_enable_out,
