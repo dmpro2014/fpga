@@ -21,9 +21,10 @@ entity ghettocuda is
          constant_write_address_in : in std_logic_vector(CONSTANT_MEM_LOG_SIZE - 1 downto 0);
          
          -- Instruction memory
-         instruction_memory_data_in : in instruction_t;
+         instruction_memory_data_in : in word_t;
          instruction_memory_address_in : in std_logic_vector(INSTRUCTION_ADDRESS_WIDTH - 1 downto 0);
          instruction_memory_write_enable_in : in std_logic;
+         instruction_memory_address_hi_select_in : in std_logic;
          
          -- Thread spawner
          ts_kernel_start_in : in std_logic;
@@ -220,6 +221,7 @@ begin
             clk => clk, reset => reset,
             write_enable_in => instruction_memory_write_enable_in,
             address_in => mux_instruction_memory_address_in_out,
+            address_hi_select_in => instruction_memory_address_hi_select_in,
             data_in => instruction_memory_data_in,
             data_out => instruction_data_out);
 

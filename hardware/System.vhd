@@ -4,7 +4,8 @@ use work.defines.all;
 
 entity System is
   Port ( -- Stuff
-         clk : in STD_LOGIC;
+         clk : in std_logic;
+         reset : in std_logic;
 
          -- SRAM
          sram_bus_data_1_inout : inout sram_bus_data_t;
@@ -25,7 +26,9 @@ entity System is
          ebi_control_in : in ebi_control_t;
          
          -- MC Special kernel complete flag
-         kernel_complete_out : out std_logic;
+         mc_kernel_complete_out : out std_logic;
+         
+         mc_sram_flip_in : in std_logic;
          
          -- MC SPI
          mc_spi_bus : inout spi_bus_t;
@@ -38,22 +41,19 @@ end System;
 architecture Behavioral of System is
 
   -- Communication unit
-  signal comm_sram_override_out : STD_LOGIC;
-  signal comm_sram_flip_out : STD_LOGIC;
-
   signal comm_sram_bus_data_inout : sram_bus_data_t;
   signal comm_sram_bus_control_out : sram_bus_control_t;
 
-  signal comm_instruction_data_out : instruction_t;
-  signal comm_instruction_address_out : STD_LOGIC_VECTOR(15 downto 0);
-  signal comm_instruction_write_enable_out : STD_LOGIC;
+  signal comm_instruction_data_out : word_t;
+  signal comm_instruction_address_out : std_logic_vector(INSTRUCTION_ADDRESS_WIDTH - 1 downto 0);
+  signal comm_instruction_write_enable_out : std_logic;
+  signal comm_instruction_address_hi_select_out : std_logic;
 
-  signal comm_reset_system_out : STD_LOGIC;
   signal comm_kernel_start_out: std_logic;
   signal comm_kernel_address_out: instruction_address_t;
   signal comm_kernel_number_of_threads_out: thread_id_t;
   
-  signal comm_constant_address_out: std_logic_vector(CONSTANT_MEM_LOG_SIZE -1 downto 0);
+  signal comm_constant_address_out: std_logic_vector(CONSTANT_MEM_LOG_SIZE - 1 downto 0);
   signal comm_constant_write_enable_out: std_logic;
   signal comm_constant_out: word_t;
   
@@ -68,7 +68,7 @@ begin
   ghettocuda : entity work.ghettocuda
   port map ( -- Stuff
             clk => clk,
-            reset => comm_reset_system_out,
+            reset => reset,
 
             -- Constant memory
             constant_write_data_in => comm_constant_out,
@@ -79,12 +79,13 @@ begin
             instruction_memory_data_in => comm_instruction_data_out,
             instruction_memory_address_in => comm_instruction_address_out,
             instruction_memory_write_enable_in => comm_instruction_write_enable_out,
+            instruction_memory_address_hi_select_in => comm_instruction_address_hi_select_out,
             
             -- Thread spawner
             ts_kernel_start_in => comm_kernel_start_out,
             ts_kernel_address_in => comm_kernel_address_out,
             ts_num_threads_in => comm_kernel_number_of_threads_out,
-            ts_kernel_complete_out => kernel_complete_out,
+            ts_kernel_complete_out => mc_kernel_complete_out,
             
             -- LSU
             load_store_sram_bus_data_1_inout => load_store_sram_bus_data_1_inout,
@@ -106,13 +107,10 @@ begin
             ebi_data_inout => ebi_data_inout,
             ebi_control_in => ebi_control_in,
 
-            command_sram_override_out => comm_sram_override_out,
-            command_sram_flip_out => comm_sram_flip_out,
-            system_reset_out => comm_reset_system_out,
-
             instruction_data_out => comm_instruction_data_out,
             instruction_address_out => comm_instruction_address_out,
             instruction_write_enable_out => comm_instruction_write_enable_out,
+            instruction_address_hi_select_out => comm_instruction_address_hi_select_out,
 
             sram_bus_data_inout => comm_sram_bus_data_inout,
             sram_bus_control_out => comm_sram_bus_control_out,
@@ -120,8 +118,6 @@ begin
             kernel_number_of_threads_out => comm_kernel_number_of_threads_out,
             kernel_start_out => comm_kernel_start_out,
             kernel_address_out => comm_kernel_address_out,
-            
-            comm_reset_system_out => comm_reset_system_out,
             
             constant_address_out => comm_constant_address_out,
             constant_write_enable_out => comm_constant_write_enable_out,
@@ -142,8 +138,7 @@ begin
             -- Communication unit wires
             comm_sram_bus_control_in => comm_sram_bus_control_out,
             comm_sram_bus_data_inout => comm_sram_bus_data_inout,
-            comm_sram_override => comm_sram_override_out,
-            comm_sram_flip_in => comm_sram_flip_out,
+            comm_sram_flip_in => mc_sram_flip_in,
 
             -- SRAM wires
             sram_bus_control_1_out => sram_bus_control_1_out,

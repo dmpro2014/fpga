@@ -9,16 +9,21 @@ entity instruction_memory is
            reset : in std_logic;
            write_enable_in : in std_logic;
            address_in : in  instruction_address_t;
-           data_in : in instruction_t;
+           address_hi_select_in : in  std_logic;
+           data_in : in word_t;
            data_out : out instruction_t
            );
 end instruction_memory;
 
 architecture behavioral of instruction_memory is
-  type mem_t is array(INSTRUCTION_MEM_SIZE - 1 downto 0) of instruction_t;
-  signal inst_mem : mem_t := (others => (others => '0'));
+
+  type mem_t is array(INSTRUCTION_MEM_SIZE - 1 downto 0) of word_t;
+  signal inst_mem_hi : mem_t := (others => (others => '0'));
+  signal inst_mem_lo : mem_t := (others => (others => '0'));
+
 begin
-  data_out <= inst_mem(to_integer(unsigned(address_in)));
+
+  data_out <= inst_mem_lo(to_integer(unsigned(address_in))) & inst_mem_hi(to_integer(unsigned(address_in)));
 
   registers: process (clk) is
   begin
@@ -26,7 +31,11 @@ begin
     if rising_edge(clk) then
 
       if write_enable_in = '1' then
-        inst_mem(to_integer(unsigned(address_in))) <= data_in;
+        if address_hi_select_in = '1' then
+          inst_mem_hi(to_integer(unsigned(address_in))) <= data_in;
+        else
+          inst_mem_lo(to_integer(unsigned(address_in))) <= data_in;
+        end if;
       end if;
 
     end if;

@@ -16,7 +16,6 @@ entity sram_arbiter is
          -- Communication unit wires
          comm_sram_bus_control_in : in sram_bus_control_t;
          comm_sram_bus_data_inout : inout sram_bus_data_t;
-         comm_sram_override : in std_logic;
          comm_sram_flip_in : in std_logic;
 
          -- SRAM wires
