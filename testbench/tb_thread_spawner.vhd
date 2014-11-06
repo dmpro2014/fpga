@@ -97,15 +97,16 @@ BEGIN
       assert_equals(pc_start_out, kernel_addr, "PC start address set correctly");
       assert_equals(pc_input_select_out, '1', "Set pc_input_select_out correctly when starting new threads");
 
-      kernel_start_in <= '0';
 
       --      Check that the IDs are set correctly when spawning first threads
       for i in 0 to BARREL_HEIGHT -1 loop
         assert_equals(signed(thread_id_out), to_signed(i * NUMBER_OF_STREAMING_PROCESSORS, 19), "ID should be set correctly");
         wait for clk_period;
-        assert_equals(pc_input_select_out, '0', "Set pc_input_select_out low after PC has been updated");
       end loop;
-      
+      assert_equals(pc_input_select_out, '0', "Set pc_input_select_out low after PC has been updated");
+
+      kernel_start_in <= '0';
+
       assert_equals(kernel_complete_out, '0', "Kernel_complete_out should be set to 0 while threads are still running");
 --    Spawn all threads except the last round
       for barrels in 1 to n_barrels_of_warps - 2 loop
@@ -162,7 +163,7 @@ BEGIN
     wait for 100 ns;	
     wait for clk_period*10;
  
-    for i in 0 to 140000 loop
+    for i in 1 to 140000 loop
       test_kernel(std_logic_vector(to_unsigned(i,19)), i);
     end loop;
     report "-------------- Run a new kernel --------------";
