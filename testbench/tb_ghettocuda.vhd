@@ -100,8 +100,7 @@ ARCHITECTURE behavior OF tb_ghettocuda IS
    constant clk_period : time := 10 ns;
  
 BEGIN
-          
-     -- Instruction decode
+  -- Instruction decode
   instruction_decode: entity work.instruction_decode
   port map(
       instruction_in => instruction_data_out,
@@ -123,8 +122,8 @@ BEGIN
   -- Constant storage
   constant_storage: entity work.constant_storage
   generic map(
-               DEPTH => 8,
-               LOG_DEPTH => 3
+               DEPTH => CONSTANT_MEM_SIZE,
+               LOG_DEPTH => CONSTANT_MEM_LOG_SIZE
               )
   port map(
             clk => clk,
@@ -230,6 +229,8 @@ BEGIN
             b_in => instruction_memory_address_in,
             select_in => instruction_memory_write_enable_in,
             data_out => mux_instruction_memory_address_in_out);
+            
+ 
            
    -- Clock process definitions
    clk_process :process
