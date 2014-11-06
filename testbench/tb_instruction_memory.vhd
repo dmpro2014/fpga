@@ -62,6 +62,7 @@
       assert_equals(std_logic_vector(to_unsigned(100 + i*5, INSTRUCTION_WIDTH)), data_out, "Checking memory contents");
     end loop;
 
+    wait;
   end process tb;
   --  end test bench 
 
