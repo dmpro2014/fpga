@@ -24,14 +24,14 @@ architecture Behavioral of thread_spawner is
   signal thread_number_reg: thread_id_t;
   signal next_id_reg      : thread_id_t;
   signal next_id_in       : thread_id_t;
-  signal num_minus_next_id : thread_id_t;
+  signal num_minus_next_id: thread_id_t;
   signal kernels_left     : thread_id_t;
-  signal spawn_new_threads: std_logic;
+  signal update_next_id   : std_logic;
   signal last_spawned     : std_logic;
-  signal reset_pc        : std_logic;
+  signal spawn_new_threads: std_logic;
 begin
 
-  spawn_new_threads <= kernel_start_in or thread_done_in;
+  update_next_id <= kernel_start_in or thread_done_in;
   
   pc_start_out <= kernel_addr_reg;
   
@@ -48,34 +48,39 @@ begin
   last_spawned <= '1' when signed(num_minus_next_id) <= 0
              else '0';
   
-  reset_pc  <= spawn_new_threads and not last_spawned;
+  spawn_new_threads  <= update_next_id and not last_spawned;
   
-  pc_input_select_out <= reset_pc;
-  id_write_enable_out <= reset_pc;
+  pc_input_select_out <= spawn_new_threads;
+  id_write_enable_out <= spawn_new_threads;
   
-  next_id_in <= next_id_reg when spawn_new_threads = '1'
+  next_id_in <= next_id_reg when update_next_id = '1'
            else std_logic_vector(unsigned(next_id_reg) + to_unsigned(BARREL_HEIGHT, ID_WIDTH)); 
 
-  process(kernel_start_in, kernel_addr_in) is
+  process(clk) is
   begin
-    if kernel_start_in = '1' then
-      kernel_addr_reg <= kernel_addr_in;
+    if rising_edge(clk) then
+      if kernel_start_in = '1' then
+        kernel_addr_reg <= kernel_addr_in;
+      end if;
     end if;
   end process;
   
-  process(kernel_start_in, num_threads_in) is
+  process(clk) is
   begin
-    if kernel_start_in = '1' then
-      thread_number_reg <= num_threads_in;
+    if rising_edge(clk) then
+      if kernel_start_in = '1' then
+        thread_number_reg <= num_threads_in;
+      end if;
     end if;
   end process;
   
-  process(kernel_start_in, clk) is
+  process(clk) is
   begin
-    if kernel_start_in = '1' then
-      next_id_reg <= (others => '0');
-    elsif rising_edge(clk) then
+    if rising_edge(clk) then
       next_id_reg <= next_id_in;
+      if kernel_start_in = '1' then
+        next_id_reg <= (others => '0');
+      end if;
     end if;
   end process;
   
