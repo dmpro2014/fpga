@@ -17,12 +17,13 @@ package defines is
   subtype instruction_address_t is std_logic_vector(INSTRUCTION_ADDRESS_WIDTH - 1 downto 0);
   subtype instruction_t is std_logic_vector(INSTRUCTION_WIDTH - 1 downto 0);
   subtype memory_address_t is std_logic_vector(DATA_ADDRESS_WIDTH - 1 downto 0);
-  subtype thread_id_t is std_logic_vector(DATA_WIDTH - 1 downto 0);
+  subtype thread_id_t is std_logic_vector(ID_WIDTH - 1 downto 0);
 
   ---------------------------
   -- Ghettocuda parameters --
   ---------------------------
-  constant NUMBER_OF_STREAMING_PROCESSORS: integer := 16;
+  constant NUMBER_OF_STREAMING_PROCESSORS: integer := 2;
+  constant NUMBER_OF_STREAMING_PROCESSORS_BIT_WIDTH: integer := 1;
 
   --One block ram is 576 instructions
   constant INSTRUCTION_MEM_SIZE: integer := 576 * 10;
@@ -80,21 +81,21 @@ package defines is
   type sram_bus_control_t is
     record
       address : std_logic_vector(18 downto 0);
-      write_enable : std_logic;
+      write_enable_n : std_logic;
     end record;
 
   type sram_bus_data_t is
     record
       data : std_logic_vector(15 downto 0);
     end record;
-  
-  type ebi_control_t is 
+
+  type ebi_control_t is
     record
       address : std_logic_vector(DATA_ADDRESS_WIDTH - 1 downto 0);
-      write_enable : std_logic;
-      read_enable : std_logic;
-      chip_select_fpga : std_logic;
-      chip_select_sram : std_logic;
+      write_enable_n : std_logic;
+      read_enable_n : std_logic;
+      chip_select_fpga_n : std_logic;
+      chip_select_sram_n : std_logic;
     end record;
-  
+
 end package defines;

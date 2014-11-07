@@ -13,7 +13,8 @@
   signal reset: std_logic;
   signal write_enable_in: std_logic;
   signal address_in: instruction_address_t;
-  signal data_in: instruction_t;
+  signal address_hi_select_in: std_logic;
+  signal data_in: word_t;
   signal data_out: instruction_t;
   
   constant clk_period: time := 10 ns;
@@ -25,6 +26,7 @@
             reset => reset,
             write_enable_in => write_enable_in,
             address_in => address_in,
+            address_hi_select_in => address_hi_select_in,
             data_in => data_in,
             data_out => data_out
       );
@@ -48,10 +50,18 @@
     reset <= '0';
     write_enable_in <= '1';
 
-    -- Write som data to memory
+    -- Write some data to memory
     for i in 0 to 20 loop
+      address_hi_select_in <= '0';
       address_in <= std_logic_vector(to_unsigned(i*20, INSTRUCTION_ADDRESS_WIDTH));
-      data_in <= std_logic_vector(to_unsigned(100 + i*5, INSTRUCTION_WIDTH));
+
+      data_in <= std_logic_vector(to_unsigned(10 + i*10, WORD_WIDTH));
+      wait for clk_period;
+      
+      address_hi_select_in <= '1';
+      address_in <= std_logic_vector(to_unsigned(i*20, INSTRUCTION_ADDRESS_WIDTH));
+
+      data_in <= std_logic_vector(to_unsigned(100 + i*5, WORD_WIDTH));
       wait for clk_period;
     end loop;
     -- Assert memory contents
@@ -59,7 +69,8 @@
     for i in 0 to 20 loop
       address_in <= std_logic_vector(to_unsigned(i*20, INSTRUCTION_ADDRESS_WIDTH));
       wait for clk_period;
-      assert_equals(std_logic_vector(to_unsigned(100 + i*5, INSTRUCTION_WIDTH)), data_out, "Checking memory contents");
+      assert_equals(std_logic_vector(to_unsigned(100 + i*5, WORD_WIDTH)), data_out(15 downto 0), "Checking memory contents upper bits");
+      assert_equals(std_logic_vector(to_unsigned(10 + i*10, WORD_WIDTH)), data_out(31 downto 16), "Checking memory contents lower bits");
     end loop;
 
     wait;
