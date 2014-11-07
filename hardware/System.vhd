@@ -18,8 +18,8 @@ entity System is
          hdmi_bus_data_inout : inout sram_bus_data_t;
          hdmi_bus_control_in : in sram_bus_control_t;
 
-         vga_bus_data_inout : inout sram_bus_control_t;
-         vga_bus_control_in : in sram_bus_data_t;
+         vga_bus_data_inout : inout sram_bus_data_t;
+         vga_bus_control_in : in sram_bus_control_t;
 
          -- MC EBI
          ebi_data_inout : inout ebi_data_t;
