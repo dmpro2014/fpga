@@ -15,7 +15,7 @@ entity communication_unit is
          kernel_number_of_threads_out: out thread_id_t;
 
          -- MC busses
-         ebi_data_inout : inout ebi_data_t;
+         ebi_data_inout : inout ebi_data_t := (others=>'Z');
          ebi_control_in : in ebi_control_t;
 
          -- Instruction memory

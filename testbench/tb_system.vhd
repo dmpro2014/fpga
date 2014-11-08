@@ -120,6 +120,7 @@ BEGIN
        ebi_data_inout <= instruction(31 downto 16);
        ebi_control_in.address <= "01" & address & '0';
        ebi_control_in.write_enable_n <= '0';
+       ebi_control_in.read_enable_n <= '1';
        ebi_control_in.chip_select_fpga_n <= '0';
        wait until rising_edge(clk);
        
@@ -182,6 +183,8 @@ BEGIN
       check_memory(x"0000", 0);
       check_memory(x"0001", 8);
       check_memory(x"000C", 100);
+      
+      
 
       wait;
    end process;
