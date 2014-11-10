@@ -112,7 +112,7 @@ begin
             instruction_write_enable_out => comm_instruction_write_enable_out,
             instruction_address_hi_select_out => comm_instruction_address_hi_select_out,
 
-            --sram_bus_data_inout => comm_sram_bus_data_inout,
+            sram_bus_data_inout => comm_sram_bus_data_inout,
             sram_bus_control_out => comm_sram_bus_control_out,
 
             kernel_number_of_threads_out => comm_kernel_number_of_threads_out,
