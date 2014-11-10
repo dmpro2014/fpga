@@ -38,8 +38,8 @@ package defines is
   ------------------------------------
   -- Streaming processor parameters --
   ------------------------------------
-  constant BARREL_HEIGHT: integer := 4;
-  constant BARREL_HEIGHT_BIT_WIDTH: integer := 2;
+  constant BARREL_HEIGHT: integer := 8;
+  constant BARREL_HEIGHT_BIT_WIDTH: integer := 3;
 
   constant REGISTER_COUNT: integer := 8;
   constant REGISTER_COUNT_BIT_WIDTH: integer := 3;

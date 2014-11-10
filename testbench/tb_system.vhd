@@ -187,7 +187,7 @@ BEGIN
       wait for clk_period*10;
 
       --Start kernel
-      ebi_data_inout <= std_logic_vector(to_unsigned(2, WORD_WIDTH)); -- Number of batches
+      ebi_data_inout <= std_logic_vector(to_unsigned(10, WORD_WIDTH)); -- Number of batches
       ebi_control_in.address <= "1000000000000000000"; -- Start at instruction mem 0. The MSB 1 means start kernel
       ebi_control_in.write_enable_n <= '0';
       ebi_control_in.chip_select_fpga_n <= '0';
@@ -199,7 +199,7 @@ BEGIN
       ebi_control_in.write_enable_n <= '1';
 
       --Wait
-      wait for clk_period*300;
+      wait for clk_period*6000;
 
       --Check memory
 
