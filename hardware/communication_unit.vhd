@@ -25,7 +25,7 @@ entity communication_unit is
          instruction_address_hi_select_out : out  std_logic;
 
          -- SRAM
-         sram_bus_data_inout : inout sram_bus_data_t;
+         --sram_bus_data_inout : inout sram_bus_data_t;
          sram_bus_control_out: out sram_bus_control_t;
          
          -- Constant_storage
@@ -54,7 +54,7 @@ begin
     and not ebi_control_in.address(17);
 
   -- SRAM
-  sram_bus_data_inout.data <= ebi_data_inout;
+  --sram_bus_data_inout.data <= ebi_data_inout;
   sram_bus_control_out.address <= ebi_control_in.address;
   sram_bus_control_out.write_enable_n <= ebi_control_in.write_enable_n;
 --  sram_bus_control_out.chip_select_n <= ebi_control_in.chip_select_sram_n;

@@ -88,10 +88,10 @@ begin
             ts_kernel_complete_out => mc_kernel_complete_out,
             
             -- LSU
-            load_store_sram_bus_data_1_inout => load_store_sram_bus_data_1_inout,
-            load_store_sram_bus_control_1_out => load_store_sram_bus_control_1_out,
-            load_store_sram_bus_data_2_inout => load_store_sram_bus_data_2_inout,
-            load_store_sram_bus_control_2_out => load_store_sram_bus_control_2_out,
+            load_store_sram_bus_data_1_inout => sram_bus_data_1_inout,
+            load_store_sram_bus_control_1_out => sram_bus_control_1_out,
+            load_store_sram_bus_data_2_inout => sram_bus_data_2_inout,
+            load_store_sram_bus_control_2_out => sram_bus_control_2_out,
 
             -- Generic IO
             led_1_out => led_1_out,
@@ -112,7 +112,7 @@ begin
             instruction_write_enable_out => comm_instruction_write_enable_out,
             instruction_address_hi_select_out => comm_instruction_address_hi_select_out,
 
-            sram_bus_data_inout => comm_sram_bus_data_inout,
+            --sram_bus_data_inout => comm_sram_bus_data_inout,
             sram_bus_control_out => comm_sram_bus_control_out,
 
             kernel_number_of_threads_out => comm_kernel_number_of_threads_out,
@@ -124,27 +124,27 @@ begin
             constant_out => comm_constant_out 
           );
           
-  sram_arbiter : entity work.sram_arbiter
-  port map( -- LSU wires
-            lsu_sram_bus_control_1_in => load_store_sram_bus_control_1_out,
-            lsu_sram_bus_data_1_inout => load_store_sram_bus_data_1_inout,
-            lsu_sram_bus_control_2_in => load_store_sram_bus_control_2_out,
-            lsu_sram_bus_data_2_inout => load_store_sram_bus_data_2_inout,
-
-            -- VGA / HDMI wires
-            vga_hdmi_sram_bus_control_in => hdmi_bus_control_in,
-            vga_hdmi_sram_bus_data_inout => hdmi_bus_data_inout,
-
-            -- Communication unit wires
-            comm_sram_bus_control_in => comm_sram_bus_control_out,
-            comm_sram_bus_data_inout => comm_sram_bus_data_inout,
-            comm_sram_flip_in => mc_sram_flip_in,
-
-            -- SRAM wires
-            sram_bus_control_1_out => sram_bus_control_1_out,
-            sram_bus_data_1_inout => sram_bus_data_1_inout,
-            sram_bus_control_2_out => sram_bus_control_2_out,
-            sram_bus_data_2_inout => sram_bus_data_2_inout
-          );
+--  sram_arbiter : entity work.sram_arbiter
+--  port map( -- LSU wires
+--            lsu_sram_bus_control_1_in => load_store_sram_bus_control_1_out,
+--            lsu_sram_bus_data_1_inout => load_store_sram_bus_data_1_inout,
+--            lsu_sram_bus_control_2_in => load_store_sram_bus_control_2_out,
+--            lsu_sram_bus_data_2_inout => load_store_sram_bus_data_2_inout,
+--
+--            -- VGA / HDMI wires
+--            vga_hdmi_sram_bus_control_in => hdmi_bus_control_in,
+--            vga_hdmi_sram_bus_data_inout => hdmi_bus_data_inout,
+--
+--            -- Communication unit wires
+--            comm_sram_bus_control_in => comm_sram_bus_control_out,
+--            comm_sram_bus_data_inout => comm_sram_bus_data_inout,
+--            comm_sram_flip_in => mc_sram_flip_in,
+--
+--            -- SRAM wires
+--            sram_bus_control_1_out => sram_bus_control_1_out,
+--            sram_bus_data_1_inout => sram_bus_data_1_inout,
+--            sram_bus_control_2_out => sram_bus_control_2_out,
+--            sram_bus_data_2_inout => sram_bus_data_2_inout
+--          );
 
 end Behavioral;

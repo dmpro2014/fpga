@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="C:/Users/aleksanw/Documents/GitHub/fpga/tb_system_isim_beh.wdb" id="1" type="auto">
+         <top_modules>
+            <top_module name="alu_defines" />
+            <top_module name="defines" />
+            <top_module name="lsu_defs" />
+            <top_module name="numeric_std" />
+            <top_module name="std_logic_1164" />
+            <top_module name="tb_system" />
+            <top_module name="test_utils" />
+            <top_module name="textio" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <WVObjectSize size="28" />
+   <wvobject fp_name="/tb_system/clk" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/uut/comm_kernel_start_out" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">comm_kernel_start_out</obj_property>
+      <obj_property name="ObjectShortName">comm_kernel_start_out</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/mc_kernel_complete_out" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">mc_kernel_complete_out</obj_property>
+      <obj_property name="ObjectShortName">mc_kernel_complete_out</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/uut/ghettocuda/pc/pc_out" type="array" db_ref_id="1">
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="ElementShortName">pc_out[15:0]</obj_property>
+      <obj_property name="ObjectShortName">pc_out[15:0]</obj_property>
+      <obj_property name="label">pc_out[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/uut/ghettocuda/streaming_processors/\gen_sp(0)\/streaming_processor/reg_dir/barrel_row_select_in" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">barrel_row_select_in[1:0]</obj_property>
+      <obj_property name="ObjectShortName">barrel_row_select_in[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/uut/ghettocuda/load_store_unit/request_sram_bus_write_in" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">request_sram_bus_write_in</obj_property>
+      <obj_property name="ObjectShortName">request_sram_bus_write_in</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/uut/ghettocuda/load_store_unit/sp_sram_bus_addresses_in" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">sp_sram_bus_addresses_in[1:0]</obj_property>
+      <obj_property name="ObjectShortName">sp_sram_bus_addresses_in[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/uut/ghettocuda/load_store_unit/sp_sram_bus_datas_in" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">sp_sram_bus_datas_in[1:0]</obj_property>
+      <obj_property name="ObjectShortName">sp_sram_bus_datas_in[1:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/uut/ghettocuda/load_store_unit/mem_queue_top_even" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">mem_queue_top_even</obj_property>
+      <obj_property name="ObjectShortName">mem_queue_top_even</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/uut/ghettocuda/load_store_unit/mem_queue_top_odd" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">mem_queue_top_odd</obj_property>
+      <obj_property name="ObjectShortName">mem_queue_top_odd</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/uut/ghettocuda/load_store_unit/mem_control_even/write_enable" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">write_enable</obj_property>
+      <obj_property name="ObjectShortName">write_enable</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/uut/ghettocuda/load_store_unit/mem_control_even/ram_control.write_enable_n" type="logic" db_ref_id="1">
+      <obj_property name="ElementShortName">.write_enable_n</obj_property>
+      <obj_property name="ObjectShortName">ram_control.write_enable_n</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/uut/ghettocuda/load_store_unit/mem_control_odd/write_data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">write_data[15:0]</obj_property>
+      <obj_property name="ObjectShortName">write_data[15:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/uut/ghettocuda/load_store_unit/mem_control_odd/ram_data.data" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">.data</obj_property>
+      <obj_property name="ObjectShortName">ram_data.data</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/uut/ghettocuda/load_store_unit/sram_bus_control_1_out" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">sram_bus_control_1_out</obj_property>
+      <obj_property name="ObjectShortName">sram_bus_control_1_out</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/sram_bus_data_1_inout" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">sram_bus_data_1_inout</obj_property>
+      <obj_property name="ObjectShortName">sram_bus_data_1_inout</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/sram_bus_control_2_out" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">sram_bus_control_2_out</obj_property>
+      <obj_property name="ObjectShortName">sram_bus_control_2_out</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/sram_bus_data_2_inout" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">sram_bus_data_2_inout</obj_property>
+      <obj_property name="ObjectShortName">sram_bus_data_2_inout</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/sram_a[0]" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">[0]</obj_property>
+      <obj_property name="ObjectShortName">sram_a[0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/sram_b[0]" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">[0]</obj_property>
+      <obj_property name="ObjectShortName">sram_b[0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/sram_a[1]" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">[1]</obj_property>
+      <obj_property name="ObjectShortName">sram_a[1]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/sram_b[1]" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">[1]</obj_property>
+      <obj_property name="ObjectShortName">sram_b[1]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/sram_a[2]" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">[2]</obj_property>
+      <obj_property name="ObjectShortName">sram_a[2]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/sram_b[2]" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">[2]</obj_property>
+      <obj_property name="ObjectShortName">sram_b[2]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/sram_a[3]" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">[3]</obj_property>
+      <obj_property name="ObjectShortName">sram_a[3]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/sram_b[3]" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">[3]</obj_property>
+      <obj_property name="ObjectShortName">sram_b[3]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/sram_a[4]" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">[4]</obj_property>
+      <obj_property name="ObjectShortName">sram_a[4]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/tb_system/sram_b[4]" type="array" db_ref_id="1">
+      <obj_property name="ElementShortName">[4]</obj_property>
+      <obj_property name="ObjectShortName">sram_b[4]</obj_property>
+   </wvobject>
+</wave_config>

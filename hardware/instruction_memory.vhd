@@ -17,7 +17,7 @@ end instruction_memory;
 
 architecture behavioral of instruction_memory is
 
-  type mem_t is array(INSTRUCTION_MEM_SIZE - 1 downto 0) of word_t;
+  type mem_t is array(0 to INSTRUCTION_MEM_SIZE - 1) of word_t;
   signal inst_mem_hi : mem_t := (others => (others => '0'));
   signal inst_mem_lo : mem_t := (others => (others => '0'));
 

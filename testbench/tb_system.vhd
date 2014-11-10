@@ -62,8 +62,8 @@ ARCHITECTURE behavior OF tb_system IS
 
    -- Memory
    type mem_t is array(1024 - 1 downto 0) of word_t;
-   signal sram_a : mem_t := (others => (others => '0'));
-   signal sram_b : mem_t := (others => (others => '0'));
+   signal sram_a : mem_t := (others => (others => 'U'));
+   signal sram_b : mem_t := (others => (others => 'U'));
 
 BEGIN
  
@@ -142,9 +142,10 @@ BEGIN
      
      
      procedure FillInstructionMemory is
-			constant TEST_INSTRS : integer := 5;
+			constant TEST_INSTRS : integer := 22;
 			type InstrData is array (0 to TEST_INSTRS-1) of instruction_t;
 			variable TestInstrData : InstrData := (
+                    X"00000000", -- nop
 				X"000228c1", -- srl $5, $2, 3
         X"00011820", -- add $3, $0, $1
         X"00022020", -- add $4, $0, $2
@@ -165,7 +166,7 @@ BEGIN
         X"00000000", -- nop
         X"00000000", -- nop
         X"00000000", -- nop
-				X"40221820" --finished
+				X"40021820" --finished
 				);
 		begin
 			for i in 0 to TEST_INSTRS-1 loop
@@ -190,6 +191,12 @@ BEGIN
       ebi_control_in.address <= "1000000000000000000"; -- Start at instruction mem 0. The MSB 1 means start kernel
       ebi_control_in.write_enable_n <= '0';
       ebi_control_in.chip_select_fpga_n <= '0';
+
+      -- As the implementation is now, we need to hold the start-
+      -- signal for exactly barrel-height plus one number of cycles. 
+      -- TODO: This should not be nessesary in this test.
+      wait for clk_period*(BARREL_HEIGHT+1);
+      ebi_control_in.write_enable_n <= '1';
 
       --Wait
       wait for clk_period*300;
