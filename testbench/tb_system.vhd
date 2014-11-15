@@ -65,31 +65,31 @@ BEGIN
            );
 
    -- Clock process definitions
-   clk_process :process
-   begin
-		clk <= '0';
-		wait for clk_period/2;
-		clk <= '1';
-		wait for clk_period/2;
-   end process;
-   
-   mem_proc: process (clk) is
-   begin
-     if rising_edge(clk) then
-       if sram_bus_control_1_out.write_enable_n = '0' then
-         sram_a(to_integer(unsigned(sram_bus_control_1_out.address))) <= sram_bus_data_1_inout;
-       end if;
-       
-       if sram_bus_control_2_out.write_enable_n = '0' then
-         sram_b(to_integer(unsigned(sram_bus_control_2_out.address))) <= sram_bus_data_2_inout;
-       end if;
-     end if;
-   end process;
- 
+  clk_process :process
+  begin
+    clk <= '0';
+    wait for clk_period/2;
+    clk <= '1';
+    wait for clk_period/2;
+  end process;
+
+  mem_proc: process (clk) is
+  begin
+    if rising_edge(clk) then
+      if sram_bus_control_1_out.write_enable_n = '0' then
+        sram_a(to_integer(unsigned(sram_bus_control_1_out.address))) <= sram_bus_data_1_inout;
+      end if;
+
+      if sram_bus_control_2_out.write_enable_n = '0' then
+        sram_b(to_integer(unsigned(sram_bus_control_2_out.address))) <= sram_bus_data_2_inout;
+      end if;
+    end if;
+  end process;
+
 
    -- Stimulus process
-   stim_proc: process
-   
+  stim_proc: process
+
      procedure write_instruction(instruction : in instruction_t
                                 ;address     : in instruction_address_t
                                 ) is begin
@@ -99,17 +99,17 @@ BEGIN
        ebi_control_in.read_enable_n <= '1';
        ebi_control_in.chip_select_fpga_n <= '0';
        wait until rising_edge(clk);
-       
+
        ebi_data_inout <= instruction(15 downto 0);
        ebi_control_in.address <= "001" & address & '1';
        ebi_control_in.write_enable_n <= '0';
        ebi_control_in.chip_select_fpga_n <= '0';
        wait until rising_edge(clk);
-       
+
        ebi_control_in.write_enable_n <= '1';
        ebi_control_in.chip_select_fpga_n <= '1';
      end procedure;
-     
+
      procedure check_memory(data : in word_t
                            ;address : in integer
                            ) is begin
@@ -119,44 +119,44 @@ BEGIN
           assert_equals(data, sram_b(address/2), "Data memory check");
        end if;
      end procedure;
-     
-     
-     procedure FillInstructionMemory is
-			constant TEST_INSTRS : integer := 21;
-			type InstrData is array (0 to TEST_INSTRS-1) of instruction_t;
-			variable TestInstrData : InstrData := (
-				X"00000000", -- nop
-				X"00022801", -- srl $5, $2, 0
-        X"00011820", -- add $3, $0, $1
-        X"00022020", -- add $4, $0, $2
-        X"10000000", -- sw
-        X"00000000", -- nop
-        X"00000000", -- nop
-        X"00000000", -- nop
-        X"00000000", -- nop
-        X"00000000", -- nop
-        X"00000000", -- nop
-        X"00000000", -- nop
-        X"00000000", -- nop
-        X"00000000", -- nop
-        X"00000000", -- nop
-        X"00000000", -- nop
-        X"00000000", -- nop
-        X"00000000", -- nop
-        X"00000000", -- nop
-        X"00000000", -- nop
-        X"00000000", -- nop
-				X"40000000" --finished
-				);
-		begin
-			for i in 0 to TEST_INSTRS-1 loop
-				write_instruction(TestInstrData(i), std_logic_vector(to_unsigned(i, INSTRUCTION_ADDRESS_WIDTH)));
-			end loop;
-		end FillInstructionMemory;
-   
-   constant batches : integer := 30;
-   
-   begin		
+
+     type InstrData is array (natural range<>) of instruction_t;
+
+     procedure fill_instruction_memory(instruction_data : in InstrData) is
+     begin
+       for i in 0 to instruction_data'LENGTH-1 loop
+         write_instruction(instruction_data(i), std_logic_vector(to_unsigned(i, INSTRUCTION_ADDRESS_WIDTH)));
+       end loop;
+     end fill_instruction_memory;
+
+     constant batches : integer := 30;
+
+     constant KERNEL_SRL : InstrData := (
+       X"00000000", -- nop
+       X"00022801", -- srl $5, $2, 0
+       X"00011820", -- add $3, $0, $1
+       X"00022020", -- add $4, $0, $2
+       X"10000000", -- sw
+       X"00000000", -- nop
+       X"00000000", -- nop
+       X"00000000", -- nop
+       X"00000000", -- nop
+       X"00000000", -- nop
+       X"00000000", -- nop
+       X"00000000", -- nop
+       X"00000000", -- nop
+       X"00000000", -- nop
+       X"00000000", -- nop
+       X"00000000", -- nop
+       X"00000000", -- nop
+       X"00000000", -- nop
+       X"00000000", -- nop
+       X"00000000", -- nop
+       X"00000000", -- nop
+       X"40000000" --finished
+     );
+
+   begin
       -- hold reset state for 100 ns.
       wait for 100 ns;
 
@@ -164,7 +164,7 @@ BEGIN
       ebi_control_in.chip_select_fpga_n <= '1';
       ebi_control_in.chip_select_sram_n <= '1';
 
-      FillInstructionMemory;
+      fill_instruction_memory(KERNEL_SRL);
 
       wait for clk_period*10;
 
@@ -176,7 +176,6 @@ BEGIN
       wait for clk_period * BARREL_HEIGHT;
       ebi_control_in.write_enable_n <= '1';
 
-      
       --Wait
       wait for clk_period * 30 * batches * BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS;
 
@@ -185,8 +184,6 @@ BEGIN
       for i in 0 to batches * BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS - 1 loop
         check_memory(std_logic_vector(to_unsigned(i,16)), i);
       end loop;
-      
-      
 
       wait;
    end process;
