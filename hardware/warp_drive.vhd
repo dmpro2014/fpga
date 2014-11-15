@@ -18,12 +18,10 @@ end warp_drive;
 architecture rtl of warp_drive is
   signal counter : unsigned(BARREL_BIT_WIDTH - 1 downto 0) := (BARREL_BIT_WIDTH - 1 downto 0 => '0'); 
 begin
-  
-  
-  
-  with counter select
-  pc_write_enable_out <=  '1' when (BARREL_BIT_WIDTH - 1 downto 0 => '0'),
-                          '0' when others;
+
+  with unsigned(counter) select
+    pc_write_enable_out <=  '1' when to_unsigned(0, BARREL_BIT_WIDTH),
+                            '0' when others;
                      
   active_barrel_row_out <= std_logic_vector(counter);
   
