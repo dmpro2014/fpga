@@ -129,8 +129,6 @@ BEGIN
        end loop;
      end fill_instruction_memory;
 
-     constant batches : integer := 30;
-
      constant KERNEL_SRL : InstrData := (
        X"00000000", -- nop
        X"00022801", -- srl $5, $2, 0
@@ -155,6 +153,7 @@ BEGIN
        X"00000000", -- nop
        X"40000000" --finished
      );
+     constant BATCHES_SRL : integer := 30;
 
    begin
       -- hold reset state for 100 ns.
@@ -169,7 +168,7 @@ BEGIN
       wait for clk_period*10;
 
       --Start kernel
-      ebi_data_inout <= std_logic_vector(to_unsigned(batches, WORD_WIDTH)); -- Number of batches
+      ebi_data_inout <= std_logic_vector(to_unsigned(BATCHES_SRL, WORD_WIDTH)); -- Number of batches
       ebi_control_in.address <= "010000000000000000000"; -- Start at instruction mem 0. Bit 18 1 means start kernel
       ebi_control_in.write_enable_n <= '0';
       ebi_control_in.chip_select_fpga_n <= '0';
@@ -177,11 +176,10 @@ BEGIN
       ebi_control_in.write_enable_n <= '1';
 
       --Wait
-      wait for clk_period * 30 * batches * BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS;
+      wait for clk_period * 3 * KERNEL_SRL'LENGTH * BATCHES_SRL * BARREL_HEIGHT;
 
       --Check memory
-
-      for i in 0 to batches * BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS - 1 loop
+      for i in 0 to BATCHES_SRL * BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS - 1 loop
         check_memory(std_logic_vector(to_unsigned(i,16)), i);
       end loop;
 
