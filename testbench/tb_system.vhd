@@ -149,6 +149,7 @@ BEGIN
 			constant TEST_INSTRS : integer := 21;
 			type InstrData is array (0 to TEST_INSTRS-1) of instruction_t;
 			variable TestInstrData : InstrData := (
+				X"00000000", -- nop
 				X"00022801", -- srl $5, $2, 0
         X"00011820", -- add $3, $0, $1
         X"00022020", -- add $4, $0, $2
@@ -205,7 +206,7 @@ BEGIN
 
       --Check memory
 
-      for i in 0 to batches * BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS loop
+      for i in 0 to batches * BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS - 1 loop
         check_memory(std_logic_vector(to_unsigned(i,16)), i);
       end loop;
       
