@@ -6,13 +6,11 @@ use work.hdmi_definitions.all;
 
 entity video_timing_generator is
 
-    generic
-        ( video_mode   : video_mode_t     := video_640x480_60Hz
-        );
-
     port
-        ( clock        : in   std_logic
-        ; control      : out  video_control_t
+        ( clock    : in  std_logic
+        ; reset    : in  std_logic
+        ; launch   : in  std_logic
+        ; control  : out  video_control_t
         );
 
 end video_timing_generator;
@@ -26,7 +24,24 @@ architecture Behavioral of video_timing_generator is
     signal h_count : unsigned(9 downto 0);
     signal v_count : unsigned(8 downto 0);
 
+    signal zero_counter : std_logic := '1';
+
+    constant video_mode : video_mode_t := video_640x480_60Hz;
+
 begin
+
+    launch_proc:
+        process (clock) begin
+            if rising_edge(clock) then
+                if reset = '1' then
+                    zero_counter <= '1';
+                else
+                    if launch = '1' then
+                        zero_counter <= '0';
+                    end if;
+                end if;
+            end if;
+        end process;
 
     blank:
         process (v_count, h_count) begin
@@ -59,11 +74,11 @@ begin
         process (clock) begin
             if rising_edge(clock) then
                 h_count <= h_count + 1;
-                if h_count = video_mode.h.total then
+                if h_count = video_mode.h.total or zero_counter = '1' then
                     h_count <= to_unsigned(0, 10);
                     v_count <= v_count + 1;
                 end if;
-                if v_count = video_mode.v.total then
+                if v_count = video_mode.v.total or zero_counter = '1' then
                     v_count <= to_unsigned(0, 9);
                 end if;
             end if;

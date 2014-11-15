@@ -97,9 +97,9 @@ package body hdmi_definitions is
     function to_video_pixel(d: word_t)
         return video_pixel_t
     is begin
-        return ( red   => d(10 downto  5) & "000"
-               , green => d(15 downto 11) & "00"
-               , blue  => d(4  downto  0) & "000"
+        return ( red   => d(15 downto 11) & d(15) & d(15) & d(15)
+               , green => d(10 downto 5) & d(10) & d(10)
+               , blue  => d(4  downto 0) & d(4) & d(4) & d(4)
                );
     end;
 

@@ -11,6 +11,7 @@ entity hdmi_output is
         ( clock_pixel         : in      std_logic
         ; clock_5bit          : in      std_logic
         ; clock_bit           : in      std_logic
+        ; strobe_serdes       : in      std_logic
         ; control             : in      video_control_t
         ; pixel_data          : in      video_pixel_t
         ; hdmi_connector      : out     hdmi_connector_t
@@ -32,6 +33,7 @@ begin
                 ( clock_pixel   => clock_pixel
                 , clock_5bit    => clock_5bit
                 , clock_bit     => clock_bit
+                , strobe_serdes => strobe_serdes
                 , blank         => control.blank
                 , control_bits  => beam_control_bits
                 , data          => pixel_data.blue
@@ -44,6 +46,7 @@ begin
                 ( clock_pixel   => clock_pixel
                 , clock_5bit    => clock_5bit
                 , clock_bit     => clock_bit
+                , strobe_serdes => strobe_serdes
                 , blank         => control.blank
                 , control_bits  => "00"
                 , data          => pixel_data.red
@@ -56,6 +59,7 @@ begin
                 ( clock_pixel   => clock_pixel
                 , clock_5bit    => clock_5bit
                 , clock_bit     => clock_bit
+                , strobe_serdes => strobe_serdes
                 , blank         => control.blank
                 , control_bits  => "00"
                 , data          => pixel_data.green
