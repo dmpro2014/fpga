@@ -30,7 +30,8 @@ architecture Behavioral of mem_control is begin
         if rising_edge(clock) then
 
             -- Setup ram-bus. `ram_control.write_enable` is active-low.
-            ram_control.address      <= request_packet.address;
+            --Drop lowest bit, because we are striping data across two RAM chips
+            ram_control.address      <= request_packet.address(DATA_WIDTH - 1 downto 1); 
             ram_control.write_enable_n <= not (request_packet.valid and write_enable);
 
             -- Handle the half-duplex data-bus to ram.

@@ -62,8 +62,8 @@ ARCHITECTURE behavior OF tb_system IS
 
    -- Memory
    type mem_t is array(1024 - 1 downto 0) of word_t;
-   signal sram_a : mem_t := (others => (others => '1'));
-   signal sram_b : mem_t := (others => (others => '1'));
+   signal sram_a : mem_t := (others => (others => '0'));
+   signal sram_b : mem_t := (others => (others => '0'));
 
 BEGIN
  
@@ -118,14 +118,14 @@ BEGIN
                                 ;address     : in instruction_address_t
                                 ) is begin
        ebi_data_inout <= instruction(31 downto 16);
-       ebi_control_in.address <= "01" & address & '0';
+       ebi_control_in.address <= "001" & address & '0';
        ebi_control_in.write_enable_n <= '0';
        ebi_control_in.read_enable_n <= '1';
        ebi_control_in.chip_select_fpga_n <= '0';
        wait until rising_edge(clk);
        
        ebi_data_inout <= instruction(15 downto 0);
-       ebi_control_in.address <= "01" & address & '1';
+       ebi_control_in.address <= "001" & address & '1';
        ebi_control_in.write_enable_n <= '0';
        ebi_control_in.chip_select_fpga_n <= '0';
        wait until rising_edge(clk);
@@ -137,7 +137,11 @@ BEGIN
      procedure check_memory(data : in word_t
                            ;address : in integer
                            ) is begin
-       assert_equals(data, sram_a(address), "Data memory check");
+       if address mod 2 = 0 then
+          assert_equals(data, sram_a(address/2), "Data memory check");
+       else
+          assert_equals(data, sram_b(address/2), "Data memory check");
+       end if;
      end procedure;
      
      
@@ -189,7 +193,7 @@ BEGIN
 
       --Start kernel
       ebi_data_inout <= std_logic_vector(to_unsigned(batches, WORD_WIDTH)); -- Number of batches
-      ebi_control_in.address <= "1000000000000000000"; -- Start at instruction mem 0. The MSB 1 means start kernel
+      ebi_control_in.address <= "010000000000000000000"; -- Start at instruction mem 0. Bit 18 1 means start kernel
       ebi_control_in.write_enable_n <= '0';
       ebi_control_in.chip_select_fpga_n <= '0';
       wait for clk_period * BARREL_HEIGHT;

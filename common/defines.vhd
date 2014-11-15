@@ -8,9 +8,9 @@ package defines is
   ----------------
   constant INSTRUCTION_WIDTH : integer := 32;
   constant INSTRUCTION_ADDRESS_WIDTH: integer := 16;
-  constant DATA_ADDRESS_WIDTH: integer := 19;
-  constant ID_WIDTH: integer := 19;
-  constant DATA_WIDTH: integer := 19;
+  constant DATA_ADDRESS_WIDTH: integer := 20;
+  constant ID_WIDTH: integer := 20;
+  constant DATA_WIDTH: integer := 20;
   constant WORD_WIDTH: integer := 16;
 
   subtype word_t is std_logic_vector(WORD_WIDTH - 1 downto 0);
