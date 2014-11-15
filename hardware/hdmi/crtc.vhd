@@ -1,6 +1,8 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
+library unisim;
+use unisim.vcomponents.all;
 use work.defines.all;
 use work.hdmi_definitions.all;
 
@@ -8,11 +10,10 @@ entity crtc is
     port
         -- clock_sys should be at least 25MHz + some.
         ( clock_sys           : in      std_logic
-        ; clock_25MHz         : in      std_logic
-        ; clock_50MHz         : in      std_logic
-        ; clock_250MHz        : in      std_logic
+        ; clock_25            : in      std_logic
+        ; clock_125           : in      std_logic
+        ; clock_125n          : in      std_logic
         ; reset               : in      std_logic
-        ; strobe_serdes       : in      std_logic
 
         ; front_buffer_select : in      std_logic         := '0'
 
@@ -30,9 +31,7 @@ end crtc;
 architecture Behavioral of crtc is
     alias video_mode : video_mode_t is video_640x480_60Hz;
 
-    alias clock_pixel : std_logic is clock_25MHz;
-    alias clock_5bit  : std_logic is clock_50MHz;
-    alias clock_bit   : std_logic is clock_250MHz;
+    alias clock_pixel : std_logic is clock_25;
 
     constant video_size : natural := video_mode.h.resolution * video_mode.v.resolution;
 
@@ -55,6 +54,11 @@ architecture Behavioral of crtc is
     signal fifo_din : std_logic_vector(WORD_WIDTH*2-1 downto 0);
     
     signal video_control : video_control_t;
+    
+    signal red_s   : std_logic;
+    signal green_s : std_logic;
+    signal blue_s  : std_logic;
+    signal clock_s : std_logic;
 begin
     
     with front_buffer_select
@@ -119,17 +123,26 @@ begin
                 , control      => video_control
                 );
 
-    hdmi_output:
-        entity work.hdmi_output
-            port map
-                ( clock_pixel    => clock_pixel
-                , clock_5bit     => clock_5bit
-                , clock_bit      => clock_bit
-                , strobe_serdes  => strobe_serdes
-                , control        => video_control
-                , pixel_data     => scanout_pixel
-                , hdmi_connector => hdmi_connector
-                );
+    Inst_dvid: entity work.dvid PORT MAP(
+      clk       => clock_125,
+      clk_n     => clock_125n, 
+      clk_pixel => clock_pixel,
+      red_p     => scanout_pixel.red,
+      green_p   => scanout_pixel.green,
+      blue_p    => scanout_pixel.blue,
+      blank     => video_control.blank,
+      hsync     => video_control.hsync,
+      vsync     => video_control.vsync,
+      -- outputs to TMDS drivers
+      red_s     => red_s,
+      green_s   => green_s,
+      blue_s    => blue_s,
+      clock_s   => clock_s
+   );
 
+    OBUFDS_blue  : OBUFDS port map ( O  => hdmi_connector.channel0.p, OB => hdmi_connector.channel0.n, I  => blue_s  );
+    OBUFDS_red   : OBUFDS port map ( O  => hdmi_connector.channel1.p, OB => hdmi_connector.channel1.n, I  => red_s );
+    OBUFDS_green : OBUFDS port map ( O  => hdmi_connector.channel2.p, OB => hdmi_connector.channel2.n, I  => green_s );
+    OBUFDS_clock : OBUFDS port map ( O  => hdmi_connector.clock.p, OB => hdmi_connector.clock.n, I  => clock_s );
 
 end Behavioral;
