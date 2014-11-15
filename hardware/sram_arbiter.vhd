@@ -1,5 +1,5 @@
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+library ieee;
+use ieee.std_logic_1164.all;
 use work.defines.all;
 
 entity sram_arbiter is
@@ -29,9 +29,43 @@ architecture Behavioral of sram_arbiter is
 begin
 
 sram_bus_control_1_out <= lsu_sram_bus_control_1_in;
-sram_bus_data_1_inout <= lsu_sram_bus_data_1_inout;
 sram_bus_control_2_out <= lsu_sram_bus_control_2_in;
-sram_bus_data_2_inout <= lsu_sram_bus_data_2_inout;
 
+--process (lsu_sram_bus_control_1_in.write_enable_n
+--        ,lsu_sram_bus_control_2_in.write_enable_n
+--        ,sram_bus_data_1_inout
+--        ,sram_bus_data_2_inout
+--        ,lsu_sram_bus_data_1_inout
+--        ,lsu_sram_bus_data_2_inout)
+--begin
+--  sram_bus_data_1_inout <= (others => 'Z');
+--  sram_bus_data_2_inout <= (others => 'Z');
+--
+--  if lsu_sram_bus_control_1_in.write_enable_n = '0' then
+--    sram_bus_data_1_inout <= lsu_sram_bus_data_1_inout;
+----  else
+----    lsu_sram_bus_data_1_inout <= lsu_sram_bus_data_1_inout;
+--  end if;
+--  
+--  if lsu_sram_bus_control_2_in.write_enable_n = '0' then
+--    sram_bus_data_2_inout <= lsu_sram_bus_data_2_inout;
+----  else
+----    lsu_sram_bus_data_2_inout <= lsu_sram_bus_data_2_inout;
+--  end if;
+--end process;
+--
+    sram_bus_data_1_inout <= lsu_sram_bus_data_1_inout when lsu_sram_bus_control_1_in.write_enable_n = '0' 
+                          else (others=>'Z');
+                          
+   lsu_sram_bus_data_1_inout <= sram_bus_data_1_inout when lsu_sram_bus_control_1_in.write_enable_n = '1' 
+                          else (others=>'Z');
+                          
+   sram_bus_data_2_inout <= lsu_sram_bus_data_2_inout when lsu_sram_bus_control_2_in.write_enable_n = '0' 
+                          else (others=>'Z');
+                          
+   lsu_sram_bus_data_2_inout <= sram_bus_data_2_inout when lsu_sram_bus_control_2_in.write_enable_n = '1' 
+                          else (others=>'Z');
+
+                     
 end Behavioral;
 

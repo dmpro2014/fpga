@@ -108,6 +108,7 @@
       <association xil_pn:name="PostTranslateSimulation"/>
     </file>
     <file xil_pn:name="hardware/System.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation"/>
       <association xil_pn:name="Implementation"/>
     </file>
     <file xil_pn:name="hardware/ghettocuda.vhd" xil_pn:type="FILE_VHDL">
@@ -165,6 +166,12 @@
     <file xil_pn:name="hardware/lsu/mem_queue_cell.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation"/>
       <association xil_pn:name="Implementation"/>
+    </file>
+    <file xil_pn:name="testbench/tb_system.vhd" xil_pn:type="FILE_VHDL">
+      <association xil_pn:name="BehavioralSimulation"/>
+      <association xil_pn:name="PostMapSimulation"/>
+      <association xil_pn:name="PostRouteSimulation"/>
+      <association xil_pn:name="PostTranslateSimulation"/>
     </file>
     <file xil_pn:name="testbench/tb_alu.vhd" xil_pn:type="FILE_VHDL">
       <association xil_pn:name="BehavioralSimulation"/>

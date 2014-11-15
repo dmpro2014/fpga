@@ -15,7 +15,7 @@ entity communication_unit is
          kernel_number_of_threads_out: out thread_id_t;
 
          -- MC busses
-         ebi_data_inout : inout ebi_data_t;
+         ebi_data_inout : inout ebi_data_t := (others=>'Z');
          ebi_control_in : in ebi_control_t;
 
          -- Instruction memory
@@ -54,10 +54,10 @@ begin
     and not ebi_control_in.address(17);
 
   -- SRAM
-  sram_bus_data_inout.data <= ebi_data_inout;
+  sram_bus_data_inout <= ebi_data_inout;
   sram_bus_control_out.address <= ebi_control_in.address;
   sram_bus_control_out.write_enable_n <= ebi_control_in.write_enable_n;
---  sram_bus_control_out.chip_select_n <= ebi_control_in.chip_select_sram_n;
+--  sram_bus_control_out.chip_select_n <= ebi_control_in.chip_select_sram_n; --Commented out so testing works
   
   -- Thread spawner
   kernel_number_of_threads_out <= std_logic_vector(shift_left(

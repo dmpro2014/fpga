@@ -84,10 +84,7 @@ package defines is
       write_enable_n : std_logic;
     end record;
 
-  type sram_bus_data_t is
-    record
-      data : std_logic_vector(15 downto 0);
-    end record;
+  subtype sram_bus_data_t is std_logic_vector(15 downto 0);
 
   type ebi_control_t is
     record

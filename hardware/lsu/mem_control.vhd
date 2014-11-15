@@ -24,7 +24,7 @@ end mem_control;
 architecture Behavioral of mem_control is begin
 
     -- Output the response from ram immediately.
-    read_response.data <= ram_data.data;
+    read_response.data <= ram_data;
 
     process (clock) begin
         if rising_edge(clock) then
@@ -36,9 +36,9 @@ architecture Behavioral of mem_control is begin
             -- Handle the half-duplex data-bus to ram.
             -- When write_enable is low, disconnect it from load using a BUFT.
             if write_enable = '1' then
-                ram_data.data <= request_packet.write_data;
+                ram_data <= request_packet.write_data;
             else
-                ram_data.data <= (others => 'Z');
+                ram_data <= (others => 'Z');
             end if;
 
 
