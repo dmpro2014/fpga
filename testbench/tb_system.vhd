@@ -62,8 +62,8 @@ ARCHITECTURE behavior OF tb_system IS
 
    -- Memory
    type mem_t is array(1024 - 1 downto 0) of word_t;
-   signal sram_a : mem_t := (others => (others => '0'));
-   signal sram_b : mem_t := (others => (others => '0'));
+   signal sram_a : mem_t := (others => (others => 'U'));
+   signal sram_b : mem_t := (others => (others => 'U'));
 
 BEGIN
  
@@ -142,7 +142,7 @@ BEGIN
      
      
      procedure FillInstructionMemory is
-			constant TEST_INSTRS : integer := 5;
+			constant TEST_INSTRS : integer := 21;
 			type InstrData is array (0 to TEST_INSTRS-1) of instruction_t;
 			variable TestInstrData : InstrData := (
 				X"000228c1", -- srl $5, $2, 3
@@ -165,7 +165,7 @@ BEGIN
         X"00000000", -- nop
         X"00000000", -- nop
         X"00000000", -- nop
-				X"40221820" --finished
+				X"40021820" --finished
 				);
 		begin
 			for i in 0 to TEST_INSTRS-1 loop
@@ -186,13 +186,13 @@ BEGIN
       wait for clk_period*10;
 
       --Start kernel
-      ebi_data_inout <= std_logic_vector(to_unsigned(2, WORD_WIDTH)); -- Number of batches
+      ebi_data_inout <= std_logic_vector(to_unsigned(10, WORD_WIDTH)); -- Number of batches
       ebi_control_in.address <= "1000000000000000000"; -- Start at instruction mem 0. The MSB 1 means start kernel
       ebi_control_in.write_enable_n <= '0';
       ebi_control_in.chip_select_fpga_n <= '0';
 
       --Wait
-      wait for clk_period*300;
+      wait for clk_period*6000;
 
       --Check memory
 
