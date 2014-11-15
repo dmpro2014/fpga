@@ -55,7 +55,7 @@ begin
 
   -- SRAM
   sram_bus_data_inout <= ebi_data_inout;
-  sram_bus_control_out.address <= ebi_control_in.address;
+--  sram_bus_control_out.address <= ebi_control_in.address;
   sram_bus_control_out.write_enable_n <= ebi_control_in.write_enable_n;
 --  sram_bus_control_out.chip_select_n <= ebi_control_in.chip_select_sram_n; --Commented out so testing works
   
