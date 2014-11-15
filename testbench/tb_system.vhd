@@ -62,8 +62,8 @@ ARCHITECTURE behavior OF tb_system IS
 
    -- Memory
    type mem_t is array(1024 - 1 downto 0) of word_t;
-   signal sram_a : mem_t := (others => (others => 'U'));
-   signal sram_b : mem_t := (others => (others => 'U'));
+   signal sram_a : mem_t := (others => (others => '1'));
+   signal sram_b : mem_t := (others => (others => '1'));
 
 BEGIN
  
@@ -101,11 +101,11 @@ BEGIN
    begin
      if rising_edge(clk) then
        if sram_bus_control_1_out.write_enable_n = '0' then
-         sram_a(to_integer(unsigned(sram_bus_control_1_out.address))) <= sram_bus_data_1_inout.data;
+         sram_a(to_integer(unsigned(sram_bus_control_1_out.address))) <= sram_bus_data_1_inout;
        end if;
        
        if sram_bus_control_2_out.write_enable_n = '0' then
-         sram_b(to_integer(unsigned(sram_bus_control_2_out.address))) <= sram_bus_data_2_inout.data;
+         sram_b(to_integer(unsigned(sram_bus_control_2_out.address))) <= sram_bus_data_2_inout;
        end if;
      end if;
    end process;
@@ -145,7 +145,7 @@ BEGIN
 			constant TEST_INSTRS : integer := 21;
 			type InstrData is array (0 to TEST_INSTRS-1) of instruction_t;
 			variable TestInstrData : InstrData := (
-				X"000228c1", -- srl $5, $2, 3
+				X"00022801", -- srl $5, $2, 0
         X"00011820", -- add $3, $0, $1
         X"00022020", -- add $4, $0, $2
         X"10000000", -- sw
@@ -165,13 +165,15 @@ BEGIN
         X"00000000", -- nop
         X"00000000", -- nop
         X"00000000", -- nop
-				X"40021820" --finished
+				X"40000000" --finished
 				);
 		begin
 			for i in 0 to TEST_INSTRS-1 loop
 				write_instruction(TestInstrData(i), std_logic_vector(to_unsigned(i, INSTRUCTION_ADDRESS_WIDTH)));
 			end loop;
 		end FillInstructionMemory;
+   
+   constant batches : integer := 30;
    
    begin		
       -- hold reset state for 100 ns.
@@ -186,19 +188,22 @@ BEGIN
       wait for clk_period*10;
 
       --Start kernel
-      ebi_data_inout <= std_logic_vector(to_unsigned(10, WORD_WIDTH)); -- Number of batches
+      ebi_data_inout <= std_logic_vector(to_unsigned(batches, WORD_WIDTH)); -- Number of batches
       ebi_control_in.address <= "1000000000000000000"; -- Start at instruction mem 0. The MSB 1 means start kernel
       ebi_control_in.write_enable_n <= '0';
       ebi_control_in.chip_select_fpga_n <= '0';
+      wait for clk_period * BARREL_HEIGHT;
+      ebi_control_in.write_enable_n <= '1';
 
+      
       --Wait
-      wait for clk_period*6000;
+      wait for clk_period * 30 * batches * BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS;
 
       --Check memory
 
-      check_memory(x"0000", 0);
-      check_memory(x"0001", 8);
-      check_memory(x"000C", 100);
+      for i in 0 to batches * BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS loop
+        check_memory(std_logic_vector(to_unsigned(i,16)), i);
+      end loop;
       
       
 
