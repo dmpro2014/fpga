@@ -83,7 +83,7 @@ begin
 
   ghettocuda : entity work.ghettocuda
   port map ( -- Stuff
-            clk => clk,
+            clk => clock_sys,
             reset => reset,
 
             -- Constant memory
@@ -119,7 +119,7 @@ begin
                CONSTANT_ADDRESS_WIDTH => CONSTANT_MEM_LOG_SIZE
   )
   port map(
-            clk => clk,
+            clk => clock_sys,
 
             ebi_data_inout => ebi_data_inout,
             ebi_control_in => ebi_control_in,
@@ -190,4 +190,12 @@ begin
           
           , hdmi_connector      => hdmi_connector_out
           );
+
+   clock_unit : entity work.clock_unit
+   port map ( clk_in1  => clk
+            , clk_out1 => clock_sys
+            , clk_out2 => clock_25
+            , clk_out3 => clock_125
+            , clk_out4 => clock_125n
+            );
 end Behavioral;
