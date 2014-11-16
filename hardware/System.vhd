@@ -13,8 +13,16 @@ entity System is
          sram_bus_data_1_inout : inout sram_bus_data_t;
          sram_bus_control_1_out : out sram_bus_control_t;
 
+         sram_bus_1_lb_out_n   : out std_logic   := '0';
+         sram_bus_1_ub_out_n   : out std_logic   := '0';
+         sram_1_enable_n     : out std_logic := '0';
+
          sram_bus_data_2_inout : inout sram_bus_data_t;
          sram_bus_control_2_out : out sram_bus_control_t;
+
+         sram_bus_2_lb_out_n : out std_logic := '0';
+         sram_bus_2_ub_out_n : out std_logic := '0';
+         sram_2_enable_n     : out std_logic := '0';
 
          -- HDMI
          hdmi_connector_out : out hdmi_connector_t;
