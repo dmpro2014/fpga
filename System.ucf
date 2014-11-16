@@ -1,3 +1,4 @@
+Net clk tmn_net = net_clk_ext;
 timespec ts_clk_ext = period net_clk_ext 120MHz;
 NET clk tnm_net = net_clk_ext | loc = C9;
 
