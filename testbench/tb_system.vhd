@@ -73,26 +73,21 @@ BEGIN
 
   mem_proc: process (clk) is
   begin
-    
+
     if rising_edge(clk) then
       sram_bus_data_1_inout <= (others => 'Z');
       sram_bus_data_2_inout <= (others => 'Z');
-      
+
       if sram_bus_control_1_out.write_enable_n = '0' then
         sram_a(to_integer(unsigned(sram_bus_control_1_out.address))) <= sram_bus_data_1_inout;
+      else
+        sram_bus_data_1_inout <= sram_a(to_integer(unsigned(sram_bus_control_1_out.address)));
       end if;
 
       if sram_bus_control_2_out.write_enable_n = '0' then
         sram_b(to_integer(unsigned(sram_bus_control_2_out.address))) <= sram_bus_data_2_inout;
-      end if;
-      
-      
-      if sram_bus_control_1_out.write_enable_n = '1' then
-        sram_bus_data_1_inout <= sram_a(to_integer(unsigned(sram_bus_control_1_out.address)));
-      end if;
-
-      if sram_bus_control_2_out.write_enable_n = '1' then
-       sram_bus_data_2_inout <=  sram_b(to_integer(unsigned(sram_bus_control_2_out.address)));
+      else
+        sram_bus_data_2_inout <=  sram_b(to_integer(unsigned(sram_bus_control_2_out.address)));
       end if;
     end if;
   end process;
@@ -185,7 +180,7 @@ BEGIN
       ebi_control_in.chip_select_fpga_n <= '0';
       wait on clk_sys_out until rising_edge(clk_sys_out);
       ebi_control_in.write_enable_n <= '1';
-      
+
       --Wait
       wait on mc_kernel_complete_out until mc_kernel_complete_out = '1';
 
