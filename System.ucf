@@ -113,8 +113,8 @@ net reset loc = C1;
 
 net ebi_control_in_read_enable_n loc = P12;
 net ebi_control_in_write_enable_n loc = U13;
-net ebi_control_in_chip_select_sram_n loc = V13; #TODO: IS THIS CORRECT?!!!!! OR THE OTHER WAY AROUND?
-net ebi_control_in_chip_select_fpga_n loc = M11;
+net ebi_control_in_chip_select_sram_n loc = M11;
+net ebi_control_in_chip_select_fpga_n loc = V13;
 
 #net ebi_control_in_address(25) loc = R11;
 #net ebi_control_in_address(24) loc = T11;
