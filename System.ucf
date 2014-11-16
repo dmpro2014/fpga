@@ -1,6 +1,6 @@
 Net clk tmn_net = net_clk_ext;
 timespec ts_clk_ext = period net_clk_ext 120MHz;
-NET clk tnm_net = net_clk_ext | loc = C9;
+NET clk tnm_net = net_clk_ext | loc = T10; -- Has been switched with ebi addr pin T13
 
 ----------------------------
 -- SRAM bus 1 constraints --
@@ -127,7 +127,7 @@ net ebi_control_in_address(18) loc = N10;
 net ebi_control_in_address(17) loc = U11;
 net ebi_control_in_address(16) loc = V11;
 net ebi_control_in_address(15) loc = R10;
-net ebi_control_in_address(14) loc = T10;
+net ebi_control_in_address(14) loc = T13; -- Has been switched with clk pin T10
 net ebi_control_in_address(13) loc = U10;
 net ebi_control_in_address(12) loc = V10;
 net ebi_control_in_address(11) loc = R8;
