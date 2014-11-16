@@ -7,6 +7,7 @@ entity System is
   Port ( -- Stuff
          clk : in std_logic;
          reset : in std_logic;
+         clk_sys_out : out std_logic;
 
          -- SRAM
          sram_bus_data_1_inout : inout sram_bus_data_t;
@@ -80,6 +81,9 @@ architecture Behavioral of System is
   signal hdmi_sram_request_accepted_in : std_logic;
 
 begin
+
+  --Output system clock for testing and debugging
+  clk_sys_out <= clock_sys;
 
   ghettocuda : entity work.ghettocuda
   port map ( -- Stuff
