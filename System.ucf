@@ -1,6 +1,7 @@
-Net clk tnm_net = net_clk_ext;
-timespec ts_clk_ext = period net_clk_ext 120MHz;
-NET clk tnm_net = net_clk_ext | loc = T10; ## Has been switched with ebi addr pin T13
+VCCAUX = 3.3;
+
+TIMESPEC TS_sys_clk_pin = PERIOD sys_clk_pin 66.6 MHz;
+Net clk TNM_NET = sys_clk_pin  |  LOC=L12 | IOSTANDARD = LVCMOS33;
 
 ############################
 ## SRAM bus 1 constraints ##
@@ -122,48 +123,47 @@ net ebi_control_in_chip_select_fpga_n loc = V13;
 #net ebi_control_in_address(22) loc = V12;
 #net ebi_control_in_address(21) loc = N10;
 #net ebi_control_in_address(20) loc = P11;
-net ebi_control_in_address(19) loc = M10;
-net ebi_control_in_address(18) loc = N10;
-net ebi_control_in_address(17) loc = U11;
-net ebi_control_in_address(16) loc = V11;
-net ebi_control_in_address(15) loc = R10;
-net ebi_control_in_address(14) loc = T13; ## Has been switched with clk pin T10
-net ebi_control_in_address(13) loc = U10;
-net ebi_control_in_address(12) loc = V10;
-net ebi_control_in_address(11) loc = R8;
-net ebi_control_in_address(10) loc = T8;
-net ebi_control_in_address(9) loc = T9;
-net ebi_control_in_address(8) loc = V9;
-net ebi_control_in_address(7) loc = M8;
-net ebi_control_in_address(6) loc = N8;
-net ebi_control_in_address(5) loc = U8;
-net ebi_control_in_address(4) loc = V8;
-net ebi_control_in_address(3) loc = U7;
-net ebi_control_in_address(2) loc = V7;
-net ebi_control_in_address(1) loc = N7;
-net ebi_control_in_address(0) loc = P8;
+#net ebi_control_in_address(19) loc = M10;
+#net ebi_control_in_address(18) loc = N10;
+#net ebi_control_in_address(17) loc = U11;
+#net ebi_control_in_address(16) loc = V11;
+net ebi_control_in_address(15) loc = t5;
+net ebi_control_in_address(14) loc = r5; ## Has been switched with clk pin T10
+net ebi_control_in_address(13) loc = v4;
+net ebi_control_in_address(12) loc = t4;
+net ebi_control_in_address(11) loc = v5;
+net ebi_control_in_address(10) loc = u5;
+net ebi_control_in_address(9) loc = p6 ;
+net ebi_control_in_address(8) loc = n5 ;
+net ebi_control_in_address(7) loc = p7 ;
+net ebi_control_in_address(6) loc = n6 ;
+net ebi_control_in_address(5) loc = p8 ;
+net ebi_control_in_address(4) loc = n7 ;
+net ebi_control_in_address(3) loc = n8 ;
+net ebi_control_in_address(2) loc = m8 ;
+net ebi_control_in_address(1) loc = n9 ;
+net ebi_control_in_address(0) loc = m10;
 
 net mc_frame_buffer_select_in loc = T11;  #EBI addr 24
 net mc_kernel_complete_out loc = R11;  #EBI addr 25
 
 
-net ebi_data_inout(15) loc = V6;
-net ebi_data_inout(14) loc = R7;
-net ebi_data_inout(13) loc = T7;
-net ebi_data_inout(12) loc = N6;
-net ebi_data_inout(11) loc = P7;
-net ebi_data_inout(10) loc = R5;
-net ebi_data_inout(9) loc = T5;
-net ebi_data_inout(8) loc = U5;
-net ebi_data_inout(7) loc = V5;
-net ebi_data_inout(6) loc = R3;
-net ebi_data_inout(5) loc = T3;
-net ebi_data_inout(4) loc = T4;
-net ebi_data_inout(3) loc = V4;
-net ebi_data_inout(2) loc = N5;
-net ebi_data_inout(1) loc = P6;
-net ebi_data_inout(0) loc = U3;
-
+net ebi_data_inout(15) loc = F18;
+net ebi_data_inout(14) loc = E18;
+net ebi_data_inout(13) loc = F17;
+net ebi_data_inout(12) loc = E16;
+net ebi_data_inout(11) loc = K13;
+net ebi_data_inout(10) loc = G13;
+net ebi_data_inout(9) loc = K12 ;
+net ebi_data_inout(8) loc = H12 ;
+net ebi_data_inout(7) loc = D18 ;
+net ebi_data_inout(6) loc = C18 ;
+net ebi_data_inout(5) loc = D17 ;
+net ebi_data_inout(4) loc = C17 ;
+net ebi_data_inout(3) loc = G14 ;
+net ebi_data_inout(2) loc = F16 ;
+net ebi_data_inout(1) loc = F14 ;
+net ebi_data_inout(0) loc = F15 ;
 
 # ROUTING OUT CLK_SYS FOR DEBUGGING AND FUN :D
 #net clk_sys_out loc = R15; 
@@ -184,17 +184,17 @@ net ebi_data_inout(0) loc = U3;
 ## HDMI constraints ##
 ######################
 
-net hdmi_connector_out_channel2_p loc = B2;
-net hdmi_connector_out_channel2_n loc = A2;
+net hdmi_connector_out_channel2_p loc = U8;
+net hdmi_connector_out_channel2_n loc = V8;
 
-net hdmi_connector_out_channel1_p loc = D6;
-net hdmi_connector_out_channel1_n loc = C6;
+net hdmi_connector_out_channel1_p loc = U7;
+net hdmi_connector_out_channel1_n loc = V7;
 
-net hdmi_connector_out_channel0_p loc = B3;
-net hdmi_connector_out_channel0_n loc = A3;
+net hdmi_connector_out_channel0_p loc = T6;
+net hdmi_connector_out_channel0_n loc = V6;
 
-net hdmi_connector_out_clock_p loc = B4;
-net hdmi_connector_out_clock_n loc = A4;
+net hdmi_connector_out_clock_p loc = R7;
+net hdmi_connector_out_clock_n loc = T7;
 
 
 #p17 p18 LEDs
