@@ -1,6 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use work.defines.all;
+use work.hdmi_definitions.all;
 
 entity System is
   Port ( -- Stuff
@@ -14,12 +15,8 @@ entity System is
          sram_bus_data_2_inout : inout sram_bus_data_t;
          sram_bus_control_2_out : out sram_bus_control_t;
 
-         -- HDMI && VGA
-         hdmi_bus_data_inout : inout sram_bus_data_t;
-         hdmi_bus_control_in : in sram_bus_control_t;
-
-         vga_bus_data_inout : inout sram_bus_data_t;
-         vga_bus_control_in : in sram_bus_control_t;
+         -- HDMI
+         hdmi_connector_out : out hdmi_connector_t;
 
          -- MC EBI
          ebi_data_inout : inout ebi_data_t;
@@ -53,6 +50,11 @@ architecture Behavioral of System is
   signal comm_constant_write_enable_out: std_logic;
   signal comm_constant_out: word_t;
 
+  -- Clocks
+  signal clock_sys  : std_logic;
+  signal clock_25   : std_logic;
+  signal clock_125  : std_logic;
+  signal clock_125n : std_logic;
 
   -- Communication unit SRAM signals
   signal comm_sram_bus_data_1_inout : sram_bus_data_t;
@@ -75,6 +77,7 @@ architecture Behavioral of System is
   signal hdmi_sram_bus_data_2_inout : sram_bus_data_t;
   signal hdmi_sram_bus_control_1_out : sram_bus_control_t;
   signal hdmi_sram_bus_control_2_out : sram_bus_control_t;
+  signal hdmi_sram_request_accepted_in : std_logic;
 
 begin
 
@@ -169,5 +172,22 @@ begin
             sram_bus_control_2_out => sram_bus_control_2_out,
             sram_bus_data_2_inout => sram_bus_data_2_inout
           );
+          
+  video_unit : entity work.video_unit
+  port map( clock_sys           => clock_sys
+          , clock_25            => clock_25  
+          , clock_125           => clock_125 
+          , clock_125n          => clock_125n
+          , reset               => reset
 
+          , front_buffer_select => '0'
+
+          , ram_request_accepted=> hdmi_sram_request_accepted_in
+          , ram_0_bus_control   => hdmi_sram_bus_control_1_out 
+          , ram_0_bus_data      => hdmi_sram_bus_data_1_inout 
+          , ram_1_bus_control   => hdmi_sram_bus_control_2_out
+          , ram_1_bus_data      => hdmi_sram_bus_data_2_inout
+          
+          , hdmi_connector      => hdmi_connector_out
+          );
 end Behavioral;

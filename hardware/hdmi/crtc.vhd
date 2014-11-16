@@ -6,7 +6,7 @@ use unisim.vcomponents.all;
 use work.defines.all;
 use work.hdmi_definitions.all;
 
-entity crtc is
+entity video_unit is
     port
         -- clock_sys should be at least 25MHz + some.
         ( clock_sys           : in      std_logic
@@ -18,17 +18,17 @@ entity crtc is
         ; front_buffer_select : in      std_logic         := '0'
 
         ; ram_request_accepted  : in      std_logic
-        ; ram_0_read_address    : out     memory_address_t
-        ; ram_0_read_data       : in      sram_bus_data_t
-        ; ram_1_read_address    : out     memory_address_t
-        ; ram_1_read_data       : in      sram_bus_data_t
+        ; ram_0_bus_control     : out     sram_bus_control_t
+        ; ram_0_bus_data        : in      sram_bus_data_t
+        ; ram_1_bus_control     : out     sram_bus_control_t
+        ; ram_1_bus_data        : in      sram_bus_data_t
         
         ; hdmi_connector      : out     hdmi_connector_t
         );
 
-end crtc;
+end video_unit;
 
-architecture Behavioral of crtc is
+architecture Behavioral of video_unit is
     alias video_mode : video_mode_t is video_640x480_60Hz;
 
     alias clock_pixel : std_logic is clock_25;
@@ -87,10 +87,14 @@ begin
             end if;
         end process;
 
-    ram_0_read_address <= std_logic_vector(ram_read_address_i) & "0";
-    ram_1_read_address <= std_logic_vector(ram_read_address_i) & "1";
-
-    fifo_din <= ram_0_read_data.data & ram_1_read_data.data;
+    ram_0_bus_control.address <= std_logic_vector(ram_read_address_i);
+    ram_1_bus_control.address <= std_logic_vector(ram_read_address_i);
+    
+    ram_0_bus_control.write_enable_n <= '1';
+    ram_1_bus_control.write_enable_n <= '1';
+    
+    
+    fifo_din <= ram_0_bus_data & ram_1_bus_data;
 
     -- The video-fifo is first-word-fall-trough. This means we don't need to delay the signals from
     -- the video-timing-generator.
