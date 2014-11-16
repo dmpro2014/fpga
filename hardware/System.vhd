@@ -25,8 +25,8 @@ entity System is
 
          -- MC Special kernel complete flag
          mc_kernel_complete_out : out std_logic;
+         mc_frame_buffer_select_in : in std_logic;
 
-         mc_sram_flip_in : in std_logic;
 
          -- MC SPI
          mc_spi_bus : inout spi_bus_t;
@@ -161,6 +161,7 @@ begin
             vga_hdmi_sram_bus_data_1_inout => hdmi_sram_bus_data_1_inout,
             vga_hdmi_sram_bus_control_2_in => hdmi_sram_bus_control_2_out,
             vga_hdmi_sram_bus_data_2_inout => hdmi_sram_bus_data_2_inout,
+            vga_hdmi_request_accepted_out => hdmi_sram_request_accepted_in,
 
             -- Communication unit wires
             comm_sram_bus_control_1_in => comm_sram_bus_control_1_out,
@@ -168,7 +169,6 @@ begin
             comm_sram_bus_control_2_in => comm_sram_bus_control_2_out,
             comm_sram_bus_data_2_inout => comm_sram_bus_data_2_inout,
             comm_mem_request_in        => comm_memory_request_out,
-            comm_sram_flip_in => mc_sram_flip_in,
 
             -- SRAM wires
             sram_bus_control_1_out => sram_bus_control_1_out,
@@ -184,7 +184,7 @@ begin
           , clock_125n          => clock_125n
           , reset               => reset
 
-          , front_buffer_select => '0'
+          , front_buffer_select => mc_frame_buffer_select_in
 
           , ram_request_accepted=> hdmi_sram_request_accepted_in
           , ram_0_bus_control   => hdmi_sram_bus_control_1_out 
@@ -194,7 +194,7 @@ begin
           
           , hdmi_connector      => hdmi_connector_out
           );
-
+          
    clock_unit : entity work.clock_unit
    port map ( clk_in1  => clk
             , clk_out1 => clock_sys

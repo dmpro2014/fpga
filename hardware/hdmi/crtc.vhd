@@ -35,9 +35,15 @@ architecture Behavioral of video_unit is
 
     constant video_size : natural := video_mode.h.resolution * video_mode.v.resolution;
 
-    signal buffer_start_address : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0);
-    signal buffer_end_address : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0);
-    signal ram_read_address_i : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0);
+    constant buffer_0_address_top : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := to_unsigned(0, DATA_ADDRESS_WIDTH - 1);
+    constant buffer_1_address_top : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := to_unsigned(65536, DATA_ADDRESS_WIDTH - 1);
+    constant buffer_0_address_end_top : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := to_unsigned(65536, DATA_ADDRESS_WIDTH - 1);
+    constant buffer_1_address_end_top : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := to_unsigned(131072, DATA_ADDRESS_WIDTH - 1);
+
+
+    signal buffer_start_address : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := buffer_0_address_top;
+    signal buffer_end_address : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := buffer_0_address_end_top;
+    signal ram_read_address_i : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := buffer_0_address_top;
 
     signal fifo_full : std_logic;
 
@@ -46,11 +52,7 @@ architecture Behavioral of video_unit is
 
     signal blank_n : std_logic;
     
-    constant buffer_0_address_top : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := to_unsigned(0, DATA_ADDRESS_WIDTH - 1);
-    constant buffer_1_address_top : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := to_unsigned(65536, DATA_ADDRESS_WIDTH - 1);
-    constant buffer_0_address_end_top : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := to_unsigned(65536, DATA_ADDRESS_WIDTH - 1);
-    constant buffer_1_address_end_top : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := to_unsigned(131072, DATA_ADDRESS_WIDTH - 1);
-    
+
     signal fifo_din : std_logic_vector(WORD_WIDTH*2-1 downto 0);
     
     signal video_control : video_control_t;

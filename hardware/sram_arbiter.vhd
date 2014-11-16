@@ -22,7 +22,6 @@ entity sram_arbiter is
          comm_sram_bus_control_2_in : in sram_bus_control_t;
          comm_sram_bus_data_1_inout : inout sram_bus_data_t;
          comm_sram_bus_data_2_inout : inout sram_bus_data_t;
-         comm_sram_flip_in : in std_logic;
          comm_mem_request_in : in std_logic;
 
          -- SRAM wires
@@ -125,24 +124,14 @@ begin
         --Connect control signals
         sram_bus_control_1_out <= vga_hdmi_sram_bus_control_1_in;
         sram_bus_control_2_out <= vga_hdmi_sram_bus_control_2_in;
+        
 
-        --Connect data to SRAM 1
-        if vga_hdmi_sram_bus_control_1_in.write_enable_n = '0' then
-            sram_bus_data_1_inout <= vga_hdmi_sram_bus_data_1_inout;
-        else
-            vga_hdmi_sram_bus_data_1_inout <= sram_bus_data_1_inout;
-        end if;
-
-        --Connect data to SRAM 1
-        if vga_hdmi_sram_bus_control_2_in.write_enable_n = '0' then
-            sram_bus_data_2_inout <= vga_hdmi_sram_bus_data_2_inout;
-        else
-            vga_hdmi_sram_bus_data_2_inout <= sram_bus_data_2_inout;
-        end if;
    end if;
 end process;
 
-
+-- Connect only one direction, as video never writes to memory
+vga_hdmi_sram_bus_data_1_inout <= sram_bus_data_1_inout;
+vga_hdmi_sram_bus_data_2_inout <= sram_bus_data_2_inout;
 
 end Behavioral;
 

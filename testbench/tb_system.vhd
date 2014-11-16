@@ -37,7 +37,7 @@ ARCHITECTURE behavior OF tb_system IS
    constant clk_period : time := 10 ns;
 
    -- Memory
-   type mem_t is array(1024 - 1 downto 0) of word_t;
+   type mem_t is array(30000 - 1 downto 0) of word_t;
    signal sram_a : mem_t := (others => (others => '0'));
    signal sram_b : mem_t := (others => (others => '0'));
 
@@ -56,7 +56,7 @@ BEGIN
              ebi_data_inout => ebi_data_inout,
              ebi_control_in => ebi_control_in,
              mc_kernel_complete_out => mc_kernel_complete_out,
-             mc_sram_flip_in => mc_sram_flip_in,
+             mc_frame_buffer_select_in => mc_sram_flip_in,
              mc_spi_bus => mc_spi_bus,
              led_1_out => led_1_out,
              led_2_out => led_2_out
@@ -73,13 +73,26 @@ BEGIN
 
   mem_proc: process (clk) is
   begin
+    
     if rising_edge(clk) then
+      sram_bus_data_1_inout <= (others => 'Z');
+      sram_bus_data_2_inout <= (others => 'Z');
+      
       if sram_bus_control_1_out.write_enable_n = '0' then
         sram_a(to_integer(unsigned(sram_bus_control_1_out.address))) <= sram_bus_data_1_inout;
       end if;
 
       if sram_bus_control_2_out.write_enable_n = '0' then
         sram_b(to_integer(unsigned(sram_bus_control_2_out.address))) <= sram_bus_data_2_inout;
+      end if;
+      
+      
+      if sram_bus_control_1_out.write_enable_n = '1' then
+        sram_bus_data_1_inout <= sram_a(to_integer(unsigned(sram_bus_control_1_out.address)));
+      end if;
+
+      if sram_bus_control_2_out.write_enable_n = '1' then
+       sram_bus_data_2_inout <=  sram_b(to_integer(unsigned(sram_bus_control_2_out.address)));
       end if;
     end if;
   end process;
@@ -151,7 +164,7 @@ BEGIN
        X"00000000", -- nop
        X"40000000" --finished
      );
-     constant BATCHES_SRL : integer := 30;
+     constant BATCHES_SRL : integer := 100;
 
    begin
       -- hold reset state for 100 ns.
@@ -182,8 +195,8 @@ BEGIN
       end loop;
 
 
-      report "TEST SUCCESS!" ;
-
+      report "TEST SUCCESS!" severity failure;
+      wait;
    end process;
 
 END;

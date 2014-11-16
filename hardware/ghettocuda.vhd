@@ -7,13 +7,6 @@ entity ghettocuda is
   Port ( -- Stuff
          clk : in std_logic;
          reset : in std_logic;
-
-         -- SRAM
-         sram_bus_data_1_inout : inout sram_bus_data_t;
-         sram_bus_control_1_out : out sram_bus_control_t;
-
-         sram_bus_data_2_inout : inout sram_bus_data_t;
-         sram_bus_control_2_out : out sram_bus_control_t;
          
          -- Constant memory
          constant_write_data_in : in word_t;
