@@ -143,6 +143,10 @@ net ebi_control_in_address(2) loc = V7;
 net ebi_control_in_address(1) loc = N7;
 net ebi_control_in_address(0) loc = P8;
 
+net mc_frame_buffer_select_in loc = T11;  #EBI addr 24
+net mc_kernel_complete_out loc = R11;  #EBI addr 25
+
+
 net ebi_data_inout(15) loc = V6;
 net ebi_data_inout(14) loc = R7;
 net ebi_data_inout(13) loc = T7;
