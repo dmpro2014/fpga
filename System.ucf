@@ -1,0 +1,196 @@
+Net clk tmn_net = net_clk_ext;
+timespec ts_clk_ext = period net_clk_ext 120MHz;
+NET clk tnm_net = net_clk_ext | loc = T10; -- Has been switched with ebi addr pin T13
+
+----------------------------
+-- SRAM bus 1 constraints --
+----------------------------
+
+net sram_bus_control_1_out_address(0) loc = F15;
+net sram_bus_control_1_out_address(1) loc = F16;
+net sram_bus_control_1_out_address(2) loc = C17;
+net sram_bus_control_1_out_address(3) loc = C18;
+net sram_bus_control_1_out_address(4) loc = F14;
+net sram_bus_control_1_out_address(5) loc = G14;
+net sram_bus_control_1_out_address(6) loc = D17;
+net sram_bus_control_1_out_address(7) loc = D18;
+net sram_bus_control_1_out_address(8) loc = H12;
+net sram_bus_control_1_out_address(9) loc = G13;
+net sram_bus_control_1_out_address(10) loc = E16;
+net sram_bus_control_1_out_address(11) loc = E18;
+net sram_bus_control_1_out_address(12) loc = K12;
+net sram_bus_control_1_out_address(13) loc = K13;
+net sram_bus_control_1_out_address(14) loc = F17;
+net sram_bus_control_1_out_address(15) loc = F18;
+net sram_bus_control_1_out_address(16) loc = H13;
+net sram_bus_control_1_out_address(17) loc = H14;
+net sram_bus_control_1_out_address(18) loc = H15;
+
+net sram_bus_data_1_inout(0) loc = H16;
+net sram_bus_data_1_inout(1) loc = G16;
+net sram_bus_data_1_inout(2) loc = G18;
+net sram_bus_data_1_inout(3) loc = J13;
+net sram_bus_data_1_inout(4) loc = K14;
+net sram_bus_data_1_inout(5) loc = L12;
+net sram_bus_data_1_inout(6) loc = L13;
+net sram_bus_data_1_inout(7) loc = K15;
+net sram_bus_data_1_inout(8) loc = K16;
+net sram_bus_data_1_inout(9) loc = L15;
+net sram_bus_data_1_inout(10) loc = L16;
+net sram_bus_data_1_inout(11) loc = H17;
+net sram_bus_data_1_inout(12) loc = H18;
+net sram_bus_data_1_inout(13) loc = J16;
+net sram_bus_data_1_inout(14) loc = J18;
+net sram_bus_data_1_inout(15) loc = K17;
+
+net sram_bus_1_ub_out_n loc = K18;
+net sram_bus_1_lb_out_n loc = L17;
+
+net sram_bus_control_1_out_write_enable_n loc = L18;
+net sram_1_enable_n loc = M16;
+
+
+------------
+-- BANK 3 --
+------------
+
+----------------------------
+-- SRAM bus 2 constraints --
+----------------------------
+
+net sram_bus_control_2_out_address(0) loc = N4;
+net sram_bus_control_2_out_address(1) loc = N3;
+net sram_bus_control_2_out_address(2) loc = P4;
+net sram_bus_control_2_out_address(3) loc = P3;
+net sram_bus_control_2_out_address(4) loc = L6;
+net sram_bus_control_2_out_address(5) loc = M5;
+net sram_bus_control_2_out_address(6) loc = U2;
+net sram_bus_control_2_out_address(7) loc = U1;
+net sram_bus_control_2_out_address(8) loc = T2;
+net sram_bus_control_2_out_address(9) loc = T1;
+net sram_bus_control_2_out_address(10) loc = P2;
+net sram_bus_control_2_out_address(11) loc = P1;
+net sram_bus_control_2_out_address(12) loc = N2;
+net sram_bus_control_2_out_address(13) loc = N1;
+net sram_bus_control_2_out_address(14) loc = M3;
+net sram_bus_control_2_out_address(15) loc = M1;
+net sram_bus_control_2_out_address(16) loc = L2;
+net sram_bus_control_2_out_address(17) loc = L1;
+net sram_bus_control_2_out_address(18) loc = K2;
+
+net sram_bus_data_2_inout(0) loc = K1;
+net sram_bus_data_2_inout(1) loc = L4;
+net sram_bus_data_2_inout(2) loc = L3;
+net sram_bus_data_2_inout(3) loc = J3;
+net sram_bus_data_2_inout(4) loc = J1;
+net sram_bus_data_2_inout(5) loc = H2;
+net sram_bus_data_2_inout(6) loc = H1;
+net sram_bus_data_2_inout(7) loc = K4;
+net sram_bus_data_2_inout(8) loc = K3;
+net sram_bus_data_2_inout(9) loc = L5;
+net sram_bus_data_2_inout(10) loc = K5;
+net sram_bus_data_2_inout(11) loc = H4;
+net sram_bus_data_2_inout(12) loc = H3;
+net sram_bus_data_2_inout(13) loc = L7;
+net sram_bus_data_2_inout(14) loc = K6;
+net sram_bus_data_2_inout(15) loc = G3;
+
+net sram_bus_2_ub_out_n loc = G1;
+net sram_bus_2_lb_out_n loc = J7;
+
+net sram_bus_control_2_out_write_enable_n loc = J6;
+net sram_2_enable_n loc = F2;
+
+net reset loc = C1;
+
+------------
+-- BANK 3 --
+------------
+
+-------------------------
+-- EBI bus constraints --
+-------------------------
+
+net ebi_control_in_read_enable_n loc = P12;
+net ebi_control_in_write_enable_n loc = U13;
+net ebi_control_in_chip_select_sram_n loc = M11;
+net ebi_control_in_chip_select_fpga_n loc = V13;
+
+#net ebi_control_in_address(25) loc = R11;
+#net ebi_control_in_address(24) loc = T11;
+#net ebi_control_in_address(23) loc = T12;
+#net ebi_control_in_address(22) loc = V12;
+#net ebi_control_in_address(21) loc = N10;
+#net ebi_control_in_address(20) loc = P11;
+net ebi_control_in_address(19) loc = M10;
+net ebi_control_in_address(18) loc = N10;
+net ebi_control_in_address(17) loc = U11;
+net ebi_control_in_address(16) loc = V11;
+net ebi_control_in_address(15) loc = R10;
+net ebi_control_in_address(14) loc = T13; -- Has been switched with clk pin T10
+net ebi_control_in_address(13) loc = U10;
+net ebi_control_in_address(12) loc = V10;
+net ebi_control_in_address(11) loc = R8;
+net ebi_control_in_address(10) loc = T8;
+net ebi_control_in_address(9) loc = T9;
+net ebi_control_in_address(8) loc = V9;
+net ebi_control_in_address(7) loc = M8;
+net ebi_control_in_address(6) loc = N8;
+net ebi_control_in_address(5) loc = U8;
+net ebi_control_in_address(4) loc = V8;
+net ebi_control_in_address(3) loc = U7;
+net ebi_control_in_address(2) loc = V7;
+net ebi_control_in_address(1) loc = N7;
+net ebi_control_in_address(0) loc = P8;
+
+net ebi_data_inout(15) loc = V6;
+net ebi_data_inout(14) loc = R7;
+net ebi_data_inout(13) loc = T7;
+net ebi_data_inout(12) loc = N6;
+net ebi_data_inout(11) loc = P7;
+net ebi_data_inout(10) loc = R5;
+net ebi_data_inout(9) loc = T5;
+net ebi_data_inout(8) loc = U5;
+net ebi_data_inout(7) loc = V5;
+net ebi_data_inout(6) loc = R3;
+net ebi_data_inout(5) loc = T3;
+net ebi_data_inout(4) loc = T4;
+net ebi_data_inout(3) loc = V4;
+net ebi_data_inout(2) loc = N5;
+net ebi_data_inout(1) loc = P6;
+net ebi_data_inout(0) loc = U3;
+
+
+# ROUTING OUT CLK_SYS FOR DEBUGGING AND FUN :D
+#net clk_sys_out loc = R15; 
+# IT WAS NO FUN :(
+
+
+# BackupGPIO0 R15
+# BackupGPIO0 T15
+# BackupGPIO0 U16
+# BackupGPIO0 V16
+
+
+------------
+-- BANK 0 --
+------------
+
+----------------------
+-- HDMI constraints --
+----------------------
+
+net hdmi_connector_out_channel2_p loc = B2;
+net hdmi_connector_out_channel2_n loc = A2;
+
+net hdmi_connector_out_channel1_p loc = D6;
+net hdmi_connector_out_channel1_n loc = C6;
+
+net hdmi_connector_out_channel0_p loc = B3;
+net hdmi_connector_out_channel0_n loc = A3;
+
+net hdmi_connector_out_clock_p loc = B4;
+net hdmi_connector_out_clock_n loc = A4;
+
+
+#p17 p18 LEDs
