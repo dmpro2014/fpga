@@ -1,10 +1,10 @@
-Net clk tmn_net = net_clk_ext;
+Net clk tnm_net = net_clk_ext;
 timespec ts_clk_ext = period net_clk_ext 120MHz;
-NET clk tnm_net = net_clk_ext | loc = T10; -- Has been switched with ebi addr pin T13
+NET clk tnm_net = net_clk_ext | loc = T10; ## Has been switched with ebi addr pin T13
 
-----------------------------
--- SRAM bus 1 constraints --
-----------------------------
+############################
+## SRAM bus 1 constraints ##
+############################
 
 net sram_bus_control_1_out_address(0) loc = F15;
 net sram_bus_control_1_out_address(1) loc = F16;
@@ -50,13 +50,13 @@ net sram_bus_control_1_out_write_enable_n loc = L18;
 net sram_1_enable_n loc = M16;
 
 
-------------
--- BANK 3 --
-------------
+############
+## BANK 3 ##
+############
 
-----------------------------
--- SRAM bus 2 constraints --
-----------------------------
+############################
+## SRAM bus 2 constraints ##
+############################
 
 net sram_bus_control_2_out_address(0) loc = N4;
 net sram_bus_control_2_out_address(1) loc = N3;
@@ -103,13 +103,13 @@ net sram_2_enable_n loc = F2;
 
 net reset loc = C1;
 
-------------
--- BANK 3 --
-------------
+############
+## BANK 3 ##
+############
 
--------------------------
--- EBI bus constraints --
--------------------------
+#########################
+## EBI bus constraints ##
+#########################
 
 net ebi_control_in_read_enable_n loc = P12;
 net ebi_control_in_write_enable_n loc = U13;
@@ -127,7 +127,7 @@ net ebi_control_in_address(18) loc = N10;
 net ebi_control_in_address(17) loc = U11;
 net ebi_control_in_address(16) loc = V11;
 net ebi_control_in_address(15) loc = R10;
-net ebi_control_in_address(14) loc = T13; -- Has been switched with clk pin T10
+net ebi_control_in_address(14) loc = T13; ## Has been switched with clk pin T10
 net ebi_control_in_address(13) loc = U10;
 net ebi_control_in_address(12) loc = V10;
 net ebi_control_in_address(11) loc = R8;
@@ -172,13 +172,13 @@ net ebi_data_inout(0) loc = U3;
 # BackupGPIO0 V16
 
 
-------------
--- BANK 0 --
-------------
+############
+## BANK 0 ##
+############
 
-----------------------
--- HDMI constraints --
-----------------------
+######################
+## HDMI constraints ##
+######################
 
 net hdmi_connector_out_channel2_p loc = B2;
 net hdmi_connector_out_channel2_n loc = A2;
