@@ -11,6 +11,7 @@ entity mem_control is
         ; request_packet : in    request_t
         ; write_enable   : in    std_logic
         ; read_response  : out   read_response_t
+        ; mem_request    : out   std_logic
 
         ; ram_control    : out   sram_bus_control_t
         ; ram_data       : inout sram_bus_data_t
@@ -33,6 +34,7 @@ architecture Behavioral of mem_control is begin
             --Drop lowest bit, because we are striping data across two RAM chips
             ram_control.address      <= request_packet.address(DATA_WIDTH - 1 downto 1); 
             ram_control.write_enable_n <= not (request_packet.valid and write_enable);
+            mem_request <= request_packet.valid;
 
             -- Handle the half-duplex data-bus to ram.
             -- When write_enable is low, disconnect it from load using a BUFT.
