@@ -166,9 +166,9 @@ BEGIN
     wait for 100 ns;	
     wait for clk_period*10;
  
-    for i in 1 to 140000 loop
+    for i in 1 to 1400 loop
       report "-------------- Run a new kernel --------------";
-      test_kernel(std_logic_vector(to_unsigned(i,19)), i*64);
+      test_kernel(std_logic_vector(to_unsigned(i,19)), i*BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS);
     end loop;
     wait;
   end process;
