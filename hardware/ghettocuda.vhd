@@ -37,6 +37,7 @@ entity ghettocuda is
          load_store_sram_bus_control_1_out : out sram_bus_control_t;
          load_store_sram_bus_data_2_inout : inout sram_bus_data_t;
          load_store_sram_bus_control_2_out : out sram_bus_control_t;
+         load_store_memory_request_out : out std_logic;
 
          -- Generic IO
          led_1_out : out STD_LOGIC;
@@ -200,6 +201,7 @@ begin
             sram_bus_control_1_out => load_store_sram_bus_control_1_out,
             sram_bus_data_2_inout => load_store_sram_bus_data_2_inout,
             sram_bus_control_2_out => load_store_sram_bus_control_2_out,
+            memory_request_out => load_store_memory_request_out,
 
             --Streaming processor wires
             registers_file_select_out => load_store_registers_file_select_out,
