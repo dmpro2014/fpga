@@ -12,6 +12,7 @@ ARCHITECTURE behavior OF tb_system IS
    --Inputs
    signal clk : std_logic := '0';
    signal reset : std_logic := '0';
+   signal clk_sys_out : std_logic := '0';
    signal hdmi_bus_control_in : sram_bus_control_t;
    signal vga_bus_control_in : sram_bus_control_t;
    signal ebi_control_in : ebi_control_t;
@@ -36,7 +37,7 @@ ARCHITECTURE behavior OF tb_system IS
    constant clk_period : time := 10 ns;
 
    -- Memory
-   type mem_t is array(1024 - 1 downto 0) of word_t;
+   type mem_t is array(30000 - 1 downto 0) of word_t;
    signal sram_a : mem_t := (others => (others => '0'));
    signal sram_b : mem_t := (others => (others => '0'));
 
@@ -47,18 +48,15 @@ BEGIN
   PORT MAP (
              clk => clk,
              reset => reset,
+             clk_sys_out => clk_sys_out,
              sram_bus_data_1_inout => sram_bus_data_1_inout,
              sram_bus_control_1_out => sram_bus_control_1_out,
              sram_bus_data_2_inout => sram_bus_data_2_inout,
              sram_bus_control_2_out => sram_bus_control_2_out,
-             hdmi_bus_data_inout => hdmi_bus_data_inout,
-             hdmi_bus_control_in => hdmi_bus_control_in,
-             vga_bus_data_inout => vga_bus_data_inout,
-             vga_bus_control_in => vga_bus_control_in,
              ebi_data_inout => ebi_data_inout,
              ebi_control_in => ebi_control_in,
              mc_kernel_complete_out => mc_kernel_complete_out,
-             mc_sram_flip_in => mc_sram_flip_in,
+             mc_frame_buffer_select_in => mc_sram_flip_in,
              mc_spi_bus => mc_spi_bus,
              led_1_out => led_1_out,
              led_2_out => led_2_out
@@ -75,13 +73,26 @@ BEGIN
 
   mem_proc: process (clk) is
   begin
+    
     if rising_edge(clk) then
+      sram_bus_data_1_inout <= (others => 'Z');
+      sram_bus_data_2_inout <= (others => 'Z');
+      
       if sram_bus_control_1_out.write_enable_n = '0' then
         sram_a(to_integer(unsigned(sram_bus_control_1_out.address))) <= sram_bus_data_1_inout;
       end if;
 
       if sram_bus_control_2_out.write_enable_n = '0' then
         sram_b(to_integer(unsigned(sram_bus_control_2_out.address))) <= sram_bus_data_2_inout;
+      end if;
+      
+      
+      if sram_bus_control_1_out.write_enable_n = '1' then
+        sram_bus_data_1_inout <= sram_a(to_integer(unsigned(sram_bus_control_1_out.address)));
+      end if;
+
+      if sram_bus_control_2_out.write_enable_n = '1' then
+       sram_bus_data_2_inout <=  sram_b(to_integer(unsigned(sram_bus_control_2_out.address)));
       end if;
     end if;
   end process;
@@ -98,13 +109,13 @@ BEGIN
        ebi_control_in.write_enable_n <= '0';
        ebi_control_in.read_enable_n <= '1';
        ebi_control_in.chip_select_fpga_n <= '0';
-       wait until rising_edge(clk);
+       wait on clk_sys_out until rising_edge(clk_sys_out);
 
        ebi_data_inout <= instruction(15 downto 0);
        ebi_control_in.address <= "001" & address & '1';
        ebi_control_in.write_enable_n <= '0';
        ebi_control_in.chip_select_fpga_n <= '0';
-       wait until rising_edge(clk);
+       wait on clk_sys_out until rising_edge(clk_sys_out);
 
        ebi_control_in.write_enable_n <= '1';
        ebi_control_in.chip_select_fpga_n <= '1';
@@ -153,7 +164,7 @@ BEGIN
        X"00000000", -- nop
        X"40000000" --finished
      );
-     constant BATCHES_SRL : integer := 30;
+     constant BATCHES_SRL : integer := 100;
 
    begin
       -- hold reset state for 100 ns.
@@ -165,24 +176,26 @@ BEGIN
 
       fill_instruction_memory(KERNEL_SRL);
 
-      wait for clk_period*10;
+      wait for clk_period*30;
 
       --Start kernel
       ebi_data_inout <= std_logic_vector(to_unsigned(BATCHES_SRL, WORD_WIDTH)); -- Number of batches
       ebi_control_in.address <= "010000000000000000000"; -- Start at instruction mem 0. Bit 18 1 means start kernel
       ebi_control_in.write_enable_n <= '0';
       ebi_control_in.chip_select_fpga_n <= '0';
-      wait for clk_period * BARREL_HEIGHT;
+      wait on clk_sys_out until rising_edge(clk_sys_out);
       ebi_control_in.write_enable_n <= '1';
-
+      
       --Wait
-      wait for clk_period * 3 * KERNEL_SRL'LENGTH * BATCHES_SRL * BARREL_HEIGHT;
+      wait on mc_kernel_complete_out until mc_kernel_complete_out = '1';
 
       --Check memory
       for i in 0 to BATCHES_SRL * BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS - 1 loop
         check_memory(std_logic_vector(to_unsigned(i,16)), i);
       end loop;
 
+
+      report "TEST SUCCESS!" severity failure;
       wait;
    end process;
 
