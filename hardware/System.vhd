@@ -91,7 +91,7 @@ architecture Behavioral of System is
 begin
 
   --Output system clock for testing and debugging
-  clk_sys_out <= clock_sys;
+--  clk_sys_out <= clock_sys;
 
   ghettocuda : entity work.ghettocuda
   port map ( -- Stuff
