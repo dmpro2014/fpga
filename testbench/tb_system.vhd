@@ -127,6 +127,20 @@ BEGIN
      end procedure;
 
 
+     procedure write_constant(constant_in : in word_t;
+                              address     : in integer) is begin
+       ebi_data_inout <= constant_in;
+       ebi_control_in.address <= "0000" & std_logic_vector(to_unsigned(address, 16));
+       ebi_control_in.write_enable_n <= '0';
+       ebi_control_in.read_enable_n <= '1';
+       ebi_control_in.chip_select_fpga_n <= '0';
+       wait on clk_sys_out until rising_edge(clk_sys_out);
+
+       ebi_control_in.write_enable_n <= '1';
+       ebi_control_in.chip_select_fpga_n <= '1';
+     end procedure;
+
+
      procedure check_memory(data : in word_t
                            ;address : in integer
                            ) is begin
@@ -137,9 +151,8 @@ BEGIN
        end if;
      end procedure;
 
+
      type InstrData is array (natural range<>) of instruction_t;
-
-
      procedure fill_instruction_memory(instruction_data : in InstrData;
                                        base_address : in integer) is
      begin
@@ -181,30 +194,89 @@ BEGIN
        X"10000000", -- sw
        X"00000000", -- nop
        X"00000000", -- nop
-       X"40000000" --finished
+       X"40000000", --finished
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000" -- nop
      );
      constant NUM_THREADS_SRL : integer := 1024;
 
+    constant KERNEL_FILLSCREEN : InstrData := (
+      X"08050000", -- ldc $lsu_data, 0
+      X"00011820", -- add $address_hi, $zero, $id_hi
+      X"00022020", -- add $address_lo, $zero, $id_lo
+      X"10000000", -- sw
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"40000000", -- thread_finished
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000" -- nop
+    );
+    constant NUM_THREADS_FILLSCREEN : integer := 256;
 
    begin
       -- hold reset state for 100 ns.
       wait for 100 ns;
 
-      -- Write kernel to memory
       ebi_control_in.write_enable_n <= '1';
       ebi_control_in.chip_select_fpga_n <= '1';
       ebi_control_in.chip_select_sram_n <= '1';
+
+      -------------------
+      -- Load kernels  --
+      -------------------
       fill_instruction_memory(KERNEL_SRL, 1);
-      -----------------
-      --Start kernel --
-      -----------------
+      fill_instruction_memory(KERNEL_FILLSCREEN, 200);
+
+      --------------------
+      --  Kernel SRL   --
+      --------------------
+      report "Simulating SRL kernel";
+
       simulate_kernel(1, NUM_THREADS_SRL);
 
-      --Check memory
       report "Checking memory";
       for i in 0 to NUM_THREADS_SRL - 1 loop
         check_memory(std_logic_vector(to_unsigned(i,16)), i);
       end loop;
+      report "SRL kernel completed";
+
+      --------------------
+      --Kernel Constant --
+      --------------------
+      report "Simulating Constant fillscreen kernel";
+
+      write_constant(std_logic_vector(to_signed(30, 16)), 0);
+      simulate_kernel(200, NUM_THREADS_FILLSCREEN);
+
+      report "Checking memory";
+      for i in 0 to NUM_THREADS_FILLSCREEN - 1 loop
+        check_memory(std_logic_vector(to_signed(30, 16)), i);
+      end loop;
+      report "Constant fillscreen completed";
 
 
       report "TEST SUCCESS!" severity failure;
