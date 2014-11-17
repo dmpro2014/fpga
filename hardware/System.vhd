@@ -87,13 +87,28 @@ architecture Behavioral of System is
   signal hdmi_sram_bus_control_1_out : sram_bus_control_t;
   signal hdmi_sram_bus_control_2_out : sram_bus_control_t;
   signal hdmi_sram_request_accepted_in : std_logic;
+  
+  
+  -- SRAM out
+  
+  signal sram_bus_data_1_inout_i  : sram_bus_data_t;
+  signal sram_bus_control_1_out_i : sram_bus_control_t;
+  
+  signal sram_bus_data_2_inout_i  : sram_bus_data_t;
+  signal sram_bus_control_2_out_i : sram_bus_control_t;
 
 begin
 
   --Output system clock for testing and debugging
---  clk_sys_out <= clock_sys;
+  clk_sys_out <= clock_sys;
   sram_1_enable_n <= '0';
   sram_2_enable_n <= '0';
+  
+  
+  sram_bus_control_1_out <= sram_bus_control_1_out_i;
+  sram_bus_data_1_inout <= sram_bus_data_1_inout_i;
+  sram_bus_control_2_out <= sram_bus_control_2_out_i;
+  sram_bus_data_2_inout <= sram_bus_data_2_inout_i;
   
   ghettocuda : entity work.ghettocuda
   port map ( -- Stuff
@@ -181,10 +196,10 @@ begin
             comm_mem_request_in        => comm_memory_request_out,
 
             -- SRAM wires
-            sram_bus_control_1_out => sram_bus_control_1_out,
-            sram_bus_data_1_inout => sram_bus_data_1_inout,
-            sram_bus_control_2_out => sram_bus_control_2_out,
-            sram_bus_data_2_inout => sram_bus_data_2_inout
+            sram_bus_control_1_out => sram_bus_control_1_out_i,
+            sram_bus_data_1_inout => sram_bus_data_1_inout_i,
+            sram_bus_control_2_out => sram_bus_control_2_out_i,
+            sram_bus_data_2_inout => sram_bus_data_2_inout_i
           );
           
   video_unit : entity work.video_unit
@@ -212,4 +227,16 @@ begin
             , clk_out3 => clock_125
             , clk_out4 => clock_125n
             );
+            
+  fake_ram_0 : entity work.fake_ram
+  port map( clk => clock_sys, reset => reset,
+            write_enable_n_in => sram_bus_control_1_out_i.write_enable_n,
+            address_in => sram_bus_control_1_out_i.address,
+            data_inout => sram_bus_data_1_inout_i);
+            
+  fake_ram_1 : entity work.fake_ram
+  port map( clk => clock_sys, reset => reset,
+            write_enable_n_in => sram_bus_control_2_out_i.write_enable_n,
+            address_in => sram_bus_control_2_out_i.address,
+            data_inout => sram_bus_data_2_inout_i);
 end Behavioral;
