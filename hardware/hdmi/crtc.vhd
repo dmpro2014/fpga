@@ -117,6 +117,10 @@ begin
                 );
 
     scanout_pixel <= to_video_pixel(scanout_pixel_raw);
+--    scanout_pixel.red <= X"FF";
+--    scanout_pixel.green <= X"00";
+--    scanout_pixel.blue <= X"00";
+
 
     blank_n <= not video_control.blank;
 

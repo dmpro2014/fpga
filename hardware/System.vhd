@@ -15,7 +15,7 @@ entity System is
 
          sram_bus_1_lb_out_n   : out std_logic   := '0';
          sram_bus_1_ub_out_n   : out std_logic   := '0';
-         sram_1_enable_n     : out std_logic := '0';
+         sram_1_enable_n     : out std_logic     := '0';
 
          sram_bus_data_2_inout : inout sram_bus_data_t;
          sram_bus_control_2_out : out sram_bus_control_t;
@@ -92,7 +92,9 @@ begin
 
   --Output system clock for testing and debugging
 --  clk_sys_out <= clock_sys;
-
+  sram_1_enable_n <= '0';
+  sram_2_enable_n <= '0';
+  
   ghettocuda : entity work.ghettocuda
   port map ( -- Stuff
             clk => clock_sys,

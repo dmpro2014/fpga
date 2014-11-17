@@ -1,40 +1,25 @@
 ##############################################################
-#
-# Xilinx Core Generator version 12.4
-# Date: Sun Nov 16 01:54:11 2014
-#
 ##############################################################
-#
-#  This file contains the customisation parameters for a
-#  Xilinx CORE Generator IP GUI. It is strongly recommended
-#  that you do not manually alter this file as it may cause
-#  unexpected and unsupported behavior.
-#
 ##############################################################
-#
-# BEGIN Project Options
 SET addpads = false
 SET asysymbol = true
-SET busformat = BusFormatAngleBracketNotRipped
 SET createndf = false
-SET designentry = VHDL
-SET device = xc6slx16
-SET devicefamily = spartan6
-SET flowvendor = Foundation_ISE
 SET formalverification = false
 SET foundationsym = false
 SET implementationfiletype = Ngc
-SET package = csg324
 SET removerpms = false
 SET simulationfiles = Behavioral
-SET speedgrade = -2
-SET verilogsim = true
-SET vhdlsim = true
-# END Project Options
-# BEGIN Select
+SET workingdirectory = ./tmp/
+SET designentry = VHDL
+SET BusFormat = BusFormatAngleBracketNotRipped
+SET devicefamily = spartan6
+SET device = xc6slx45
+SET package = csg324
+SET speedgrade = -3
+SET FlowVendor = Foundation_ISE
+SET VerilogSim = True
+SET VHDLSim = True
 SELECT Clocking_Wizard family Xilinx,_Inc. 1.8
-# END Select
-# BEGIN Parameters
 CSET calc_done=DONE
 CSET clk_out1_use_fine_ps_gui=false
 CSET clk_out2_use_fine_ps_gui=false
@@ -217,6 +202,3 @@ CSET use_power_down=false
 CSET use_reset=false
 CSET use_spread_spectrum=false
 CSET use_status=false
-# END Parameters
-GENERATE
-# CRC: 7622a499
