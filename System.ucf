@@ -3,106 +3,7 @@ VCCAUX = 3.3;
 TIMESPEC TS_sys_clk_pin = PERIOD sys_clk_pin 66.6 MHz;
 Net clk TNM_NET = sys_clk_pin  |  LOC=L12 | IOSTANDARD = LVCMOS33;
 
-############################
-## SRAM bus 1 constraints ##
-############################
-
-net sram_bus_control_1_out_address(0) loc = F15;
-net sram_bus_control_1_out_address(1) loc = F16;
-net sram_bus_control_1_out_address(2) loc = C17;
-net sram_bus_control_1_out_address(3) loc = C18;
-net sram_bus_control_1_out_address(4) loc = F14;
-net sram_bus_control_1_out_address(5) loc = G14;
-net sram_bus_control_1_out_address(6) loc = D17;
-net sram_bus_control_1_out_address(7) loc = D18;
-net sram_bus_control_1_out_address(8) loc = H12;
-net sram_bus_control_1_out_address(9) loc = G13;
-net sram_bus_control_1_out_address(10) loc = E16;
-net sram_bus_control_1_out_address(11) loc = E18;
-net sram_bus_control_1_out_address(12) loc = K12;
-net sram_bus_control_1_out_address(13) loc = K13;
-net sram_bus_control_1_out_address(14) loc = F17;
-net sram_bus_control_1_out_address(15) loc = F18;
-net sram_bus_control_1_out_address(16) loc = H13;
-net sram_bus_control_1_out_address(17) loc = H14;
-net sram_bus_control_1_out_address(18) loc = H15;
-
-net sram_bus_data_1_inout(0) loc = H16;
-net sram_bus_data_1_inout(1) loc = G16;
-net sram_bus_data_1_inout(2) loc = G18;
-net sram_bus_data_1_inout(3) loc = J13;
-net sram_bus_data_1_inout(4) loc = K14;
-net sram_bus_data_1_inout(5) loc = L12;
-net sram_bus_data_1_inout(6) loc = L13;
-net sram_bus_data_1_inout(7) loc = K15;
-net sram_bus_data_1_inout(8) loc = K16;
-net sram_bus_data_1_inout(9) loc = L15;
-net sram_bus_data_1_inout(10) loc = L16;
-net sram_bus_data_1_inout(11) loc = H17;
-net sram_bus_data_1_inout(12) loc = H18;
-net sram_bus_data_1_inout(13) loc = J16;
-net sram_bus_data_1_inout(14) loc = J18;
-net sram_bus_data_1_inout(15) loc = K17;
-
-net sram_bus_1_ub_out_n loc = K18;
-net sram_bus_1_lb_out_n loc = L17;
-
-net sram_bus_control_1_out_write_enable_n loc = L18;
-net sram_1_enable_n loc = M16;
-
-
-############
-## BANK 3 ##
-############
-
-############################
-## SRAM bus 2 constraints ##
-############################
-
-net sram_bus_control_2_out_address(0) loc = N4;
-net sram_bus_control_2_out_address(1) loc = N3;
-net sram_bus_control_2_out_address(2) loc = P4;
-net sram_bus_control_2_out_address(3) loc = P3;
-net sram_bus_control_2_out_address(4) loc = L6;
-net sram_bus_control_2_out_address(5) loc = M5;
-net sram_bus_control_2_out_address(6) loc = U2;
-net sram_bus_control_2_out_address(7) loc = U1;
-net sram_bus_control_2_out_address(8) loc = T2;
-net sram_bus_control_2_out_address(9) loc = T1;
-net sram_bus_control_2_out_address(10) loc = P2;
-net sram_bus_control_2_out_address(11) loc = P1;
-net sram_bus_control_2_out_address(12) loc = N2;
-net sram_bus_control_2_out_address(13) loc = N1;
-net sram_bus_control_2_out_address(14) loc = M3;
-net sram_bus_control_2_out_address(15) loc = M1;
-net sram_bus_control_2_out_address(16) loc = L2;
-net sram_bus_control_2_out_address(17) loc = L1;
-net sram_bus_control_2_out_address(18) loc = K2;
-
-net sram_bus_data_2_inout(0) loc = K1;
-net sram_bus_data_2_inout(1) loc = L4;
-net sram_bus_data_2_inout(2) loc = L3;
-net sram_bus_data_2_inout(3) loc = J3;
-net sram_bus_data_2_inout(4) loc = J1;
-net sram_bus_data_2_inout(5) loc = H2;
-net sram_bus_data_2_inout(6) loc = H1;
-net sram_bus_data_2_inout(7) loc = K4;
-net sram_bus_data_2_inout(8) loc = K3;
-net sram_bus_data_2_inout(9) loc = L5;
-net sram_bus_data_2_inout(10) loc = K5;
-net sram_bus_data_2_inout(11) loc = H4;
-net sram_bus_data_2_inout(12) loc = H3;
-net sram_bus_data_2_inout(13) loc = L7;
-net sram_bus_data_2_inout(14) loc = K6;
-net sram_bus_data_2_inout(15) loc = G3;
-
-net sram_bus_2_ub_out_n loc = G1;
-net sram_bus_2_lb_out_n loc = J7;
-
-net sram_bus_control_2_out_write_enable_n loc = J6;
-net sram_2_enable_n loc = F2;
-
-net reset loc = C1;
+#net reset loc = C1;
 
 ############
 ## BANK 3 ##
@@ -112,10 +13,10 @@ net reset loc = C1;
 ## EBI bus constraints ##
 #########################
 
-net ebi_control_in_read_enable_n loc = P12;
-net ebi_control_in_write_enable_n loc = U13;
-net ebi_control_in_chip_select_sram_n loc = M11;
-net ebi_control_in_chip_select_fpga_n loc = V13;
+net ebi_control_in_read_enable_n loc = A3;
+net ebi_control_in_write_enable_n loc = B3 | IOSTANDARD = LVCMOS33;
+net ebi_control_in_chip_select_sram_n loc = B4;
+net ebi_control_in_chip_select_fpga_n loc = A4;
 
 #net ebi_control_in_address(25) loc = R11;
 #net ebi_control_in_address(24) loc = T11;
@@ -127,25 +28,25 @@ net ebi_control_in_chip_select_fpga_n loc = V13;
 #net ebi_control_in_address(18) loc = N10;
 #net ebi_control_in_address(17) loc = U11;
 #net ebi_control_in_address(16) loc = V11;
-net ebi_control_in_address(15) loc = t5;
-net ebi_control_in_address(14) loc = r5; ## Has been switched with clk pin T10
-net ebi_control_in_address(13) loc = v4;
-net ebi_control_in_address(12) loc = t4;
-net ebi_control_in_address(11) loc = v5;
-net ebi_control_in_address(10) loc = u5;
-net ebi_control_in_address(9) loc = p6 ;
-net ebi_control_in_address(8) loc = n5 ;
-net ebi_control_in_address(7) loc = p7 ;
-net ebi_control_in_address(6) loc = n6 ;
-net ebi_control_in_address(5) loc = p8 ;
-net ebi_control_in_address(4) loc = n7 ;
-net ebi_control_in_address(3) loc = n8 ;
-net ebi_control_in_address(2) loc = m8 ;
-net ebi_control_in_address(1) loc = n9 ;
-net ebi_control_in_address(0) loc = m10;
+net ebi_control_in_address(15) loc = t5 | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(14) loc = r5 | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(13) loc = v4 | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(12) loc = t4 | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(11) loc = v5 | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(10) loc = u5 | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(9) loc = p6  | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(8) loc = n5  | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(7) loc = p7  | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(6) loc = n6  | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(5) loc = p8  | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(4) loc = n7  | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(3) loc = n8  | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(2) loc = m8  | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(1) loc = n9  | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(0) loc = m10  | IOSTANDARD = LVCMOS33;
 
-net mc_frame_buffer_select_in loc = T11;  #EBI addr 24
-net mc_kernel_complete_out loc = R11;  #EBI addr 25
+#net mc_frame_buffer_select_in loc = T11;  #EBI addr 24
+#net mc_kernel_complete_out loc = R11;  #EBI addr 25
 
 
 net ebi_data_inout(15) loc = F18;
@@ -184,17 +85,16 @@ net ebi_data_inout(0) loc = F15 ;
 ## HDMI constraints ##
 ######################
 
-net hdmi_connector_out_channel2_p loc = U8;
-net hdmi_connector_out_channel2_n loc = V8;
+net hdmi_connector_out_channel2_p loc = U8 | IOSTANDARD = TMDS_33 ;
+net hdmi_connector_out_channel2_n loc = V8 | IOSTANDARD = TMDS_33 ;
 
-net hdmi_connector_out_channel1_p loc = U7;
-net hdmi_connector_out_channel1_n loc = V7;
+net hdmi_connector_out_channel1_p loc = U7 | IOSTANDARD = TMDS_33 ;
+net hdmi_connector_out_channel1_n loc = V7 | IOSTANDARD = TMDS_33 ;
 
-net hdmi_connector_out_channel0_p loc = T6;
-net hdmi_connector_out_channel0_n loc = V6;
+net hdmi_connector_out_channel0_p loc = T6 | IOSTANDARD = TMDS_33 ;
+net hdmi_connector_out_channel0_n loc = V6 | IOSTANDARD = TMDS_33 ;
 
-net hdmi_connector_out_clock_p loc = R7;
-net hdmi_connector_out_clock_n loc = T7;
-
+net hdmi_connector_out_clock_p loc = R7 | IOSTANDARD = TMDS_33 ;
+net hdmi_connector_out_clock_n loc = T7 | IOSTANDARD = TMDS_33 ;
 
 #p17 p18 LEDs
