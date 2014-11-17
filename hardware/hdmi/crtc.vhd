@@ -67,13 +67,13 @@ begin
     select
         buffer_start_address
             <= buffer_0_address_top when '0'
-             , buffer_1_address_top when '1';
+             , buffer_1_address_top when others;
 
     with front_buffer_select
     select
         buffer_end_address
             <= buffer_0_address_end_top when '0'
-             , buffer_1_address_end_top when '1';
+             , buffer_1_address_end_top when others;
 
     ram_address_counter:
         process (clock_sys) begin
