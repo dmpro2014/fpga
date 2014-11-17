@@ -105,6 +105,7 @@ BEGIN
    -- Stimulus process
   stim_proc: process
 
+
      procedure write_instruction(instruction : in instruction_t
                                 ;address     : in instruction_address_t
                                 ) is begin
@@ -125,6 +126,7 @@ BEGIN
        ebi_control_in.chip_select_fpga_n <= '1';
      end procedure;
 
+
      procedure check_memory(data : in word_t
                            ;address : in integer
                            ) is begin
@@ -137,12 +139,39 @@ BEGIN
 
      type InstrData is array (natural range<>) of instruction_t;
 
-     procedure fill_instruction_memory(instruction_data : in InstrData) is
+
+     procedure fill_instruction_memory(instruction_data : in InstrData;
+                                       base_address : in integer) is
      begin
        for i in 0 to instruction_data'LENGTH-1 loop
-         write_instruction(instruction_data(i), std_logic_vector(to_unsigned(i, INSTRUCTION_ADDRESS_WIDTH)));
+         write_instruction(instruction_data(i),
+                           std_logic_vector(to_unsigned(base_address + i,
+                                                        INSTRUCTION_ADDRESS_WIDTH)));
        end loop;
      end fill_instruction_memory;
+
+
+    procedure simulate_kernel(kernel_base_address : in integer ;
+                              num_threads : in integer) is
+      variable delta_cycles : natural := 0;
+    begin
+      -- Write number of threads to memory
+      ebi_data_inout <= std_logic_vector(to_unsigned(num_threads / (NUMBER_OF_STREAMING_PROCESSORS * BARREL_HEIGHT) , WORD_WIDTH));
+       -- Start at instruction mem 0. Bit 18 1 means start kernel
+      ebi_control_in.address <= "0100" & std_logic_vector(to_unsigned(kernel_base_address, INSTRUCTION_ADDRESS_WIDTH));
+      ebi_control_in.write_enable_n <= '0';
+      ebi_control_in.chip_select_fpga_n <= '0';
+      wait on clk_sys_out until rising_edge(clk_sys_out);
+      ebi_control_in.write_enable_n <= '1';
+
+      -- Count cycles to completion
+      delta_cycles := elapsed_cycles;
+      wait on mc_kernel_complete_out until mc_kernel_complete_out = '1';
+      delta_cycles  := elapsed_cycles - delta_cycles;
+      report "Kernels done @ " & natural'image(delta_cycles) & " cycles.";
+
+    end procedure;
+
 
      constant KERNEL_SRL : InstrData := (
        X"00000000", -- nop
@@ -152,61 +181,31 @@ BEGIN
        X"10000000", -- sw
        X"00000000", -- nop
        X"00000000", -- nop
-       X"00000000", -- nop
-       X"00000000", -- nop
-       X"00000000", -- nop
-       X"00000000", -- nop
-       X"00000000", -- nop
-       X"00000000", -- nop
-       X"00000000", -- nop
-       X"00000000", -- nop
-       X"00000000", -- nop
-       X"00000000", -- nop
-       X"00000000", -- nop
-       X"00000000", -- nop
-       X"00000000", -- nop
-       X"00000000", -- nop
        X"40000000" --finished
      );
      constant NUM_THREADS_SRL : integer := 1024;
 
-    variable delta_cycles : natural := 0;
+
    begin
       -- hold reset state for 100 ns.
       wait for 100 ns;
 
+      -- Write kernel to memory
       ebi_control_in.write_enable_n <= '1';
       ebi_control_in.chip_select_fpga_n <= '1';
       ebi_control_in.chip_select_sram_n <= '1';
-
-      fill_instruction_memory(KERNEL_SRL);
-
-      wait for clk_period*30;
-
+      fill_instruction_memory(KERNEL_SRL, 1);
       -----------------
       --Start kernel --
       -----------------
-
-      -- Number of batches
-      ebi_data_inout <= std_logic_vector(to_unsigned(NUM_THREADS_SRL / (NUMBER_OF_STREAMING_PROCESSORS * BARREL_HEIGHT) , WORD_WIDTH));
-      ebi_control_in.address <= "010000000000000000000"; -- Start at instruction mem 0. Bit 18 1 means start kernel
-      ebi_control_in.write_enable_n <= '0';
-      ebi_control_in.chip_select_fpga_n <= '0';
-      wait on clk_sys_out until rising_edge(clk_sys_out);
-      ebi_control_in.write_enable_n <= '1';
-
-      --Wait
-      delta_cycles := elapsed_cycles;
-      wait on mc_kernel_complete_out until mc_kernel_complete_out = '1';
-      delta_cycles  := elapsed_cycles - delta_cycles;
-
-      report "Kernels done @ " & natural'image(delta_cycles) & " cycles.";
-      report "Checking memory";
+      simulate_kernel(1, NUM_THREADS_SRL);
 
       --Check memory
+      report "Checking memory";
       for i in 0 to NUM_THREADS_SRL - 1 loop
         check_memory(std_logic_vector(to_unsigned(i,16)), i);
       end loop;
+
 
       report "TEST SUCCESS!" severity failure;
       wait;
