@@ -1,28 +1,30 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+library unisim;
+use unisim.vcomponents.all;
 use work.defines.all;
 use work.hdmi_definitions.all;
 
 entity System is
   Port ( -- Stuff
          clk : in std_logic;
-         reset : in std_logic;
+--         reset : in std_logic;
          clk_sys_out : out std_logic;
 
          -- SRAM
-         sram_bus_data_1_inout : inout sram_bus_data_t;
-         sram_bus_control_1_out : out sram_bus_control_t;
-
-         sram_bus_1_lb_out_n   : out std_logic   := '0';
-         sram_bus_1_ub_out_n   : out std_logic   := '0';
-         sram_1_enable_n     : out std_logic     := '0';
-
-         sram_bus_data_2_inout : inout sram_bus_data_t;
-         sram_bus_control_2_out : out sram_bus_control_t;
-
-         sram_bus_2_lb_out_n : out std_logic := '0';
-         sram_bus_2_ub_out_n : out std_logic := '0';
-         sram_2_enable_n     : out std_logic := '0';
+--         sram_bus_data_1_inout : inout sram_bus_data_t;
+--         sram_bus_control_1_out : out sram_bus_control_t;
+--
+--         sram_bus_1_lb_out_n   : out std_logic   := '0';
+--         sram_bus_1_ub_out_n   : out std_logic   := '0';
+--         sram_1_enable_n     : out std_logic     := '0';
+--
+--         sram_bus_data_2_inout : inout sram_bus_data_t;
+--         sram_bus_control_2_out : out sram_bus_control_t;
+--
+--         sram_bus_2_lb_out_n : out std_logic := '0';
+--         sram_bus_2_ub_out_n : out std_logic := '0';
+--         sram_2_enable_n     : out std_logic := '0';
 
          -- HDMI
          hdmi_connector_out : out hdmi_connector_t;
@@ -45,6 +47,20 @@ entity System is
 end System;
 
 architecture Behavioral of System is
+  
+  signal sram_bus_data_1_inout : sram_bus_data_t;
+  signal sram_bus_control_1_out : sram_bus_control_t;
+
+  signal sram_bus_1_lb_out_n   : std_logic   := '0';
+  signal sram_bus_1_ub_out_n   : std_logic   := '0';
+  signal sram_1_enable_n     : std_logic     := '0';
+
+  signal sram_bus_data_2_inout : sram_bus_data_t;
+  signal sram_bus_control_2_out : sram_bus_control_t;
+
+  signal sram_bus_2_lb_out_n : std_logic := '0';
+  signal sram_bus_2_ub_out_n : std_logic := '0';
+  signal sram_2_enable_n     : std_logic := '0';
 
   signal comm_instruction_data_out : word_t;
   signal comm_instruction_address_out : std_logic_vector(INSTRUCTION_ADDRESS_WIDTH - 1 downto 0);
@@ -96,11 +112,14 @@ architecture Behavioral of System is
   
   signal sram_bus_data_2_inout_i  : sram_bus_data_t;
   signal sram_bus_control_2_out_i : sram_bus_control_t;
+  
+  signal reset : std_logic := '0';
 
 begin
 
   --Output system clock for testing and debugging
-  clk_sys_out <= clock_sys;
+  clock_output: ODDR2 port map ( d0 => '1', d1 => '0', c0 => clock_sys, c1 => not clock_sys, q => clk_sys_out);
+
   sram_1_enable_n <= '0';
   sram_2_enable_n <= '0';
   

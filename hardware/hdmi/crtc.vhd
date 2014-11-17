@@ -129,7 +129,7 @@ begin
             port map
                 ( clock        => clock_pixel
                 , reset        => reset
-                , launch       => fifo_full
+                , launch       => '1' --fifo_full
                 , control      => video_control
                 );
 
