@@ -23,12 +23,11 @@ architecture behavioral of instruction_memory is
 
 begin
 
-  data_out <= inst_mem_lo(to_integer(unsigned(address_in))) & inst_mem_hi(to_integer(unsigned(address_in)));
-
   registers: process (clk) is
   begin
 
     if rising_edge(clk) then
+      data_out <= inst_mem_lo(to_integer(unsigned(address_in))) & inst_mem_hi(to_integer(unsigned(address_in)));
 
       if write_enable_in = '1' then
         if address_hi_select_in = '1' then
@@ -37,7 +36,6 @@ begin
           inst_mem_lo(to_integer(unsigned(address_in))) <= data_in;
         end if;
       end if;
-
     end if;
 
   end process;
