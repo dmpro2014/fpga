@@ -41,6 +41,8 @@ ARCHITECTURE behavior OF tb_system IS
    signal sram_a : mem_t := (others => (others => '0'));
    signal sram_b : mem_t := (others => (others => '0'));
 
+   -- Cycle count
+   signal elapsed_cycles : natural := 0;
 BEGIN
 
   -- Instantiate the Unit Under Test (UUT)
@@ -69,6 +71,13 @@ BEGIN
     wait for clk_period/2;
     clk <= '1';
     wait for clk_period/2;
+  end process;
+
+  process (clk_sys_out) is
+  begin
+    if rising_edge(clk_sys_out) then
+      elapsed_cycles <= elapsed_cycles + 1;
+    end if;
   end process;
 
   mem_proc: process (clk) is
@@ -159,8 +168,9 @@ BEGIN
        X"00000000", -- nop
        X"40000000" --finished
      );
-     constant BATCHES_SRL : integer := 100;
+     constant NUM_THREADS_SRL : integer := 1024;
 
+    variable delta_cycles : natural := 0;
    begin
       -- hold reset state for 100 ns.
       wait for 100 ns;
@@ -173,8 +183,12 @@ BEGIN
 
       wait for clk_period*30;
 
-      --Start kernel
-      ebi_data_inout <= std_logic_vector(to_unsigned(BATCHES_SRL, WORD_WIDTH)); -- Number of batches
+      -----------------
+      --Start kernel --
+      -----------------
+
+      -- Number of batches
+      ebi_data_inout <= std_logic_vector(to_unsigned(NUM_THREADS_SRL / (NUMBER_OF_STREAMING_PROCESSORS * BARREL_HEIGHT) , WORD_WIDTH));
       ebi_control_in.address <= "010000000000000000000"; -- Start at instruction mem 0. Bit 18 1 means start kernel
       ebi_control_in.write_enable_n <= '0';
       ebi_control_in.chip_select_fpga_n <= '0';
@@ -182,13 +196,17 @@ BEGIN
       ebi_control_in.write_enable_n <= '1';
 
       --Wait
+      delta_cycles := elapsed_cycles;
       wait on mc_kernel_complete_out until mc_kernel_complete_out = '1';
+      delta_cycles  := elapsed_cycles - delta_cycles;
+
+      report "Kernels done @ " & natural'image(delta_cycles) & " cycles.";
+      report "Checking memory";
 
       --Check memory
-      for i in 0 to BATCHES_SRL * BARREL_HEIGHT * NUMBER_OF_STREAMING_PROCESSORS - 1 loop
+      for i in 0 to NUM_THREADS_SRL - 1 loop
         check_memory(std_logic_vector(to_unsigned(i,16)), i);
       end loop;
-
 
       report "TEST SUCCESS!" severity failure;
       wait;
