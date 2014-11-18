@@ -101,8 +101,8 @@ architecture Behavioral of ghettocuda is
   signal constant_storage_value_out: word_t;
   
 begin          
---  debug_signal0 <= ts_id_write_enable_out;
---  debug_signal1 <= ts_pc_out(0);
+--  debug_signal0 <= decode_lsu_write_enable_out;
+--  debug_signal1 <= instruction_data_out(28);
 --  debug_signal2 <= instruction_data_out(13);
   
   
