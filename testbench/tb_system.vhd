@@ -239,6 +239,77 @@ BEGIN
     );
     constant NUM_THREADS_FILLSCREEN : integer := 256;
 
+    constant KERNEL_SLT : InstrData := (
+     X"00002804", -- add $lsu_data, $0, $0
+     X"0407000a", -- addi $7, $0, 10
+     X"0408000c", -- addi $8, $0, 12
+     X"00e83003", -- slt $mask, $7, $8
+     --X"01073003", -- slt $mask, $8, $7
+     X"8405002a", -- ? addi $lsu_data, $0, 42
+     X"00011804", -- add $address_hi, $0, $id_hi
+     X"00022004", -- add $address_lo, $0, $id_lo
+     X"10000000", -- sw
+     X"40000000", -- thread_finished
+     X"00000000", -- nop
+     X"00000000", -- nop
+     X"00000000", -- nop
+     X"00000000", -- nop
+     X"00000000", -- nop
+     X"00000000", -- nop
+     X"00000000", -- nop
+     X"00000000", -- nop
+     X"00000000", -- nop
+     X"00000000", -- nop
+     X"00000000", -- nop
+     X"00000000", -- nop
+     X"00000000", -- nop
+     X"00000000" -- nop
+   );
+   constant NUM_THREADS_SLT : integer := 64;
+
+    constant KERNEL_SQUARE : InstrData := (
+      X"00023a41", -- srl $7, $2, 9 ; load y value
+      X"000159c0", -- sll $11, $1, 7 ; Load shifted hi value
+      X"00eb3804", -- add $7, $7, $11 ; Stitch together hi and low
+      X"040801ff", -- addi $8, $0, 511
+      X"01024006", -- and $8, $8, $2 ; load x value
+      X"04090040", -- addi $9, $0, 64 ; x, y offset
+      X"04060000", -- addi $6, $0, 0 ; Disable masking
+      X"04050000", -- addi $5, $0, 0 ; Set default color to black
+      X"00e93003", -- slt $6, $7, $9
+      X"81093003", -- ? slt $6, $8, $9
+      X"040a0200", -- addi $10, $0, 512
+      X"01495005", -- sub $10, $10, $9
+      X"81483003", -- ? slt $6, $10, $8
+      X"040a0100", -- addi $10, $0, 256
+      X"01495005", -- sub $10, $10, $9
+      X"81473003", -- ? slt $6, $10, $7
+      X"8405f800", -- ? addi $5, $0, 0b1111100000000000 ; red
+      X"00011804", -- add $3, $0, $1
+      X"00022004", -- add $4, $0, $2
+      X"10000000", -- sw
+      X"00000000", -- nop
+      X"40000000", -- thread_finished
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"00000000" -- nop
+    );
+    CONSTANT NUM_THREADS_SQUARE : integer := 512*70;
+
    begin
       -- hold reset state for 100 ns.
       wait for 100 ns;
@@ -252,6 +323,8 @@ BEGIN
       -------------------
       fill_instruction_memory(KERNEL_SRL, 1);
       fill_instruction_memory(KERNEL_FILLSCREEN, 200);
+      fill_instruction_memory(KERNEL_SLT, 300);
+      fill_instruction_memory(KERNEL_SQUARE, 400);
 
       --------------------
       --  Kernel SRL   --
@@ -280,6 +353,35 @@ BEGIN
       end loop;
       report "Constant fillscreen completed";
 
+      ----------------------
+      --Kernel SLT & Mask --
+      ----------------------
+      simulate_kernel(300, NUM_THREADS_SLT);
+      for i in 0 to NUM_THREADS_SLT - 1 loop
+        check_memory(std_logic_vector(to_signed(0, 16)), i);
+      end loop;
+      report "Simulated SLT";
+
+
+      --------------------
+      --Kernel Square   --
+      --------------------
+      report "Simulating square kernel";
+
+      simulate_kernel(400, NUM_THREADS_SQUARE);
+
+      report "Checking memory";
+      for i in 0 to NUM_THREADS_SQUARE - 1 loop
+        if i mod 512 >= 64
+            and i / 512 >= 64
+            and i mod 512 <= 512 - 64
+            and i / 512 <= 256 - 64 then
+          check_memory("1111100000000000", i);
+        else
+          check_memory(std_logic_vector(to_signed(0, 16)), i);
+        end if;
+      end loop;
+      report "Square kernel completed";
 
       report "TEST SUCCESS!" severity failure;
       wait;
