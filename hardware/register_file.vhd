@@ -28,13 +28,8 @@ entity register_file is
           lsu_write_data_out: out word_t;
           return_data_in: in word_t;
 
-          -- Constant storage
-          constant_write_enable_in : in std_logic;
-          constant_value_in: in word_t;
-
           -- Predicate bit
-          predicate_out: out std_logic
-        );
+          predicate_out: out std_logic);
 
 end register_file;
 
@@ -53,8 +48,6 @@ architecture rtl of register_file is
   signal lsu_data : word_t;
 
   signal mask : std_logic := '0';
-
-  signal data_to_write : word_t;
 
 begin
 
@@ -85,10 +78,6 @@ begin
                        (others => '0') when register_mask,
                        general_registers(to_integer(unsigned(read_register_2_in))) when others;
 
-  with constant_write_enable_in select
-    data_to_write <= constant_value_in when '1',
-                     write_data_in when others;
-
   registers: process (clk) is
   begin
 
@@ -106,15 +95,15 @@ begin
           when register_zero | register_id_hi | register_id_lo =>
             null;
           when register_address_hi =>
-            address_hi <= data_to_write;
+            address_hi <= write_data_in;
           when register_address_lo =>
-            address_lo <= data_to_write;
+            address_lo <= write_data_in;
           when register_lsu_data =>
-            lsu_data <= data_to_write;
+            lsu_data <= write_data_in;
           when register_mask =>
-            mask <= data_to_write(0);
+            mask <= write_data_in(0);
           when others =>
-            general_registers(to_integer(unsigned(write_register_in))) <= data_to_write;
+            general_registers(to_integer(unsigned(write_register_in))) <= write_data_in;
         end case;
       end if;
     end if;

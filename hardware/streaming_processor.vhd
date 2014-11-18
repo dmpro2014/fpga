@@ -40,12 +40,18 @@ architecture rtl of streaming_processor is
     signal alu_result_i               : word_t;
     signal alu_operand_b_i            : word_t;
 
+    signal write_data_i               : word_t;
+
 begin
 
   reg_dir_write_enable_i <= reg_write_enable_in and not( reg_dir_predicate_i and mask_enable_in);
 
   alu_operand_b_i <= immediate_in when immediate_enable_in = '1'
                      else reg_dir_read_data_2_i;
+
+  with constant_write_enable_in select
+    write_data_i <= constant_value_in when '1',
+                    alu_result_i when others;
 
   reg_dir : entity work.register_directory
   generic map( NUMBER_OF_REGISTERS => REGISTER_COUNT
@@ -57,7 +63,7 @@ begin
           , read_register_1_in  => read_reg_1_in
           , read_register_2_in  => read_reg_2_in
           , write_register_in   => write_reg_in
-          , write_data_in       => alu_result_i
+          , write_data_in       => write_data_i
           , register_write_enable_in => reg_dir_write_enable_i
 
           , id_register_write_enable_in => id_write_enable_in
@@ -73,8 +79,6 @@ begin
           , lsu_write_data_out  => lsu_write_data_out
 
           , predicate_out  => reg_dir_predicate_i
-          , constant_write_enable_in => constant_write_enable_in
-          , constant_value_in => constant_value_in
           );
 
   alu : entity work.alu

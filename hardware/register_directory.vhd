@@ -38,12 +38,7 @@ entity register_directory is
          lsu_write_data_out: out word_t;
 
          --Predicate
-         predicate_out: out std_logic;
-
-         -- Constant storage
-         constant_write_enable_in : in std_logic;
-         constant_value_in: in word_t
-       );
+         predicate_out: out std_logic);
 
 end register_directory;
 
@@ -108,10 +103,6 @@ begin
               return_data_in => return_data_in,
               lsu_address_out => lsu_addresses_out(i),
               lsu_write_data_out => lsu_datas(i),
-
-              -- Constant storage
-              constant_write_enable_in => constant_write_enable_in,
-              constant_value_in => constant_value_in,
 
               -- Predicate bit
               predicate_out => predicates_out(i)
