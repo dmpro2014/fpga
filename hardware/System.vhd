@@ -163,9 +163,11 @@ begin
             ts_kernel_complete_out => mc_kernel_complete_out,
 
             -- LSU
-            load_store_sram_bus_data_1_inout => load_store_sram_bus_data_1_inout,
+            load_store_sram_bus_data_1_in => load_store_sram_bus_data_1_in,
+            load_store_sram_bus_data_1_out => load_store_sram_bus_data_1_out,
             load_store_sram_bus_control_1_out => load_store_sram_bus_control_1_out,
-            load_store_sram_bus_data_2_inout => load_store_sram_bus_data_2_inout,
+            load_store_sram_bus_data_2_in => load_store_sram_bus_data_2_in,
+            load_store_sram_bus_data_2_out => load_store_sram_bus_data_2_out,
             load_store_sram_bus_control_2_out => load_store_sram_bus_control_2_out,
             load_store_memory_request_out => load_store_memory_request_out,
             

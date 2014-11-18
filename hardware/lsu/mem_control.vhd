@@ -14,7 +14,8 @@ entity mem_control is
         ; mem_request    : out   std_logic
 
         ; ram_control    : out   sram_bus_control_t
-        ; ram_data       : inout sram_bus_data_t
+        ; ram_data_in    : in    sram_bus_data_t
+        ; ram_data_out   : out   sram_bus_data_t
         );
 
 end mem_control;
@@ -25,7 +26,7 @@ end mem_control;
 architecture Behavioral of mem_control is begin
 
     -- Output the response from ram immediately.
-    read_response.data <= ram_data;
+    read_response.data <= ram_data_in;
 
     process (clock) begin
         if rising_edge(clock) then
@@ -36,14 +37,8 @@ architecture Behavioral of mem_control is begin
             ram_control.write_enable_n <= not (request_packet.valid and write_enable);
             mem_request <= request_packet.valid;
 
-            -- Handle the half-duplex data-bus to ram.
-            -- When write_enable is low, disconnect it from load using a BUFT.
-            if write_enable = '1' then
-                ram_data <= request_packet.write_data;
-            else
-                ram_data <= (others => 'Z');
-            end if;
-
+            -- Output potential write-data.
+            ram_data_out <= request_packet.write_data;
 
             -- Outputs to response-handler.
             read_response.valid <= request_packet.valid and not write_enable;

@@ -13,9 +13,11 @@ entity load_store_unit is
          sp_sram_bus_datas_in : in sp_sram_datas_t;
 
          -- Memory wires
-         sram_bus_data_1_inout : inout sram_bus_data_t;
+         sram_bus_data_1_in : in sram_bus_data_t;
+         sram_bus_data_1_out : out sram_bus_data_t;
          sram_bus_control_1_out : out sram_bus_control_t;
-         sram_bus_data_2_inout : inout sram_bus_data_t;
+         sram_bus_data_2_in : in sram_bus_data_t;
+         sram_bus_data_2_out : out sram_bus_data_t;
          sram_bus_control_2_out : out sram_bus_control_t;
          memory_request_out : out std_logic;
 
@@ -125,7 +127,8 @@ begin
                 , mem_request    => mem_request_even
 
                 , ram_control    => sram_bus_control_1_out
-                , ram_data       => sram_bus_data_1_inout
+                , ram_data_in    => sram_bus_data_1_in
+                , ram_data_out   => sram_bus_data_1_out
                 );
 
 
@@ -139,7 +142,8 @@ begin
                 , mem_request    => mem_request_odd
 
                 , ram_control    => sram_bus_control_2_out
-                , ram_data       => sram_bus_data_2_inout
+                , ram_data_in    => sram_bus_data_2_in
+                , ram_data_out   => sram_bus_data_2_out
                 );
 
     -- Deserialize record for output
