@@ -193,8 +193,10 @@ begin
             instruction_write_enable_out => comm_instruction_write_enable_out,
             instruction_address_hi_select_out => comm_instruction_address_hi_select_out,
 
-            sram_bus_data_1_inout => comm_sram_bus_data_1_inout,
-            sram_bus_data_2_inout => comm_sram_bus_data_2_inout,
+            sram_bus_data_1_in => comm_sram_bus_data_1_in,
+            sram_bus_data_1_out => comm_sram_bus_data_1_out,
+            sram_bus_data_2_in => comm_sram_bus_data_2_in,
+            sram_bus_data_2_out => comm_sram_bus_data_2_out,
             sram_bus_control_1_out => comm_sram_bus_control_1_out,
             sram_bus_control_2_out => comm_sram_bus_control_2_out,
             sram_request_out => comm_memory_request_out,
@@ -231,7 +233,7 @@ begin
             sram_bus_data_inout => sram_bus_data_1_inout_i
           );
 
-  sram_arbiter_1 : entity work.sram_arbiter
+  sram_arbiter_2 : entity work.sram_arbiter
   port map( -- LSU wires
             lsu_sram_bus_control_in => load_store_sram_bus_control_2_out,
             lsu_sram_bus_data_in    => load_store_sram_bus_data_2_out,

@@ -76,7 +76,7 @@ begin
   ------------------------------------------
   ----   Connect data to sram 2
   ------------------------------------------
-  sram_bus_data_2_inout <= ebi_data_inout;
+  sram_bus_data_2_out <= ebi_data_inout;
 
   ebi_data_inout <= sram_bus_data_2_in when ebi_control_in.chip_select_sram_n = '0'
                                        and ebi_control_in.read_enable_n = '0'

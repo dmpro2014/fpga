@@ -43,8 +43,8 @@ begin
                     else lsu_sram_bus_data_in;
 
     -- Output if required:
-    outputing_to_sram <= (comm_mem_request_in and comm_sram_bus_control_in.write_enable_n = '0')
-                      or (lsu_mem_request_in and lsu_sram_bus_control_in.write_enable_n = '0');
+    outputing_to_sram <= (comm_mem_request_in and not comm_sram_bus_control_in.write_enable_n)
+                      or (lsu_mem_request_in and not lsu_sram_bus_control_in.write_enable_n);
     
     -- Tri-state-buffer for inout
     with outputing_to_sram
@@ -57,6 +57,6 @@ begin
     comm_sram_bus_data_out     <= sram_bus_data_inout;
 
     -- Notify video-unit of available data:
-    vga_hdmi_request_accepted_out <= comm_mem_request_in = '0' and lsu_mem_request_in = '0';
+    vga_hdmi_request_accepted_out <= not comm_mem_request_in and not lsu_mem_request_in;
 
 end Behavioral;
