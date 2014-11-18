@@ -145,8 +145,10 @@ BEGIN
                            ;address : in integer
                            ) is begin
        if address mod 2 = 0 then
+          --report "Checking " & integer'image(address) & " " & integer'image(to_integer(signed(sram_a(address/2))));
           assert_equals(data, sram_a(address/2), "Data memory check");
        else
+          --report "Checking " & integer'image(address) & " " & integer'image(to_integer(signed(sram_b(address/2))));
           assert_equals(data, sram_b(address/2), "Data memory check");
        end if;
      end procedure;
