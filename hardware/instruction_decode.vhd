@@ -19,7 +19,8 @@ entity instruction_decode is
         lsu_load_enable_out: out std_logic;
         lsu_write_enable_out: out std_logic;
         constant_write_enable_out: out std_logic;
-        thread_done_out: out std_logic
+        thread_done_out: out std_logic;
+        led_out: out std_logic
       );
 end instruction_decode;
 
@@ -71,7 +72,11 @@ begin
 
       when THREAD_FINISHED_OPCODE =>
         thread_done_out <= '1';
-
+      
+      when "11111" => --LED on
+        led_out <= '1';
+      when "11110" => --LED off
+        led_out <= '0';
       when others =>
         null;
 

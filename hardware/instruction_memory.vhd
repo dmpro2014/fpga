@@ -18,8 +18,21 @@ end instruction_memory;
 architecture behavioral of instruction_memory is
 
   type mem_t is array(INSTRUCTION_MEM_SIZE - 1 downto 0) of word_t;
-  signal inst_mem_hi : mem_t := (others => (others => '0'));
-  signal inst_mem_lo : mem_t := (others => (others => '0'));
+  signal inst_mem_hi : mem_t := ( (3) => X"0002" 
+                                , (4) => X"0001"
+                                , (5) => X"0002"
+                                , (6) => X"1000"
+                                , (7) => X"7800"
+                                , (8) => X"4000"
+                                , others => (others => '0')
+                                );
+  signal inst_mem_lo : mem_t := ( (3) => X"2804" 
+                                , (4) => X"1804"
+                                , (5) => X"2004"
+                                , (6) => X"0000"
+                                , (7) => X"7800"
+                                , (8) => X"4000"
+                                , others => (others => '0'));
 
 begin
 

@@ -55,7 +55,6 @@ architecture Behavioral of ghettocuda is
   signal ts_id_write_enable_out : std_logic;
   signal ts_kernel_complete_out_i : std_logic;
 
-  signal ts_thread_done_in : std_logic;
   signal ts_flush_instruction_delay_i : std_logic;
 
   -- Streaming processor (SP)
@@ -103,10 +102,10 @@ architecture Behavioral of ghettocuda is
   
 begin          
   debug_signal0 <= ts_pc_input_select_out;
-  debug_signal1 <= ts_kernel_complete_out_i;
-  debug_signal2 <= instruction_data_out(13);
-  
-  
+  debug_signal1 <= ts_pc_out(0);
+  debug_signal2 <= decode_thread_done_out;
+--  
+--  
   ts_kernel_complete_out <= ts_kernel_complete_out_i;
 
   -- Instruction decode
@@ -125,7 +124,8 @@ begin
       alu_shamt_out => decode_shamt_out,
       constant_write_enable_out => decode_constant_write_enable_out,
       immediate_operand_out => decode_immediate_operand_out,
-      immediate_enable_out => decode_immediate_enable_out
+      immediate_enable_out => decode_immediate_enable_out,
+      led_out => led_2_out
   );
 
   -- Constant storage

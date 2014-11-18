@@ -8,11 +8,11 @@ entity thread_spawner is
   Port ( clk : in std_logic;
          thread_done_in: in std_logic;
           --Engage signal
-         kernel_start_in: in std_logic;
-         kernel_addr_in: in instruction_address_t;
+         kernel_start_in: in std_logic := '1';
+         kernel_addr_in: in instruction_address_t := X"0001";
          kernel_complete_out: out std_logic;
 
-         num_threads_in: in thread_id_t;
+         num_threads_in: in thread_id_t :=  std_logic_vector(to_unsigned(1024,20));
          pc_start_out: out instruction_address_t;
          pc_input_select_out: out std_logic;
          thread_id_out : out thread_id_t;
@@ -22,8 +22,8 @@ entity thread_spawner is
 end thread_spawner;
 
 architecture Behavioral of thread_spawner is
-  signal kernel_addr_reg  : instruction_address_t := (others => '0');
-  signal thread_number_reg: thread_id_t := (others => '0');
+  signal kernel_addr_reg  : instruction_address_t := ((0) => '1', others => '0');
+  signal thread_number_reg: thread_id_t :=  std_logic_vector(to_unsigned(1024,20));-- (others => '0');
   signal next_id_reg      : thread_id_t := (others => '0');
   signal next_id_in       : thread_id_t := (others => '0');
   signal num_minus_next_id: thread_id_t;

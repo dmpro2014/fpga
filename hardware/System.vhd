@@ -127,10 +127,10 @@ begin
   sram_1_enable_n <= '0';
   sram_2_enable_n <= '0';
   
---  debug_signal0 <= sram_bus_control_1_out.write_enable_n;
---  debug_signal1 <= load_store_sram_bus_control_1_out.write_enable_n;
---  debug_signal2 <= load_store_memory_request_out;
-  
+--  debug_signal0 <= comm_instruction_data_out(14);
+--  debug_signal1 <= comm_instruction_write_enable_out;
+--  debug_signal2 <= comm_instruction_address_hi_select_out;
+--  
   sram_bus_control_1_out <= sram_bus_control_1_out_i;
   sram_bus_data_1_inout <= sram_bus_data_1_inout_i;
   sram_bus_control_2_out <= sram_bus_control_2_out_i;
@@ -259,7 +259,7 @@ begin
             );
             
   fake_ram_0 : entity work.fake_ram
-  generic map(init_value => '0')
+  generic map(init_value => '1')
   port map( clk => clock_sys, reset => reset,
             write_enable_n_in => sram_bus_control_1_out_i.write_enable_n,
             address_in => sram_bus_control_1_out_i.address,

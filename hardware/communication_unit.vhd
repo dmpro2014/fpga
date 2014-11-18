@@ -39,84 +39,101 @@ entity communication_unit is
 end communication_unit;
 
 architecture Behavioral of communication_unit is
+
+  signal ebi_data_i : ebi_data_t := (others=>'0');
+  signal ebi_control_i : ebi_control_t := (write_enable_n => '1'
+                                          ,chip_select_fpga_n => '1'
+                                          ,chip_select_sram_n => '1'
+                                          ,read_enable_n      => '1'
+                                          ,address            => (others => '0'));
 begin
 
+  process (clk)
+  begin
+    if rising_edge(clk) then
+      ebi_data_i <= ebi_data_inout;
+      ebi_control_i <= ebi_control_in;
+    end if;
+  end process;
+
   -- Instruction memory
-  instruction_data_out <= ebi_data_inout;
-  instruction_address_out <= ebi_control_in.address(INSTRUCTION_ADDRESS_WIDTH downto 1);
-  instruction_address_hi_select_out <= ebi_control_in.address(0);
-  instruction_write_enable_out <= not ebi_control_in.write_enable_n
-    and not ebi_control_in.chip_select_fpga_n
-    and ebi_control_in.address(17);
+  instruction_data_out <= ebi_data_i;
+  instruction_address_out <= ebi_control_i.address(INSTRUCTION_ADDRESS_WIDTH downto 1);
+  instruction_address_hi_select_out <= ebi_control_i.address(0);
+  instruction_write_enable_out <= not ebi_control_i.write_enable_n
+    and not ebi_control_i.chip_select_fpga_n
+    and ebi_control_i.address(17);
 
   -- Constant storage
-  constant_out <= ebi_data_inout;
-  constant_address_out <= ebi_control_in.address(CONSTANT_MEM_LOG_SIZE - 1 downto 0);
-  constant_write_enable_out <= not ebi_control_in.write_enable_n
-    and not ebi_control_in.chip_select_fpga_n
-    and not ebi_control_in.address(17);
+  constant_out <= ebi_data_i;
+  constant_address_out <= ebi_control_i.address(CONSTANT_MEM_LOG_SIZE - 1 downto 0);
+  constant_write_enable_out <= not ebi_control_i.write_enable_n
+    and not ebi_control_i.chip_select_fpga_n
+    and not ebi_control_i.address(17);
 
   -- SRAM
-  sram_request_out <= not ebi_control_in.chip_select_sram_n;
+  sram_request_out <= not ebi_control_i.chip_select_sram_n and not ebi_control_i.write_enable_n;
 
 
   ------------------------------------------
   ----   Connect data to sram 1
   ------------------------------------------
-  sram_bus_data_1_inout <= ebi_data_inout when ebi_control_in.chip_select_sram_n = '0'
-                                          and ebi_control_in.write_enable_n = '0'
-                                          and ebi_control_in.address(0) = '0'
+  sram_bus_data_1_inout <= ebi_data_i when ebi_control_i.chip_select_sram_n = '0'
+                                          and ebi_control_i.write_enable_n = '0'
+                                          and ebi_control_i.address(0) = '0'
                       else (others => 'Z');
 
-  ebi_data_inout <= sram_bus_data_1_inout when ebi_control_in.chip_select_sram_n = '0'
-                                          and ebi_control_in.read_enable_n = '0'
-                                          and ebi_control_in.address(0) = '0'
+  ebi_data_inout <= sram_bus_data_1_inout when ebi_control_i.chip_select_sram_n = '0'
+                                          and ebi_control_i.read_enable_n = '0'
+                                          and ebi_control_i.address(0) = '0'
                       else (others => 'Z');
 
 
   ------------------------------------------
   ----   Connect data to sram 2
   ------------------------------------------
-  sram_bus_data_2_inout <= ebi_data_inout when ebi_control_in.chip_select_sram_n = '0'
-                                          and ebi_control_in.write_enable_n = '0'
-                                          and ebi_control_in.address(0) = '1'
+  sram_bus_data_2_inout <= ebi_data_i when ebi_control_i.chip_select_sram_n = '0'
+                                          and ebi_control_i.write_enable_n = '0'
+                                          and ebi_control_i.address(0) = '1'
                       else (others => 'Z');
 
-  ebi_data_inout <= sram_bus_data_2_inout when ebi_control_in.chip_select_sram_n = '0'
-                                          and ebi_control_in.read_enable_n = '0'
-                                          and ebi_control_in.address(0) = '1'
+  ebi_data_inout <= sram_bus_data_2_inout    when ebi_control_i.chip_select_sram_n = '0'
+                                          and ebi_control_i.read_enable_n = '0'
+                                          and ebi_control_i.address(0) = '1'
                       else (others => 'Z');
 
 
   -- Least significant bit selects SRAM chip, and should not be part of the address.
-  sram_bus_control_1_out.address <= ebi_control_in.address(DATA_ADDRESS_WIDTH - 1 downto 1);
-  sram_bus_control_2_out.address <= ebi_control_in.address(DATA_ADDRESS_WIDTH - 1 downto 1);
+  sram_bus_control_1_out.address <= ebi_control_i.address(DATA_ADDRESS_WIDTH - 1 downto 1);
+  sram_bus_control_2_out.address <= ebi_control_i.address(DATA_ADDRESS_WIDTH - 1 downto 1);
 
 
   ------------------------------------------
   ----   Set SRAM write enable signals
   ------------------------------------------
-  sram_bus_control_1_out.write_enable_n <= '0' when ebi_control_in.chip_select_sram_n = '0'
-                                                and ebi_control_in.write_enable_n = '0'
-                                                and ebi_control_in.address(0) = '0'
+--  sram_bus_control_1_out.write_enable_n <= '0';
+  sram_bus_control_1_out.write_enable_n <= '0' when ebi_control_i.chip_select_sram_n = '0'
+                                                and ebi_control_i.write_enable_n = '0'
+                                                and ebi_control_i.address(0) = '0'
                                        else '1';
 
 
 
-  sram_bus_control_2_out.write_enable_n <= '0' when ebi_control_in.chip_select_sram_n = '0'
-                                                and ebi_control_in.write_enable_n = '0'
-                                                and ebi_control_in.address(0) = '1'
+--  sram_bus_control_2_out.write_enable_n <= '0';
+  sram_bus_control_2_out.write_enable_n <= '0' when ebi_control_i.chip_select_sram_n = '0'
+                                                and ebi_control_i.write_enable_n = '0'
+                                                and ebi_control_i.address(0) = '1'
                                        else '1';
 
   -- Thread spawner
   kernel_number_of_threads_out <= std_logic_vector(shift_left(
-    resize(unsigned(ebi_data_inout), ID_WIDTH),
+    resize(unsigned(ebi_data_i), ID_WIDTH),
     NUMBER_OF_STREAMING_PROCESSORS_BIT_WIDTH + BARREL_HEIGHT_BIT_WIDTH
   ));
-  kernel_address_out <= ebi_control_in.address(INSTRUCTION_ADDRESS_WIDTH - 1 downto 0);
-  kernel_start_out <= not ebi_control_in.write_enable_n
-    and not ebi_control_in.chip_select_fpga_n
-    and ebi_control_in.address(18);
+  kernel_address_out <= ebi_control_i.address(INSTRUCTION_ADDRESS_WIDTH - 1 downto 0);
+  kernel_start_out <= not ebi_control_i.write_enable_n
+    and not ebi_control_i.chip_select_fpga_n
+    and ebi_control_i.address(18);
 
 
 end Behavioral;

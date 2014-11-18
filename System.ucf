@@ -11,7 +11,7 @@ net debug_signal1 loc = C5 | IOSTANDARD = LVCMOS33;
 net debug_signal2 loc = C4 | IOSTANDARD = LVCMOS33;
 
 net led_1_out loc = J13  | IOSTANDARD = LVCMOS33;
-#net led_2_out loc = K14  | IOSTANDARD = LVCMOS33;
+net led_2_out loc = U17  | IOSTANDARD = LVCMOS33;
 
 #GPIOs:  A5 C5 C4
 
