@@ -74,11 +74,11 @@ begin
         process (clock) begin
             if rising_edge(clock) then
                 h_count <= h_count + 1;
-                if h_count = video_mode.h.total or zero_counter = '1' then
+                if h_count = (video_mode.h.total - 1) or zero_counter = '1' then
                     h_count <= to_unsigned(0, 10);
                     v_count <= v_count + 1;
                 end if;
-                if v_count = video_mode.v.total or zero_counter = '1' then
+                if v_count = (video_mode.v.total - 1) or zero_counter = '1' then
                     v_count <= to_unsigned(0, 9);
                 end if;
             end if;
