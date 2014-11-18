@@ -36,8 +36,8 @@ ARCHITECTURE behavior OF tb_system IS
    -- Clock period definitions
    constant clk_period : time := 10 ns;
 
-   -- Memory
-   type mem_t is array(30000 - 1 downto 0) of word_t;
+   -- Memory (> 512* 256)
+   type mem_t is array(200000 - 1 downto 0) of word_t;
    signal sram_a : mem_t := (others => (others => '0'));
    signal sram_b : mem_t := (others => (others => '0'));
 
