@@ -30,8 +30,8 @@ architecture behavioral of instruction_memory is
                                 , (4) => X"1804"
                                 , (5) => X"2004"
                                 , (6) => X"0000"
-                                , (7) => X"7800"
-                                , (8) => X"4000"
+                                , (7) => X"0000"
+                                , (8) => X"0000"
                                 , others => (others => '0'));
 
 begin
@@ -40,9 +40,9 @@ begin
   begin
 
     if rising_edge(clk) then
-      data_out <= inst_mem_lo(to_integer(unsigned(address_in))) & inst_mem_hi(to_integer(unsigned(address_in)));
-
-      if write_enable_in = '1' then
+      if write_enable_in = '0' then
+        data_out <= inst_mem_hi(to_integer(unsigned(address_in))) & inst_mem_lo(to_integer(unsigned(address_in)));
+      elsif write_enable_in = '1' then
         if address_hi_select_in = '1' then
           inst_mem_hi(to_integer(unsigned(address_in))) <= data_in;
         else
