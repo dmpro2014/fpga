@@ -25,8 +25,10 @@ entity communication_unit is
          instruction_address_hi_select_out : out  std_logic;
 
          -- SRAM
-         sram_bus_data_1_inout : inout sram_bus_data_t;
-         sram_bus_data_2_inout : inout sram_bus_data_t;
+         sram_bus_data_1_in : in sram_bus_data_t;
+         sram_bus_data_1_out : out sram_bus_data_t;
+         sram_bus_data_2_in : in sram_bus_data_t;
+         sram_bus_data_2_out : out sram_bus_data_t;
          sram_bus_control_1_out: out sram_bus_control_t;
          sram_bus_control_2_out: out sram_bus_control_t;
          sram_request_out      : out std_logic;
@@ -63,28 +65,22 @@ begin
   ------------------------------------------
   ----   Connect data to sram 1
   ------------------------------------------
-  sram_bus_data_1_inout <= ebi_data_inout when ebi_control_in.chip_select_sram_n = '0'
-                                          and ebi_control_in.write_enable_n = '0'
-                                          and ebi_control_in.address(0) = '0'
-                      else (others => 'Z');
+  sram_bus_data_1_out <= ebi_data_inout;
 
-  ebi_data_inout <= sram_bus_data_1_inout when ebi_control_in.chip_select_sram_n = '0'
-                                          and ebi_control_in.read_enable_n = '0'
-                                          and ebi_control_in.address(0) = '0'
+  ebi_data_inout <= sram_bus_data_1_in when ebi_control_in.chip_select_sram_n = '0'
+                                       and ebi_control_in.read_enable_n = '0'
+                                       and ebi_control_in.address(0) = '0'
                       else (others => 'Z');
 
 
   ------------------------------------------
   ----   Connect data to sram 2
   ------------------------------------------
-  sram_bus_data_2_inout <= ebi_data_inout when ebi_control_in.chip_select_sram_n = '0'
-                                          and ebi_control_in.write_enable_n = '0'
-                                          and ebi_control_in.address(0) = '1'
-                      else (others => 'Z');
+  sram_bus_data_2_inout <= ebi_data_inout;
 
-  ebi_data_inout <= sram_bus_data_2_inout when ebi_control_in.chip_select_sram_n = '0'
-                                          and ebi_control_in.read_enable_n = '0'
-                                          and ebi_control_in.address(0) = '1'
+  ebi_data_inout <= sram_bus_data_2_in when ebi_control_in.chip_select_sram_n = '0'
+                                       and ebi_control_in.read_enable_n = '0'
+                                       and ebi_control_in.address(0) = '1'
                       else (others => 'Z');
 
 

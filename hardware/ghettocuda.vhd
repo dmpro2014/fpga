@@ -26,9 +26,11 @@ entity ghettocuda is
          ts_kernel_complete_out : out std_logic;
          
          -- LSU
-         load_store_sram_bus_data_1_inout : inout sram_bus_data_t;
+         load_store_sram_bus_data_1_in : inout sram_bus_data_t;
+         load_store_sram_bus_data_1_out : inout sram_bus_data_t;
          load_store_sram_bus_control_1_out : out sram_bus_control_t;
-         load_store_sram_bus_data_2_inout : inout sram_bus_data_t;
+         load_store_sram_bus_data_2_in : inout sram_bus_data_t;
+         load_store_sram_bus_data_2_out : inout sram_bus_data_t;
          load_store_sram_bus_control_2_out : out sram_bus_control_t;
          load_store_memory_request_out : out std_logic;
          
@@ -205,9 +207,11 @@ begin
             sp_sram_bus_datas_in => sp_sram_bus_data_out,
             
             --Memory wires
-            sram_bus_data_1_inout => load_store_sram_bus_data_1_inout,
+            sram_bus_data_1_in => load_store_sram_bus_data_1_in,
+            sram_bus_data_1_out => load_store_sram_bus_data_1_out,
             sram_bus_control_1_out => load_store_sram_bus_control_1_out,
-            sram_bus_data_2_inout => load_store_sram_bus_data_2_inout,
+            sram_bus_data_2_in => load_store_sram_bus_data_2_in,
+            sram_bus_data_2_out => load_store_sram_bus_data_2_out,
             sram_bus_control_2_out => load_store_sram_bus_control_2_out,
             memory_request_out => load_store_memory_request_out,
 
