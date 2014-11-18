@@ -50,8 +50,7 @@ begin
 
   lsu_load_enable_out <= '1' when opcode = LW_OPCODE
                           else '0';
-  lsu_write_enable_out <= '1' when opcode = SW_OPCODE
-                          else '0';
+  lsu_write_enable_out <= instruction_in(28);
 
   constant_write_enable_out <= '1' when opcode = LOAD_CONSTANT_OPCODE
                                 else '0';
