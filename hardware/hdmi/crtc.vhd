@@ -76,12 +76,14 @@ begin
     ram_address_counter:
         process (clock_sys) begin
             if rising_edge(clock_sys) then
-                if ram_read_address_i = buffer_end_address then
-                    ram_read_address_i <= buffer_start_address;
-                else
-                    -- Pause counter while fifo is full.
-                    if fifo_full = '0' then
-                        ram_read_address_i <= ram_read_address_i + 1;
+                -- Pause prefetching while fifo is full.
+                if fifo_full = '0' then
+                    if ram_request_accepted = '1' then
+                        if ram_read_address_i = buffer_end_address then
+                            ram_read_address_i <= buffer_start_address;
+                        else
+                            ram_read_address_i <= ram_read_address_i + 1;
+                        end if;
                     end if;
                 end if;
             end if;
