@@ -264,9 +264,9 @@ begin
 
           , ram_request_accepted=> hdmi_sram_request_accepted_in
           , ram_0_bus_control   => hdmi_sram_bus_control_1_out 
-          , ram_0_bus_data      => hdmi_sram_bus_data_1_inout 
+          , ram_0_bus_data      => hdmi_sram_bus_data_1_in
           , ram_1_bus_control   => hdmi_sram_bus_control_2_out
-          , ram_1_bus_data      => hdmi_sram_bus_data_2_inout
+          , ram_1_bus_data      => hdmi_sram_bus_data_2_in
           
           , hdmi_connector      => hdmi_connector_out
           );
