@@ -24,6 +24,7 @@ entity video_unit is
         ; ram_1_bus_data        : in      sram_bus_data_t
         
         ; hdmi_connector      : out     hdmi_connector_t
+        ; starved             : out std_logic 
         );
 
 end video_unit;
@@ -106,7 +107,7 @@ begin
                 ( rst    => reset
                 , wr_clk => clock_sys
                 , rd_clk => clock_pixel
-
+                , empty  => starved
                 , full   => fifo_full
                 , wr_en  => ram_request_accepted
                 -- Not sure how the 32 to 16 conversion takes place. Maybe these should change places.
