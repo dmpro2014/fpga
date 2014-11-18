@@ -9,7 +9,6 @@ entity System is
   Port ( -- Stuff
          clk : in std_logic;
 --         reset : in std_logic;
-         clk_sys_out : out std_logic;
 
          -- SRAM
 --         sram_bus_data_1_inout : inout sram_bus_data_t;
@@ -118,8 +117,9 @@ architecture Behavioral of System is
 begin
 
   --Output system clock for testing and debugging
-  clock_output: ODDR2 port map ( d0 => '1', d1 => '0', c0 => clock_sys, c1 => not clock_sys, q => clk_sys_out);
-
+  
+--  clock_output: ODDR2 port map ( d0 => '1', d1 => '0', c0 => clock_sys, c1 => not clock_sys, q => clk_sys_out);
+--  clk_sys_out <= clock_sys;
   sram_1_enable_n <= '0';
   sram_2_enable_n <= '0';
   
@@ -227,7 +227,8 @@ begin
           , clock_125           => clock_125 
           , clock_125n          => clock_125n
           , reset               => reset
-
+          
+          , starved             => led_1_out
           , front_buffer_select => mc_frame_buffer_select_in
 
           , ram_request_accepted=> hdmi_sram_request_accepted_in
@@ -248,12 +249,14 @@ begin
             );
             
   fake_ram_0 : entity work.fake_ram
+  generic map(init_value => '0')
   port map( clk => clock_sys, reset => reset,
             write_enable_n_in => sram_bus_control_1_out_i.write_enable_n,
             address_in => sram_bus_control_1_out_i.address,
             data_inout => sram_bus_data_1_inout_i);
             
   fake_ram_1 : entity work.fake_ram
+  generic map(init_value => '1')
   port map( clk => clock_sys, reset => reset,
             write_enable_n_in => sram_bus_control_2_out_i.write_enable_n,
             address_in => sram_bus_control_2_out_i.address,
