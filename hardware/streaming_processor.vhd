@@ -27,12 +27,12 @@ entity streaming_processor is
 end streaming_processor;
 
 architecture rtl of streaming_processor is
-    
+
     --Register directory out
     signal reg_dir_read_data_1_i      : word_t;
     signal reg_dir_read_data_2_i      : word_t;
     signal reg_dir_predicate_i        : std_logic;
-    
+
     --Register directory in
     signal reg_dir_write_enable_i     : std_logic;
 
@@ -42,7 +42,7 @@ architecture rtl of streaming_processor is
 
 begin
 
-  reg_dir_write_enable_i <= reg_write_enable_in and not( reg_dir_predicate_i and mask_enable_in);                      
+  reg_dir_write_enable_i <= reg_write_enable_in and not( reg_dir_predicate_i and mask_enable_in);
 
   alu_operand_b_i <= immediate_in when immediate_enable_in = '1'
                      else reg_dir_read_data_2_i;

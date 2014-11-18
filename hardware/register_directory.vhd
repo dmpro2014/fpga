@@ -14,9 +14,9 @@ entity register_directory is
          clk : in std_logic;
 
          -- General registers
-         read_register_1_in: in std_logic_vector(LOG_NUMBER_OF_REGISTERS -1 downto 0);
-         read_register_2_in: in std_logic_vector(LOG_NUMBER_OF_REGISTERS -1 downto 0);
-         write_register_in: in std_logic_vector(LOG_NUMBER_OF_REGISTERS -1 downto 0);
+         read_register_1_in: in register_address_t;
+         read_register_2_in: in register_address_t;
+         write_register_in: in register_address_t;
          write_data_in: in word_t;
          register_write_enable_in: in std_logic;
          read_data_1_out: out word_t;

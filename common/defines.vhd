@@ -41,8 +41,8 @@ package defines is
   constant BARREL_HEIGHT: integer := 4;
   constant BARREL_HEIGHT_BIT_WIDTH: integer := 2;
 
-  constant REGISTER_COUNT: integer := 8;
-  constant REGISTER_COUNT_BIT_WIDTH: integer := 3;
+  constant REGISTER_COUNT: integer := 8; -- Actually 15
+  constant REGISTER_COUNT_BIT_WIDTH: integer := 4; -- Incremented by 1 to accomodate special registers
 
   type register_directory_ids_t is array(BARREL_HEIGHT-1 downto 0) of  thread_id_t;
   subtype barrel_row_t is std_logic_vector(BARREL_HEIGHT_BIT_WIDTH - 1 downto 0);
