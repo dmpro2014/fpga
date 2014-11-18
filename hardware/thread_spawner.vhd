@@ -16,7 +16,8 @@ entity thread_spawner is
          pc_start_out: out instruction_address_t;
          pc_input_select_out: out std_logic;
          thread_id_out : out thread_id_t;
-         id_write_enable_out: out std_logic);
+         id_write_enable_out: out std_logic;
+         flush_instruction_delay_out: out std_logic);
 
 end thread_spawner;
 
@@ -60,6 +61,8 @@ begin
   
   next_id_in <= next_id_reg when update_next_id = '0'
            else std_logic_vector(unsigned(next_id_reg) + to_unsigned(NUMBER_OF_STREAMING_PROCESSORS, ID_WIDTH)); 
+
+  flush_instruction_delay_out <= not kernel_start_in_prev and kernel_start_in;
 
   process(clk) is
   begin

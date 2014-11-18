@@ -196,20 +196,7 @@ BEGIN
        X"10000000", -- sw
        X"00000000", -- nop
        X"00000000", -- nop
-       X"40000000", --finished
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000" -- nop
+       X"40000000" --finished
      );
      constant NUM_THREADS_SRL : integer := 1024;
 
@@ -221,21 +208,7 @@ BEGIN
       X"00000000", -- nop
       X"00000000", -- nop
       X"00000000", -- nop
-      X"00000000", -- nop
-      X"40000000", -- thread_finished
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000" -- nop
+      X"40000000" -- thread_finished
     );
     constant NUM_THREADS_FILLSCREEN : integer := 256;
 
@@ -249,21 +222,7 @@ BEGIN
      X"00011804", -- add $address_hi, $0, $id_hi
      X"00022004", -- add $address_lo, $0, $id_lo
      X"10000000", -- sw
-     X"40000000", -- thread_finished
-     X"00000000", -- nop
-     X"00000000", -- nop
-     X"00000000", -- nop
-     X"00000000", -- nop
-     X"00000000", -- nop
-     X"00000000", -- nop
-     X"00000000", -- nop
-     X"00000000", -- nop
-     X"00000000", -- nop
-     X"00000000", -- nop
-     X"00000000", -- nop
-     X"00000000", -- nop
-     X"00000000", -- nop
-     X"00000000" -- nop
+     X"40000000" -- thread_finished
    );
    constant NUM_THREADS_SLT : integer := 64;
 
@@ -288,25 +247,7 @@ BEGIN
       X"00011804", -- add $3, $0, $1
       X"00022004", -- add $4, $0, $2
       X"10000000", -- sw
-      X"00000000", -- nop
-      X"40000000", -- thread_finished
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000" -- nop
+      X"40000000" -- thread_finished
     );
     CONSTANT NUM_THREADS_SQUARE : integer := 512*70;
 
