@@ -21,8 +21,8 @@ end video_timing_generator;
 -- if it is be used with a larger framesize.
 architecture Behavioral of video_timing_generator is
 
-    signal h_count : unsigned(9 downto 0);
-    signal v_count : unsigned(8 downto 0);
+    signal h_count : unsigned(9 downto 0) := (others => '0');
+    signal v_count : unsigned(8 downto 0) := (others => '0');
 
     signal zero_counter : std_logic := '1';
 
@@ -47,8 +47,8 @@ begin
         process (v_count, h_count) begin
             control.blank <= '0';
 
-            if h_count >= video_mode.h.resolution
-            or v_count >= video_mode.v.resolution
+            if (h_count >= video_mode.h.resolution
+            or v_count >= video_mode.v.resolution)
             then
                 control.blank <= '1';
             end if;

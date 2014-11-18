@@ -45,7 +45,7 @@ begin
 
   mask_enable_out <= instruction_in(31);
 
-  register_write_enable_out <= '1' when opcode = R_TYPE_OPCODE
+  register_write_enable_out <= '1' when opcode = R_TYPE_OPCODE or opcode = ADD_IMMEDIATE_OPCODE or opcode = LOAD_CONSTANT_OPCODE
                           else '0';
 
   lsu_load_enable_out <= '1' when opcode = LW_OPCODE

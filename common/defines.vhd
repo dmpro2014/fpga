@@ -26,7 +26,7 @@ package defines is
   constant NUMBER_OF_STREAMING_PROCESSORS_BIT_WIDTH: integer := 1;
 
   --One block ram is 576 instructions
-  constant INSTRUCTION_MEM_SIZE: integer := 576 * 10;
+  constant INSTRUCTION_MEM_SIZE: integer := 576;
 
   --Constant mem size has a hard limit of 2^16, log_size of 16.
   constant CONSTANT_MEM_SIZE: integer := 256;

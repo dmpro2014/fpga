@@ -17,6 +17,7 @@ entity load_store_unit is
          sram_bus_control_1_out : out sram_bus_control_t;
          sram_bus_data_2_inout : inout sram_bus_data_t;
          sram_bus_control_2_out : out sram_bus_control_t;
+         memory_request_out : out std_logic;
 
          -- Streaming processor wires
          registers_file_select_out : out barrel_row_t;
@@ -29,10 +30,12 @@ architecture Behavioral of load_store_unit is
     signal requests_all       : request_batch_t;
 
     signal requests_even      : request_batch_part_t;
+    signal mem_request_even   : std_logic;
     signal mem_queue_top_even : request_t;
     signal read_response_even : read_response_t;
 
     signal requests_odd       : request_batch_part_t;
+    signal mem_request_odd   : std_logic;
     signal mem_queue_top_odd  : request_t;
     signal read_response_odd  : read_response_t;
 
@@ -72,6 +75,9 @@ begin
 
     -- Signal for detecting request.
     mem_request_accept <= request_sram_bus_read_in or request_sram_bus_write_in;
+    
+    -- Signal to request memory access from arbiter
+    memory_request_out <= mem_request_odd or mem_request_even;
 
     global_setup:
         process (clock) begin
@@ -116,6 +122,7 @@ begin
                 , request_packet => mem_queue_top_even
                 , write_enable   => mem_write_enable
                 , read_response  => read_response_even
+                , mem_request    => mem_request_even
 
                 , ram_control    => sram_bus_control_1_out
                 , ram_data       => sram_bus_data_1_inout
@@ -129,6 +136,7 @@ begin
                 , request_packet => mem_queue_top_odd
                 , write_enable   => mem_write_enable
                 , read_response  => read_response_odd
+                , mem_request    => mem_request_odd
 
                 , ram_control    => sram_bus_control_2_out
                 , ram_data       => sram_bus_data_2_inout

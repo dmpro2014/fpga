@@ -7,13 +7,6 @@ entity ghettocuda is
   Port ( -- Stuff
          clk : in std_logic;
          reset : in std_logic;
-
-         -- SRAM
-         sram_bus_data_1_inout : inout sram_bus_data_t;
-         sram_bus_control_1_out : out sram_bus_control_t;
-
-         sram_bus_data_2_inout : inout sram_bus_data_t;
-         sram_bus_control_2_out : out sram_bus_control_t;
          
          -- Constant memory
          constant_write_data_in : in word_t;
@@ -37,6 +30,7 @@ entity ghettocuda is
          load_store_sram_bus_control_1_out : out sram_bus_control_t;
          load_store_sram_bus_data_2_inout : inout sram_bus_data_t;
          load_store_sram_bus_control_2_out : out sram_bus_control_t;
+         load_store_memory_request_out : out std_logic;
 
          -- Generic IO
          led_1_out : out STD_LOGIC;
@@ -48,12 +42,14 @@ architecture Behavioral of ghettocuda is
 
   -- PC
   signal pc_out : std_logic_vector (15 downto 0);
+  signal pc_reset : std_logic;
 
   -- Thread spawner(TS)
   signal ts_pc_input_select_out : std_logic;
   signal ts_pc_out: instruction_address_t;
   signal ts_thread_id_out: thread_id_t;
   signal ts_id_write_enable_out : std_logic;
+  signal ts_kernel_complete_out_i : std_logic;
 
   signal ts_thread_done_in : std_logic;
 
@@ -67,7 +63,7 @@ architecture Behavioral of ghettocuda is
 
   -- Instruction memory
   signal instruction_data_out : instruction_t;
-
+  signal instruction_delay_instruction_out : instruction_t;
 
 
   -- Load / Store unit
@@ -101,10 +97,13 @@ architecture Behavioral of ghettocuda is
   signal constant_storage_value_out: word_t;
   
 begin          
+
+  ts_kernel_complete_out <= ts_kernel_complete_out_i;
+
   -- Instruction decode
   instruction_decode: entity work.instruction_decode
   port map(
-      instruction_in => instruction_data_out,
+      instruction_in => instruction_delay_instruction_out,
       operand_rs_out => decode_operand_rs_out,
       operand_rt_out => decode_operand_rt_out,
       operand_rd_out => decode_operand_rd_out,
@@ -182,7 +181,7 @@ begin
             pc_input_select_out => TS_pc_input_select_out,
             thread_id_out => TS_thread_id_out,
             id_write_enable_out => TS_id_write_enable_out,
-            kernel_complete_out => TS_kernel_complete_out
+            kernel_complete_out => ts_kernel_complete_out_i
           );
 
   load_store_unit : entity work.load_store_unit
@@ -200,6 +199,7 @@ begin
             sram_bus_control_1_out => load_store_sram_bus_control_1_out,
             sram_bus_data_2_inout => load_store_sram_bus_data_2_inout,
             sram_bus_control_2_out => load_store_sram_bus_control_2_out,
+            memory_request_out => load_store_memory_request_out,
 
             --Streaming processor wires
             registers_file_select_out => load_store_registers_file_select_out,
@@ -207,10 +207,11 @@ begin
             sp_sram_bus_data_out => load_store_sp_sram_data_out
           );
 
+  pc_reset <= reset or ts_kernel_complete_out_i;
   pc : entity work.pc
   port map(
             clk => clk,
-            reset => reset,
+            reset => pc_reset,
             write_enable => warp_drive_pc_write_enable_out,
             pc_in => TS_pc_out,
 						pc_input_select_in => TS_pc_input_select_out,
@@ -224,6 +225,16 @@ begin
             address_hi_select_in => instruction_memory_address_hi_select_in,
             data_in => instruction_memory_data_in,
             data_out => instruction_data_out);
+
+  instruction_delay : entity work.instruction_delay
+  generic map(
+               BARREL_BIT_WIDTH => BARREL_HEIGHT_BIT_WIDTH)
+  port map(
+            clk => clk,
+            shift_instructions_in => warp_drive_pc_write_enable_out,
+            active_barrel_row_in => warp_drive_active_barrel_row_out,
+            instruction_in => instruction_data_out,
+            instruction_out => instruction_delay_instruction_out);
 
   -- MUX units
   mux_instruction_address : entity work.mux_2
