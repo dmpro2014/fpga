@@ -53,13 +53,9 @@ package hdmi_definitions is
     end record;
 
     -- These timings where gathered from CEA-861-D.
---    constant video_640x480_60Hz : video_mode_t :=
---        ( h => (total => 800, resolution => 640, sync => (start => 656, stop => 752, active => '0'))
---        , v => (total => 490, resolution => 480, sync => (start => 490, stop => 492, active => '0'))
---        );
     constant video_640x480_60Hz : video_mode_t :=
-        ( h => (total => 800, resolution => 128, sync => (start => 656, stop => 752, active => '0'))
-        , v => (total => 490, resolution => 8, sync => (start => 490, stop => 492, active => '0'))
+        ( h => (total => 800, resolution => 640, sync => (start => 656, stop => 752, active => '0'))
+        , v => (total => 490, resolution => 480, sync => (start => 490, stop => 492, active => '0'))
         );
 
     function to_video_pixel(d: word_t) return video_pixel_t;
