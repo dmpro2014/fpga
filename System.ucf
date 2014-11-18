@@ -6,7 +6,14 @@ Net clk TNM_NET = sys_clk_pin  |  LOC=L12 | IOSTANDARD = LVCMOS33;
 #net reset loc = T18;
 #net clk_sys_out loc = A5;
 
+net debug_signal0 loc = A5 | IOSTANDARD = LVCMOS33;
+net debug_signal1 loc = C5 | IOSTANDARD = LVCMOS33;
+net debug_signal2 loc = C4 | IOSTANDARD = LVCMOS33;
+
 net led_1_out loc = J13  | IOSTANDARD = LVCMOS33;
+#net led_2_out loc = K14  | IOSTANDARD = LVCMOS33;
+
+#GPIOs:  A5 C5 C4
 
 ############
 ## BANK 3 ##
@@ -27,10 +34,10 @@ net ebi_control_in_chip_select_fpga_n loc = A4 | IOSTANDARD = LVCMOS33;
 #net ebi_control_in_address(22) loc = V12;
 #net ebi_control_in_address(21) loc = N10;
 #net ebi_control_in_address(20) loc = P11;
-#net ebi_control_in_address(19) loc = M10;
-#net ebi_control_in_address(18) loc = N10;
-#net ebi_control_in_address(17) loc = U11;
-#net ebi_control_in_address(16) loc = V11;
+net ebi_control_in_address(19) loc = A2 | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(18) loc = B2 | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(17) loc = T3 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(16) loc = R3 | IOSTANDARD = LVCMOS33;
 net ebi_control_in_address(15) loc = t5 | IOSTANDARD = LVCMOS33;
 net ebi_control_in_address(14) loc = r5 | IOSTANDARD = LVCMOS33;
 net ebi_control_in_address(13) loc = v4 | IOSTANDARD = LVCMOS33;
@@ -49,7 +56,7 @@ net ebi_control_in_address(1) loc = n9  | IOSTANDARD = LVCMOS33;
 net ebi_control_in_address(0) loc = m10  | IOSTANDARD = LVCMOS33;
 
 #net mc_frame_buffer_select_in loc = T11;  #EBI addr 24
-net mc_kernel_complete_out loc = C5;  #EBI addr 25
+net mc_kernel_complete_out loc = K14 | IOSTANDARD = LVCMOS33;  #EBI addr 25
 
 
 net ebi_data_inout(15) loc = F18 | IOSTANDARD = LVCMOS33;

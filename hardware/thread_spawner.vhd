@@ -21,10 +21,10 @@ entity thread_spawner is
 end thread_spawner;
 
 architecture Behavioral of thread_spawner is
-  signal kernel_addr_reg  : instruction_address_t;
-  signal thread_number_reg: thread_id_t;
-  signal next_id_reg      : thread_id_t;
-  signal next_id_in       : thread_id_t;
+  signal kernel_addr_reg  : instruction_address_t := (others => '0');
+  signal thread_number_reg: thread_id_t := (others => '0');
+  signal next_id_reg      : thread_id_t := (others => '0');
+  signal next_id_in       : thread_id_t := (others => '0');
   signal num_minus_next_id: thread_id_t;
   signal kernels_left     : thread_id_t;
   signal update_next_id   : std_logic;

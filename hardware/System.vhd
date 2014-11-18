@@ -35,7 +35,10 @@ entity System is
          -- MC Special kernel complete flag
          mc_kernel_complete_out : out std_logic;
          mc_frame_buffer_select_in : in std_logic;
-
+        
+          debug_signal0 : out std_logic := '0';
+          debug_signal1 : out std_logic := '0';
+          debug_signal2 : out std_logic := '0';
 
          -- MC SPI
          mc_spi_bus : inout spi_bus_t;
@@ -118,11 +121,14 @@ begin
 
   --Output system clock for testing and debugging
   
---  clock_output: ODDR2 port map ( d0 => '1', d1 => '0', c0 => clock_sys, c1 => not clock_sys, q => clk_sys_out);
+--  clock_output: ODDR2 port map ( d0 => '1', d1 => '0', c0 => clock_sys, c1 => not clock_sys, q => debug_signal1);
 --  clk_sys_out <= clock_sys;
   sram_1_enable_n <= '0';
   sram_2_enable_n <= '0';
   
+  debug_signal0 <= sram_bus_control_1_out.write_enable_n;
+  debug_signal1 <= load_store_sram_bus_control_1_out.write_enable_n;
+  debug_signal2 <= load_store_memory_request_out;
   
   sram_bus_control_1_out <= sram_bus_control_1_out_i;
   sram_bus_data_1_inout <= sram_bus_data_1_inout_i;
@@ -157,7 +163,10 @@ begin
             load_store_sram_bus_data_2_inout => load_store_sram_bus_data_2_inout,
             load_store_sram_bus_control_2_out => load_store_sram_bus_control_2_out,
             load_store_memory_request_out => load_store_memory_request_out,
-
+            
+            debug_signal0 => debug_signal0,
+            debug_signal1 => debug_signal1,
+            debug_signal2 => debug_signal2,
             -- Generic IO
             led_1_out => led_1_out,
             led_2_out => led_2_out);

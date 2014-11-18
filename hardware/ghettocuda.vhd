@@ -31,6 +31,10 @@ entity ghettocuda is
          load_store_sram_bus_data_2_inout : inout sram_bus_data_t;
          load_store_sram_bus_control_2_out : out sram_bus_control_t;
          load_store_memory_request_out : out std_logic;
+         
+         debug_signal0 : out std_logic;
+         debug_signal1 : out std_logic;
+         debug_signal2 : out std_logic;
 
          -- Generic IO
          led_1_out : out STD_LOGIC;
@@ -97,7 +101,11 @@ architecture Behavioral of ghettocuda is
   signal constant_storage_value_out: word_t;
   
 begin          
-
+--  debug_signal0 <= ts_id_write_enable_out;
+--  debug_signal1 <= ts_pc_out(0);
+--  debug_signal2 <= instruction_data_out(13);
+  
+  
   ts_kernel_complete_out <= ts_kernel_complete_out_i;
 
   -- Instruction decode
