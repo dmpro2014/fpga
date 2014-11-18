@@ -9,7 +9,7 @@ entity instruction_delay is
       BARREL_BIT_WIDTH: integer := 4);
 
   Port(
-        clk : in std_logic;
+        clk, reset : in std_logic;
         shift_instructions_in : in std_logic;
         active_barrel_row_in : in std_logic_vector(BARREL_BIT_WIDTH -1 downto 0);
         instruction_in : in instruction_t;
@@ -35,7 +35,9 @@ begin
   shift_instructions: process (clk) is
   begin
     if rising_edge(clk) then
-      if shift_instructions_in = '1' then
+      if reset = '1' then
+        instruction_queue <= (others => (others => '0'));
+      elsif shift_instructions_in = '1' then
         instruction_queue(0) <= instruction_in;
         for i in 1 to BARREL_HEIGHT - 1 loop
           instruction_queue(i) <= instruction_queue(i-1);

@@ -4,7 +4,7 @@ TIMESPEC TS_sys_clk_pin = PERIOD sys_clk_pin 66.6 MHz;
 Net clk TNM_NET = sys_clk_pin  |  LOC=L12 | IOSTANDARD = LVCMOS33;
 
 #net reset loc = T18;
-#net clk_sys_out loc = A5;
+#net clk_sys_out loc = A5  | IOSTANDARD = LVCMOS33;
 
 net debug_signal0 loc = A5 | IOSTANDARD = LVCMOS33;
 net debug_signal1 loc = C5 | IOSTANDARD = LVCMOS33;

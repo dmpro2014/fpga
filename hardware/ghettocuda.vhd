@@ -56,6 +56,7 @@ architecture Behavioral of ghettocuda is
   signal ts_kernel_complete_out_i : std_logic;
 
   signal ts_thread_done_in : std_logic;
+  signal ts_flush_instruction_delay_i : std_logic;
 
   -- Streaming processor (SP)
   signal sp_sram_bus_addresses_out : sp_sram_addresses_t;
@@ -101,9 +102,9 @@ architecture Behavioral of ghettocuda is
   signal constant_storage_value_out: word_t;
   
 begin          
---  debug_signal0 <= decode_lsu_write_enable_out;
---  debug_signal1 <= instruction_data_out(28);
---  debug_signal2 <= instruction_data_out(13);
+  debug_signal0 <= ts_pc_input_select_out;
+  debug_signal1 <= ts_kernel_complete_out_i;
+  debug_signal2 <= instruction_data_out(13);
   
   
   ts_kernel_complete_out <= ts_kernel_complete_out_i;
@@ -189,7 +190,8 @@ begin
             pc_input_select_out => TS_pc_input_select_out,
             thread_id_out => TS_thread_id_out,
             id_write_enable_out => TS_id_write_enable_out,
-            kernel_complete_out => ts_kernel_complete_out_i
+            kernel_complete_out => ts_kernel_complete_out_i,
+            flush_instruction_delay_out => ts_flush_instruction_delay_i
           );
 
   load_store_unit : entity work.load_store_unit
@@ -238,7 +240,7 @@ begin
   generic map(
                BARREL_BIT_WIDTH => BARREL_HEIGHT_BIT_WIDTH)
   port map(
-            clk => clk,
+            clk => clk, reset => ts_flush_instruction_delay_i,
             shift_instructions_in => warp_drive_pc_write_enable_out,
             active_barrel_row_in => warp_drive_active_barrel_row_out,
             instruction_in => instruction_data_out,
@@ -251,9 +253,5 @@ begin
             b_in => instruction_memory_address_in,
             select_in => instruction_memory_write_enable_in,
             data_out => mux_instruction_memory_address_in_out);
-            
- 
-
 
 end Behavioral;
-

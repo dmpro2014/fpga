@@ -26,37 +26,57 @@ end instruction_decode;
 architecture rtl of instruction_decode is
   alias opcode is instruction_in(30 downto 26);
 begin
-  operand_rs_out <= instruction_in(21 + REGISTER_COUNT_BIT_WIDTH - 1 downto 21);
 
-  operand_rt_out <= instruction_in(16 + REGISTER_COUNT_BIT_WIDTH - 1 downto 16);
+  process (instruction_in) is
+  begin
+    -- Registers
+    operand_rs_out <= instruction_in(21 + REGISTER_COUNT_BIT_WIDTH - 1 downto 21);
+    operand_rt_out <= instruction_in(16 + REGISTER_COUNT_BIT_WIDTH - 1 downto 16);
+    operand_rd_out <= instruction_in(16 + REGISTER_COUNT_BIT_WIDTH - 1 downto 16);
 
-  operand_rd_out <= instruction_in(11 + REGISTER_COUNT_BIT_WIDTH - 1 downto 11)  when opcode = R_TYPE_OPCODE
-               else instruction_in(16 + REGISTER_COUNT_BIT_WIDTH - 1 downto 16);
+    -- Other values
+    alu_shamt_out <= instruction_in(6 + ALU_SHAMT_WIDTH -1 downto 6);
+    alu_funct_out <= instruction_in(ALU_FUNCT_WIDTH - 1 downto 0);
+    immediate_operand_out <= instruction_in(15 downto 0);
 
-  alu_shamt_out <= instruction_in(6 + ALU_SHAMT_WIDTH -1 downto 6);
-  
-  alu_funct_out <= ALU_FUNCTION_ADD when opcode = ADD_IMMEDIATE_OPCODE
-                   else instruction_in(ALU_FUNCT_WIDTH -1 downto 0);
+    -- Control signals
+    mask_enable_out <= instruction_in(31);
+    register_write_enable_out <= '0';
+    lsu_load_enable_out <= '0';
+    lsu_write_enable_out <= '0';
+    constant_write_enable_out <= '0';
+    immediate_enable_out <= '0';
+    thread_done_out <= '0';
 
-  immediate_enable_out <= '1' when opcode = ADD_IMMEDIATE_OPCODE
-                     else '0';
-  
-  immediate_operand_out <= instruction_in(15 downto 0);
+    case opcode is
 
-  mask_enable_out <= instruction_in(31);
+      when ADD_IMMEDIATE_OPCODE =>
+        register_write_enable_out <= '1';
+        immediate_enable_out <= '1';
+        alu_funct_out <= ALU_FUNCTION_ADD;
 
-  register_write_enable_out <= '1' when opcode = R_TYPE_OPCODE or opcode = ADD_IMMEDIATE_OPCODE or opcode = LOAD_CONSTANT_OPCODE
-                          else '0';
+      when R_TYPE_OPCODE =>
+        register_write_enable_out <= '1';
+        operand_rd_out <= instruction_in(11 + REGISTER_COUNT_BIT_WIDTH - 1 downto 11);
 
-  lsu_load_enable_out <= '1' when opcode = LW_OPCODE
-                          else '0';
-  lsu_write_enable_out <= instruction_in(28);
+      when LW_OPCODE =>
+        lsu_load_enable_out <= '1';
 
-  constant_write_enable_out <= '1' when opcode = LOAD_CONSTANT_OPCODE
-                                else '0';
+      when SW_OPCODE =>
+        lsu_write_enable_out <= '1';
 
-  thread_done_out <= '1' when opcode = THREAD_FINISHED_OPCODE
-                else '0';
+      when LOAD_CONSTANT_OPCODE =>
+        register_write_enable_out <= '1';
+        constant_write_enable_out <= '1';
+
+      when THREAD_FINISHED_OPCODE =>
+        thread_done_out <= '1';
+
+      when others =>
+        null;
+
+    end case;
+  end process;
 
 end rtl;
 

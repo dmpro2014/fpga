@@ -16,7 +16,7 @@ end fake_ram;
 architecture Behavioral of fake_ram is
 
   type mem_t is array(512 - 1 downto 0) of word_t;
-  signal fake_mem : mem_t := (others => (others => init_value));
+  signal fake_mem : mem_t;-- := (others => (others => init_value));
 
 begin
   data_inout <= fake_mem(to_integer(unsigned(address_in(8 downto 0)))) when write_enable_n_in = '1'

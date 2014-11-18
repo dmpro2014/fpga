@@ -8,6 +8,7 @@ use work.hdmi_definitions.all;
 entity System is
   Port ( -- Stuff
          clk : in std_logic;
+         clk_sys_out : out std_logic;
 --         reset : in std_logic;
 
          -- SRAM
@@ -41,7 +42,7 @@ entity System is
           debug_signal2 : out std_logic := '0';
 
          -- MC SPI
-         mc_spi_bus : inout spi_bus_t;
+--         mc_spi_bus : inout spi_bus_t;
 
          -- Generic IO
          led_1_out : out STD_LOGIC;
@@ -121,14 +122,14 @@ begin
 
   --Output system clock for testing and debugging
   
---  clock_output: ODDR2 port map ( d0 => '1', d1 => '0', c0 => clock_sys, c1 => not clock_sys, q => debug_signal1);
+--  clock_output: ODDR2 port map ( d0 => '1', d1 => '0', c0 => clock_sys, c1 => not clock_sys, q => clk_sys_out);
 --  clk_sys_out <= clock_sys;
   sram_1_enable_n <= '0';
   sram_2_enable_n <= '0';
   
-  debug_signal0 <= sram_bus_control_1_out.write_enable_n;
-  debug_signal1 <= load_store_sram_bus_control_1_out.write_enable_n;
-  debug_signal2 <= load_store_memory_request_out;
+--  debug_signal0 <= sram_bus_control_1_out.write_enable_n;
+--  debug_signal1 <= load_store_sram_bus_control_1_out.write_enable_n;
+--  debug_signal2 <= load_store_memory_request_out;
   
   sram_bus_control_1_out <= sram_bus_control_1_out_i;
   sram_bus_data_1_inout <= sram_bus_data_1_inout_i;
