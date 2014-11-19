@@ -11,6 +11,7 @@ entity video_timing_generator is
         ; reset    : in  std_logic
         ; launch   : in  std_logic
         ; control  : out  video_control_t
+        ; sending_image : out std_logic
         );
 
 end video_timing_generator;
@@ -29,6 +30,17 @@ architecture Behavioral of video_timing_generator is
     constant video_mode : video_mode_t := video_640x480_60Hz;
 
 begin
+
+    letterboxing:
+        process (v_count, h_count) begin
+            sending_image <= '0';
+
+            if  (h_count > 287 and h_count < 352)
+            and (v_count > 207 and v_count < 272)
+            then
+                sending_image <= '1';
+            end if;
+        end process;
 
     launch_proc:
         process (clock) begin
