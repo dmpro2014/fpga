@@ -77,7 +77,10 @@ begin
              , buffer_1_address_end_top when others;
 
     ram_address_counter:
-        process (clock_sys) begin
+        process (clock_sys, video_control.vsync) begin
+            if video_control.vsync = '0' then
+              ram_read_address_i <= buffer_start_address;
+            end if;
             if rising_edge(clock_sys) then
                 if ram_read_address_i = buffer_end_address then
                     ram_read_address_i <= buffer_start_address;
