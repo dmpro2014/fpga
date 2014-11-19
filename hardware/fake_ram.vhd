@@ -15,22 +15,31 @@ end fake_ram;
 
 architecture Behavioral of fake_ram is
 
-  type mem_t is array(512 - 1 downto 0) of word_t;
+  type mem_t is array(8192 - 1 downto 0) of word_t;
   signal fake_mem : mem_t := (others => (others => init_value));
+  
+  attribute ram_style:string;
+  attribute ram_style of fake_mem: signal is "block";
+  
+  
+  signal data_in_i : word_t; --Data in to the sram
+  signal data_out_i : word_t; --Data out of the sram
 
 begin
-  data_inout <= fake_mem(to_integer(unsigned(address_in(8 downto 0)))) when write_enable_n_in = '1'
-            else (others => 'Z');
+
+  --Write
+  data_in_i <= data_inout;
+  --Read
+  data_inout <= data_out_i when write_enable_n_in = '1' else (others => 'Z');
 
   mem: process (clk) is
   begin
-
     if rising_edge(clk) then
       if write_enable_n_in = '0' then
-          fake_mem(to_integer(unsigned(address_in(8 downto 0)))) <= data_inout;
+          fake_mem(to_integer(unsigned(address_in(12 downto 0)))) <= data_in_i;
       end if;
+          data_out_i <= fake_mem(to_integer(unsigned(address_in(12 downto 0))));
     end if;
-
   end process;
 
 end Behavioral;
