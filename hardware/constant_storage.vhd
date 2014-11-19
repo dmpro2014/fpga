@@ -22,7 +22,9 @@ end constant_storage;
 architecture rtl of constant_storage is
 
   type register_file_t is array(DEPTH - 1 downto 0) of word_t;
-  signal register_file : register_file_t := (others => (others => '0'));
+  signal register_file : register_file_t := ((0)   => "0000011111111111" 
+                                            ,others => X"0000"
+                                            );
 
 begin
 

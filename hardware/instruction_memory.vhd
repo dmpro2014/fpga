@@ -18,21 +18,52 @@ end instruction_memory;
 architecture behavioral of instruction_memory is
 
   type mem_t is array(INSTRUCTION_MEM_SIZE - 1 downto 0) of word_t;
-  signal inst_mem_hi : mem_t := ( (3) => X"0002" 
-                                , (4) => X"0001"
-                                , (5) => X"0002"
-                                , (6) => X"1000"
-                                , (7) => X"7800"
-                                , (8) => X"4000"
-                                , others => (others => '0')
-                                );
-  signal inst_mem_lo : mem_t := ( (3) => X"2804" 
-                                , (4) => X"1804"
-                                , (5) => X"2004"
-                                , (6) => X"0000"
-                                , (7) => X"0000"
-                                , (8) => X"0000"
-                                , others => (others => '0'));
+  signal inst_mem_hi : mem_t := ( (10) => X"4000", others => (others => '0') );
+--                               (0) => X"0000" -- ldc $lsu_data, 0
+--                               ,(1) => X"0000" -- ldc $lsu_data, 0
+--                               ,(2) => X"0000" -- ldc $lsu_data, 0
+--                               ,(3) => X"0000" -- ldc $lsu_data, 0
+--                               ,(4) => X"0805" -- 
+--                               ,(5) => X"0001" -- add $address_hi, $zero, $id_hi
+--                               ,(6) => X"0002" -- add $address_lo, $zero, $id_lo
+--                               ,(7) => X"1000" -- sw
+--                               ,(8) => X"0000" -- nop
+--                               ,(9) => X"0000" -- nop
+--                               ,(10) => X"0000" -- nop
+--                               ,(11) => X"4000" -- thread_finished
+--                               ,(12) => X"0000" -- thread_finished
+--                               ,(13) => X"0000" -- thread_finished
+--                               ,(14) => X"0000" -- thread_finished
+--                               ,(15) => X"0000" -- thread_finished
+--                                , others => (others => '0')
+--                                );
+
+--                                (3) => X"0002" 
+--                                , (4) => X"0001"
+--                                , (5) => X"0002"
+--                                , (6) => X"1000"
+--                                , (7) => X"0000"
+--                                , (8) => X"4000"
+
+  signal inst_mem_lo : mem_t := ( others => (others => '0'));
+--                               (0) => X"0000" -- ldc $lsu_data, 0
+--                               ,(1) => X"0000" -- ldc $lsu_data, 0
+--                               ,(2) => X"0000" -- ldc $lsu_data, 0
+--                               ,(3) => X"0000" -- ldc $lsu_data, 0
+--                               ,(4) => X"0000" -- ldc $lsu_data, 0
+--                               ,(5) => X"1820" -- add $address_hi, $zero, $id_hi
+--                               ,(6) => X"2020" -- add $address_lo, $zero, $id_lo
+--                               ,(7) => X"0000" -- sw
+--                               ,(8) => X"0000" -- nop
+--                               ,(9) => X"0000" -- nop
+--                               ,(10) => X"0000" -- nop
+--                               ,(11) => X"0000" -- thread_finished
+--                               ,(12) => X"0000" -- thread_finished
+--                               ,(13) => X"0000" -- thread_finished
+--                               ,(14) => X"0000" -- thread_finished
+--                               ,(15) => X"0000" -- thread_finished
+--                                , others => (others => '0')
+--                                );
 
 begin
 

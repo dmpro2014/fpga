@@ -102,7 +102,7 @@ architecture Behavioral of ghettocuda is
   
 begin          
   debug_signal0 <= ts_pc_input_select_out;
-  debug_signal1 <= ts_pc_out(0);
+  debug_signal1 <= pc_out(1);
   debug_signal2 <= decode_thread_done_out;
 --  
 --  
