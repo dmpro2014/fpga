@@ -127,7 +127,8 @@ begin
                 );
 
     scanout_pixel <= to_video_pixel(scanout_pixel_raw) when sending_image = '1'
-                else to_video_pixel((others => ticktok));
+                else (red => X"AA", green => X"AA", blue => X"AA") when ticktok = '1'
+                else (red => X"88", green => X"88", blue => X"88");
 
     timing_generator:
         entity work.video_timing_generator
