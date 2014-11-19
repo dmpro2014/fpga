@@ -62,6 +62,9 @@ architecture Behavioral of video_unit is
     signal green_s : std_logic;
     signal blue_s  : std_logic;
     signal clock_s : std_logic;
+
+    signal sending_image : std_logic := '0';
+
 begin
     
     with front_buffer_select
@@ -116,25 +119,21 @@ begin
                 -- Not sure how the 32 to 16 conversion takes place. Maybe these should change places.
                 , din    => fifo_din
 
-                , rd_en  => blank_n
+                , rd_en  => sending_image
                 , dout   => scanout_pixel_raw
                 );
 
-    scanout_pixel <= to_video_pixel(scanout_pixel_raw);
---    scanout_pixel.red <= X"FF";
---    scanout_pixel.green <= X"00";
---    scanout_pixel.blue <= X"00";
-
-
-    blank_n <= not video_control.blank;
+    scanout_pixel <= to_video_pixel(scanout_pixel_raw) when sending_image = '1'
+                else to_video_pixel(X"FFFF");
 
     timing_generator:
         entity work.video_timing_generator
             port map
-                ( clock        => clock_pixel
-                , reset        => reset
-                , launch       => '1' --fifo_full
-                , control      => video_control
+                ( clock         => clock_pixel
+                , reset         => reset
+                , launch        => '1' --fifo_full
+                , control       => video_control
+                , sending_image => sending_image
                 );
 
     Inst_dvid: entity work.dvid PORT MAP(
