@@ -62,11 +62,14 @@ architecture Behavioral of video_unit is
     signal green_s : std_logic;
     signal blue_s  : std_logic;
     signal clock_s : std_logic;
-
     signal sending_image : std_logic := '0';
+
+    signal ticktok : std_logic := '0';
 
 begin
     
+    ticktok <= not ticktok when rising_edge(clock_25);
+
     with front_buffer_select
     select
         buffer_start_address
@@ -124,7 +127,7 @@ begin
                 );
 
     scanout_pixel <= to_video_pixel(scanout_pixel_raw) when sending_image = '1'
-                else to_video_pixel(X"FFFF");
+                else to_video_pixel((others => ticktok));
 
     timing_generator:
         entity work.video_timing_generator
