@@ -1,2 +1,3 @@
-SETPROJECT "/opt/dmlab/home/eirikjak/ghettoCUDA/fpga/ipcore_dir/coregen.cgp"
-LAUNCHXCO "/opt/dmlab/home/eirikjak/ghettoCUDA/fpga/ipcore_dir/ip_memory.xco"
+NEWPROJECT "/home/lionleaf/projects/dmpro/fpga/ipcore_dir/coregen.cgp"
+SETPROJECT "/home/lionleaf/projects/dmpro/fpga/ipcore_dir/coregen.cgp"
+LAUNCHXCO "/home/lionleaf/projects/dmpro/fpga/ipcore_dir/clock_unit.xco"
