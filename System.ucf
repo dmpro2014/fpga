@@ -7,8 +7,8 @@ Net clk TNM_NET = sys_clk_pin  |  LOC=L12 | IOSTANDARD = LVCMOS33;
 #net clk_sys_out loc = A5  | IOSTANDARD = LVCMOS33;
 
 net debug_signal0 loc = A5 | IOSTANDARD = LVCMOS33;
-net debug_signal1 loc = C5 | IOSTANDARD = LVCMOS33;
-net debug_signal2 loc = C4 | IOSTANDARD = LVCMOS33;
+#net debug_signal1 loc = C5 | IOSTANDARD = LVCMOS33;
+#net debug_signal2 loc = C4 | IOSTANDARD = LVCMOS33;
 
 net led_1_out loc = J13  | IOSTANDARD = LVCMOS33;
 net led_2_out loc = U17  | IOSTANDARD = LVCMOS33;
@@ -55,8 +55,9 @@ net ebi_control_in_address(2) loc = m8  | IOSTANDARD = LVCMOS33;
 net ebi_control_in_address(1) loc = n9  | IOSTANDARD = LVCMOS33;
 net ebi_control_in_address(0) loc = m10  | IOSTANDARD = LVCMOS33;
 
-#net mc_frame_buffer_select_in loc = T11;  #EBI addr 24
+net mc_frame_buffer_select_in loc = C4 | IOSTANDARD = LVCMOS33;  #EBI addr 24
 net mc_kernel_complete_out loc = K14 | IOSTANDARD = LVCMOS33;  #EBI addr 25
+net mc_kernel_complete_out loc = C5 | IOSTANDARD = LVCMOS33;  #EBI addr 25
 
 
 net ebi_data_inout(15) loc = F18 | IOSTANDARD = LVCMOS33;
