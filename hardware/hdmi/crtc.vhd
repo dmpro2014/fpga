@@ -37,9 +37,9 @@ architecture Behavioral of video_unit is
     constant video_size : natural := video_mode.h.resolution * video_mode.v.resolution;
 
     constant buffer_0_address_top : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := to_unsigned(0, DATA_ADDRESS_WIDTH - 1);
-    constant buffer_0_address_end_top : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := to_unsigned(4096, DATA_ADDRESS_WIDTH - 1);
-    constant buffer_1_address_top : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := to_unsigned(4096, DATA_ADDRESS_WIDTH - 1);
-    constant buffer_1_address_end_top : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := to_unsigned(8192, DATA_ADDRESS_WIDTH - 1);
+    constant buffer_0_address_end_top : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := to_unsigned(2048, DATA_ADDRESS_WIDTH - 1);
+    constant buffer_1_address_top : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := to_unsigned(2048, DATA_ADDRESS_WIDTH - 1);
+    constant buffer_1_address_end_top : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := to_unsigned(4096, DATA_ADDRESS_WIDTH - 1);
 
 
     signal buffer_start_address : unsigned(DATA_ADDRESS_WIDTH - 2 downto 0) := buffer_0_address_top;
@@ -85,7 +85,7 @@ begin
     ram_address_counter:
         process (clock_sys, video_control.vsync) begin
             if video_control.vsync = '0' then
-              ram_read_address_i <= buffer_start_address;
+              ram_read_address_i <= buffer_start_address + 512;
             end if;
             if rising_edge(clock_sys) then
                 if ram_read_address_i = buffer_end_address then
