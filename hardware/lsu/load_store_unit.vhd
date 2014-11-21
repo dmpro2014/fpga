@@ -84,7 +84,10 @@ begin
             if rising_edge(clock) then
                 if mem_request_accept = '1' then
                     mem_write_enable      <= request_sram_bus_write_in;
-                    writeback_barrel_line <= register_file_select_in;
+                end if;
+
+                if request_sram_bus_read_in = '1' then
+                  writeback_barrel_line <= register_file_select_in;
                 end if;
             end if;
         end process;
@@ -145,28 +148,21 @@ begin
     -- Deserialize record for output
     process (clock) begin
         if rising_edge(clock) then
+            registers_write_enable_out <= read_response_even.valid and read_response_odd.valid;
+
             sp_sram_bus_data_out_i(0) <= read_response_even.data;
             sp_sram_bus_data_out_i(1) <= read_response_odd.data;
-            for i in 1 to (sp_sram_datas_t'high/2) loop
-                sp_sram_bus_data_out_i(i*2)   <= sp_sram_bus_data_out_i((i-1)*2);
-                sp_sram_bus_data_out_i(i*2+1) <= sp_sram_bus_data_out_i((i-1)*2+1);
-            end loop;
+
+            if sp_sram_datas_t'high > 2 then
+              for i in 1 to (sp_sram_datas_t'high/2) loop
+                  sp_sram_bus_data_out_i(i*2)   <= sp_sram_bus_data_out_i((i-1)*2);
+                  sp_sram_bus_data_out_i(i*2+1) <= sp_sram_bus_data_out_i((i-1)*2+1);
+              end loop;
+            end if;
         end if;
     end process;
 
-    registers_write_enable_out <= read_response_even.valid or read_response_odd.valid;
     registers_file_select_out <= writeback_barrel_line;
---    sp_sram_bus_data_out_even(read_response_even.sp/2) <= read_response_even.data;
---    sp_sram_bus_data_out_odd(read_response_odd.sp/2)  <= read_response_odd.data;
-
---    writeback_static_switch:
---        for i in request_batch_part_t'range generate
---            sp_sram_bus_data_out(i*2)   <= sp_sram_bus_data_out_even(i);
---            sp_sram_bus_data_out(i*2+1) <= sp_sram_bus_data_out_odd(i);
---        end generate;
-
-    -- Because for some reasons (nobody seem to know), we are not supposed
-    -- to use `buffer` ports.
     sp_sram_bus_data_out <= sp_sram_bus_data_out_i;
 
 

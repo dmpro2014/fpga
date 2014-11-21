@@ -141,6 +141,20 @@ BEGIN
      end procedure;
 
 
+     procedure write_memory(data_in : in word_t;
+                              address     : in integer) is begin
+         ebi_data_inout <= data_in;
+         ebi_control_in.address <= "0000" & std_logic_vector(to_unsigned(address, 16));
+         ebi_control_in.write_enable_n <= '0';
+         ebi_control_in.read_enable_n <= '1';
+         ebi_control_in.chip_select_sram_n <= '0';
+         wait on clk_sys_out until rising_edge(clk_sys_out);
+
+         ebi_control_in.write_enable_n <= '1';
+         ebi_control_in.chip_select_sram_n <= '1';
+     end procedure;
+
+
      procedure check_memory(data : in word_t
                            ;address : in integer
                            ) is begin
@@ -251,6 +265,22 @@ BEGIN
     );
     CONSTANT NUM_THREADS_SQUARE : integer := 512*70;
 
+    constant KERNEL_LOAD : InstrData := (
+      X"00001804", -- add $address_hi, $0, $0
+      X"00002004", -- add $address_lo, $0, $0
+      X"20000000", -- lw
+      X"00011804", -- add $address_hi, $0, $id_hi
+      X"04080002", -- addi $8, $0, 2
+      X"01022004", -- add $address_lo, $8, $id_lo
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"10000000", -- sw
+      X"00000000", -- nop
+      X"00000000", -- nop
+      X"40000000" -- thread_finished
+    );
+    constant NUM_THREADS_LOAD : integer := 64;
+
    begin
       -- hold reset state for 100 ns.
       wait for 100 ns;
@@ -266,6 +296,7 @@ BEGIN
       fill_instruction_memory(KERNEL_FILLSCREEN, 200);
       fill_instruction_memory(KERNEL_SLT, 300);
       fill_instruction_memory(KERNEL_SQUARE, 400);
+      fill_instruction_memory(KERNEL_LOAD, 500);
 
       --------------------
       --  Kernel SRL   --
@@ -303,6 +334,22 @@ BEGIN
       end loop;
       report "Simulated SLT";
 
+      --------------------
+      --  Kernel Load   --
+      --------------------
+      report "Simulating load test";
+      write_memory(std_logic_vector(to_signed(55, 16)), 0);
+      write_memory(std_logic_vector(to_signed(55, 16)), 1);
+      simulate_kernel(500, NUM_THREADS_LOAD);
+
+      check_memory(std_logic_vector(to_signed(55, 16)), 0);
+      for i in 0 to NUM_THREADS_LOAD - 1 loop
+        check_memory(std_logic_vector(to_signed(55, 16)), i + 2);
+      end loop;
+
+      report "TEST SUCCESS!" severity failure;
+      report "Simulated Load";
+      wait;
 
       --------------------
       --Kernel Square   --
