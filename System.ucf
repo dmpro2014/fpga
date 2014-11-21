@@ -1,19 +1,22 @@
 VCCAUX = 3.3;
 
-TIMESPEC TS_sys_clk_pin = PERIOD sys_clk_pin 66.6 MHz;
-Net clk TNM_NET = sys_clk_pin  |  LOC=L12 | IOSTANDARD = LVCMOS33;
+timespec ts_sys_clk_pin = period sys_clk_pin 120 MHz;
+NET clk tnm_net = sys_clk_pin | loc = T10 | IOSTANDARD = LVCMOS33; ## Has been switched with ebi addr pin T13
 
-#net reset loc = T18;
-#net clk_sys_out loc = A5  | IOSTANDARD = LVCMOS33;
+############################
+## SRAM bus 1 constraints ##
+############################
 
-net debug_signal0 loc = A5 | IOSTANDARD = LVCMOS33;
-#net debug_signal1 loc = C5 | IOSTANDARD = LVCMOS33;
-#net debug_signal2 loc = C4 | IOSTANDARD = LVCMOS33;
 
-net led_1_out loc = J13  | IOSTANDARD = LVCMOS33;
-net led_2_out loc = U17  | IOSTANDARD = LVCMOS33;
+############
+## BANK 3 ##
+############
 
-#GPIOs:  A5 C5 C4
+############################
+## SRAM bus 2 constraints ##
+############################
+
+
 
 ############
 ## BANK 3 ##
@@ -23,10 +26,10 @@ net led_2_out loc = U17  | IOSTANDARD = LVCMOS33;
 ## EBI bus constraints ##
 #########################
 
-net ebi_control_in_read_enable_n loc = A3 | IOSTANDARD = LVCMOS33;
-net ebi_control_in_write_enable_n loc = B3 | IOSTANDARD = LVCMOS33;
-net ebi_control_in_chip_select_sram_n loc = B4 | IOSTANDARD = LVCMOS33;
-net ebi_control_in_chip_select_fpga_n loc = A4 | IOSTANDARD = LVCMOS33;
+net ebi_control_in_read_enable_n loc = P12 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_write_enable_n loc = U13 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_chip_select_sram_n loc = M11 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_chip_select_fpga_n loc = V13 | IOSTANDARD = LVCMOS33 ;
 
 #net ebi_control_in_address(25) loc = R11;
 #net ebi_control_in_address(24) loc = T11;
@@ -34,48 +37,48 @@ net ebi_control_in_chip_select_fpga_n loc = A4 | IOSTANDARD = LVCMOS33;
 #net ebi_control_in_address(22) loc = V12;
 #net ebi_control_in_address(21) loc = N10;
 #net ebi_control_in_address(20) loc = P11;
-net ebi_control_in_address(19) loc = A2 | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(18) loc = B2 | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(17) loc = T3 | IOSTANDARD = LVCMOS33 ;
-net ebi_control_in_address(16) loc = R3 | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(15) loc = t5 | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(14) loc = r5 | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(13) loc = v4 | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(12) loc = t4 | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(11) loc = v5 | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(10) loc = u5 | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(9) loc = p6  | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(8) loc = n5  | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(7) loc = p7  | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(6) loc = n6  | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(5) loc = p8  | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(4) loc = n7  | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(3) loc = n8  | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(2) loc = m8  | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(1) loc = n9  | IOSTANDARD = LVCMOS33;
-net ebi_control_in_address(0) loc = m10  | IOSTANDARD = LVCMOS33;
+net ebi_control_in_address(19) loc = M10 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(18) loc = N10 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(17) loc = U11 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(16) loc = V11 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(15) loc = R10 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(14) loc = T13 | IOSTANDARD = LVCMOS33 ; ## Has been switched with clk pin T10
+net ebi_control_in_address(13) loc = U10 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(12) loc = V10 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(11) loc = R8 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(10) loc = T8 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(9) loc = T9 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(8) loc = V9 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(7) loc = M8 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(6) loc = N8 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(5) loc = U8 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(4) loc = V8 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(3) loc = U7 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(2) loc = V7 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(1) loc = N7 | IOSTANDARD = LVCMOS33 ;
+net ebi_control_in_address(0) loc = P8 | IOSTANDARD = LVCMOS33 ;
 
-net mc_frame_buffer_select_in loc = C4 | IOSTANDARD = LVCMOS33;  #EBI addr 24
-net mc_kernel_complete_out loc = K14 | IOSTANDARD = LVCMOS33;  #EBI addr 25
-net mc_kernel_complete_out loc = C5 | IOSTANDARD = LVCMOS33;  #EBI addr 25
+net mc_frame_buffer_select_in loc = T11 | IOSTANDARD = LVCMOS33 ;  #EBI addr 24
+net mc_kernel_complete_out loc = R11 | IOSTANDARD = LVCMOS33 ;  #EBI addr 25
 
 
-net ebi_data_inout(15) loc = F18 | IOSTANDARD = LVCMOS33;
-net ebi_data_inout(14) loc = E18 | IOSTANDARD = LVCMOS33;
-net ebi_data_inout(13) loc = F17 | IOSTANDARD = LVCMOS33;
-net ebi_data_inout(12) loc = E16 | IOSTANDARD = LVCMOS33;
-net ebi_data_inout(11) loc = K13 | IOSTANDARD = LVCMOS33;
-net ebi_data_inout(10) loc = G13 | IOSTANDARD = LVCMOS33;
-net ebi_data_inout(9) loc = K12  | IOSTANDARD = LVCMOS33;
-net ebi_data_inout(8) loc = H12  | IOSTANDARD = LVCMOS33;
-net ebi_data_inout(7) loc = D18  | IOSTANDARD = LVCMOS33;
-net ebi_data_inout(6) loc = C18  | IOSTANDARD = LVCMOS33;
-net ebi_data_inout(5) loc = D17  | IOSTANDARD = LVCMOS33;
-net ebi_data_inout(4) loc = C17  | IOSTANDARD = LVCMOS33;
-net ebi_data_inout(3) loc = G14  | IOSTANDARD = LVCMOS33;
-net ebi_data_inout(2) loc = F16  | IOSTANDARD = LVCMOS33;
-net ebi_data_inout(1) loc = F14  | IOSTANDARD = LVCMOS33;
-net ebi_data_inout(0) loc = F15  | IOSTANDARD = LVCMOS33;
+net ebi_data_inout(15) loc = V6 | IOSTANDARD = LVCMOS33 ;
+net ebi_data_inout(14) loc = R7 | IOSTANDARD = LVCMOS33 ;
+net ebi_data_inout(13) loc = T7 | IOSTANDARD = LVCMOS33 ;
+net ebi_data_inout(12) loc = N6 | IOSTANDARD = LVCMOS33 ;
+net ebi_data_inout(11) loc = P7 | IOSTANDARD = LVCMOS33 ;
+net ebi_data_inout(10) loc = R5 | IOSTANDARD = LVCMOS33 ;
+net ebi_data_inout(9) loc = T5 | IOSTANDARD = LVCMOS33 ;
+net ebi_data_inout(8) loc = U5 | IOSTANDARD = LVCMOS33 ;
+net ebi_data_inout(7) loc = V5 | IOSTANDARD = LVCMOS33 ;
+net ebi_data_inout(6) loc = R3 | IOSTANDARD = LVCMOS33 ;
+net ebi_data_inout(5) loc = T3 | IOSTANDARD = LVCMOS33 ;
+net ebi_data_inout(4) loc = T4 | IOSTANDARD = LVCMOS33 ;
+net ebi_data_inout(3) loc = V4 | IOSTANDARD = LVCMOS33 ;
+net ebi_data_inout(2) loc = N5 | IOSTANDARD = LVCMOS33 ;
+net ebi_data_inout(1) loc = P6 | IOSTANDARD = LVCMOS33 ;
+net ebi_data_inout(0) loc = U3 | IOSTANDARD = LVCMOS33 ;
+
 
 # ROUTING OUT CLK_SYS FOR DEBUGGING AND FUN :D
 #net clk_sys_out loc = R15; 
@@ -96,26 +99,17 @@ net ebi_data_inout(0) loc = F15  | IOSTANDARD = LVCMOS33;
 ## HDMI constraints ##
 ######################
 
-net hdmi_connector_out_channel0_p loc = T6 | IOSTANDARD = TMDS_33 ;
-net hdmi_connector_out_channel0_n loc = V6 | IOSTANDARD = TMDS_33 ;
+net hdmi_connector_out_channel2_p loc = B2 | IOSTANDARD = TMDS_33 ;
+net hdmi_connector_out_channel2_n loc = A2 | IOSTANDARD = TMDS_33 ;
 
-net hdmi_connector_out_channel1_p loc = U7 | IOSTANDARD = TMDS_33 ;
-net hdmi_connector_out_channel1_n loc = V7 | IOSTANDARD = TMDS_33 ;
+net hdmi_connector_out_channel1_p loc = D6 | IOSTANDARD = TMDS_33 ;
+net hdmi_connector_out_channel1_n loc = C6 | IOSTANDARD = TMDS_33 ;
 
-net hdmi_connector_out_channel2_p loc = U8 | IOSTANDARD = TMDS_33 ;
-net hdmi_connector_out_channel2_n loc = V8 | IOSTANDARD = TMDS_33 ;
+net hdmi_connector_out_channel0_p loc = B3 | IOSTANDARD = TMDS_33 ;
+net hdmi_connector_out_channel0_n loc = A3 | IOSTANDARD = TMDS_33 ;
 
-net hdmi_connector_out_clock_p loc = R7 | IOSTANDARD = TMDS_33 ;
-net hdmi_connector_out_clock_n loc = T7 | IOSTANDARD = TMDS_33 ;
+net hdmi_connector_out_clock_p loc = B4 | IOSTANDARD = TMDS_33 ;
+net hdmi_connector_out_clock_n loc = A4 | IOSTANDARD = TMDS_33 ;
 
-#Copied from working LX16
-#NET "TMDS(0)"   LOC = "T6" | IOSTANDARD = TMDS_33 ; # Blue
-#NET "TMDSB(0)"  LOC = "V6" | IOSTANDARD = TMDS_33 ;
-#NET "TMDS(1)"   LOC = "U7" | IOSTANDARD = TMDS_33 ; # Red
-#NET "TMDSB(1)"  LOC = "V7" | IOSTANDARD = TMDS_33 ;
-#NET "TMDS(2)"   LOC = "U8" | IOSTANDARD = TMDS_33 ; # Green
-#NET "TMDSB(2)"  LOC = "V8" | IOSTANDARD = TMDS_33 ;
-#NET "TMDS(3)"   LOC = "R7" | IOSTANDARD = TMDS_33 ; # Clock
-#NET "TMDSB(3)"  LOC = "T7" | IOSTANDARD = TMDS_33 ;
 
 #p17 p18 LEDs
