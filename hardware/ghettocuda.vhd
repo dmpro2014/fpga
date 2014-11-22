@@ -51,6 +51,7 @@ architecture Behavioral of ghettocuda is
   -- Thread spawner(TS)
   signal ts_pc_input_select_out : std_logic;
   signal ts_pc_out: instruction_address_t;
+  signal ts_reset_pc : std_logic;
   signal ts_thread_id_out: thread_id_t;
   signal ts_id_write_enable_out : std_logic;
   signal ts_kernel_complete_out_i : std_logic;
@@ -188,6 +189,7 @@ begin
             thread_done_in => decode_thread_done_out,
             pc_start_out => TS_pc_out,
             pc_input_select_out => TS_pc_input_select_out,
+            reset_pc => ts_reset_pc,
             thread_id_out => TS_thread_id_out,
             id_write_enable_out => TS_id_write_enable_out,
             kernel_complete_out => ts_kernel_complete_out_i,
@@ -217,7 +219,7 @@ begin
             sp_sram_bus_data_out => load_store_sp_sram_data_out
           );
 
-  pc_reset <= reset or ts_kernel_complete_out_i;
+  pc_reset <= reset or ts_reset_pc;
   pc : entity work.pc
   port map(
             clk => clk,

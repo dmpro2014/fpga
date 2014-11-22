@@ -15,6 +15,7 @@ entity thread_spawner is
          num_threads_in: in thread_id_t :=  std_logic_vector(to_unsigned(1024,20));
          pc_start_out: out instruction_address_t;
          pc_input_select_out: out std_logic;
+         reset_pc: out std_logic;
          thread_id_out : out thread_id_t;
          id_write_enable_out: out std_logic;
          flush_instruction_delay_out: out std_logic);
@@ -51,8 +52,8 @@ begin
   kernel_complete_out <= '1' when signed(kernels_left) <= 0
                     else '0';
 
-  last_spawned <= '1' when signed(num_minus_next_id) <= 0
-             else '0';
+  last_spawned <= '1' when signed(num_minus_next_id) <= 0 else '0';
+  reset_pc <= '1' when signed(num_minus_next_id) < 0 else '0';
   
   spawn_new_threads  <= update_next_id and not last_spawned;
   
