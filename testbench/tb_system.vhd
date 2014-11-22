@@ -338,10 +338,7 @@ BEGIN
         check_memory(std_logic_vector(to_signed(55, 16)), i + 2);
       end loop;
 
-      report "TEST SUCCESS!" severity failure;
       report "Simulated Load";
-      wait;
-
       --------------------
       --Kernel Square   --
       --------------------
