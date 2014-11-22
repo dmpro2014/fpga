@@ -203,13 +203,10 @@ BEGIN
 
 
      constant KERNEL_SRL : InstrData := (
-       X"00000000", -- nop
        X"00022801", -- srl $5, $2, 0
        X"00011820", -- add $3, $0, $1
        X"00022020", -- add $4, $0, $2
        X"10000000", -- sw
-       X"00000000", -- nop
-       X"00000000", -- nop
        X"40000000" --finished
      );
      constant NUM_THREADS_SRL : integer := 1024;
@@ -219,9 +216,6 @@ BEGIN
       X"00011820", -- add $address_hi, $zero, $id_hi
       X"00022020", -- add $address_lo, $zero, $id_lo
       X"10000000", -- sw
-      X"00000000", -- nop
-      X"00000000", -- nop
-      X"00000000", -- nop
       X"40000000" -- thread_finished
     );
     constant NUM_THREADS_FILLSCREEN : integer := 256;
@@ -231,7 +225,6 @@ BEGIN
      X"0407000a", -- addi $7, $0, 10
      X"0408000c", -- addi $8, $0, 12
      X"00e83003", -- slt $mask, $7, $8
-     --X"01073003", -- slt $mask, $8, $7
      X"8405002a", -- ? addi $lsu_data, $0, 42
      X"00011804", -- add $address_hi, $0, $id_hi
      X"00022004", -- add $address_lo, $0, $id_lo
@@ -273,9 +266,7 @@ BEGIN
       X"04080002", -- addi $8, $0, 2
       X"01022004", -- add $address_lo, $8, $id_lo
       X"00000000", -- nop
-      X"00000000", -- nop
       X"10000000", -- sw
-      X"00000000", -- nop
       X"00000000", -- nop
       X"40000000" -- thread_finished
     );
