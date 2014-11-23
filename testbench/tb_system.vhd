@@ -198,7 +198,7 @@ BEGIN
       wait on mc_kernel_complete_out until mc_kernel_complete_out = '1';
       delta_cycles  := elapsed_cycles - delta_cycles;
       report "Kernels done @ " & natural'image(delta_cycles) & " cycles.";
-
+      wait for clk_period * NUMBER_OF_STREAMING_PROCESSORS * 2;
     end procedure;
 
 
