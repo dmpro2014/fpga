@@ -123,17 +123,14 @@ begin
 
   -- Constant storage
   constant_storage: entity work.constant_storage
-  generic map(
-               DEPTH => CONSTANT_MEM_SIZE,
-               LOG_DEPTH => CONSTANT_MEM_LOG_SIZE
-              )
   port map(
             clk => clk,
             write_constant_in => constant_write_data_in,
             write_enable_in => constant_write_enable_in,
             write_address_in => constant_write_address_in,
             constant_value_out => constant_storage_value_out,
-            constant_select_in => decode_immediate_operand_out
+            constant_select_in => decode_immediate_operand_out,
+            kernel_addr_in    => TS_pc_out
   );
 
 

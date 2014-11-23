@@ -307,7 +307,7 @@ BEGIN
       --------------------
       report "Simulating Constant fillscreen kernel";
 
-      write_constant(std_logic_vector(to_signed(30, 16)), 0);
+      write_constant(std_logic_vector(to_signed(30, 16)), 200);
       simulate_kernel(200, NUM_THREADS_FILLSCREEN);
 
       report "Checking memory";

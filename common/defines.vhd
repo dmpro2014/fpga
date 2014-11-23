@@ -25,12 +25,12 @@ package defines is
   constant NUMBER_OF_STREAMING_PROCESSORS: integer := 2;
   constant NUMBER_OF_STREAMING_PROCESSORS_BIT_WIDTH: integer := 1;
 
-  --One block ram is 576 instructions
-  constant INSTRUCTION_MEM_SIZE: integer := 576;
+  constant INSTRUCTION_MEM_SIZE: integer := 512;
+  constant INSTRUCTION_MEM_SIZE_LOG: integer := 9;
 
-  --Constant mem size has a hard limit of 2^16, log_size of 16.
-  constant CONSTANT_MEM_SIZE: integer := 256;
-  constant CONSTANT_MEM_LOG_SIZE: integer := 8;
+  --For virtual parameter address space, we need constant mem to be as big as the instruction mem
+  constant CONSTANT_MEM_SIZE: integer := INSTRUCTION_MEM_SIZE;
+  constant CONSTANT_MEM_LOG_SIZE: integer := INSTRUCTION_MEM_SIZE_LOG;
 
   type sp_sram_addresses_t is array(NUMBER_OF_STREAMING_PROCESSORS - 1 downto 0) of memory_address_t;
   type sp_sram_datas_t is array(NUMBER_OF_STREAMING_PROCESSORS - 1 downto 0) of word_t;
@@ -54,12 +54,12 @@ package defines is
   constant OPCODE_BIT_WIDTH : integer := 5;
   constant ALU_SHAMT_WIDTH : integer := 5;
   constant ALU_FUNCT_WIDTH : integer := 5;
-  constant INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH: integer := 16;
+  constant IMMEDIATE_BIT_WIDTH: integer := 16;
 
   subtype opcode_t is std_logic_vector(OPCODE_BIT_WIDTH - 1 downto 0);
   subtype shamt_t is std_logic_vector(ALU_SHAMT_WIDTH - 1 downto 0);
   subtype alu_funct_t is std_logic_vector(ALU_FUNCT_WIDTH -1 downto 0);
-  subtype immediate_value_t is std_logic_vector(INSTRUCTION_DECODE_IMMEDIATE_BIT_WIDTH -1 downto 0);
+  subtype immediate_value_t is std_logic_vector(IMMEDIATE_BIT_WIDTH -1 downto 0);
 
   ---------------------
   -- Named registers --
