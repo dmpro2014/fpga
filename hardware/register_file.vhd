@@ -65,7 +65,7 @@ begin
                        address_hi when register_address_hi,
                        address_lo when register_address_lo,
                        lsu_data when register_lsu_data,
-                       (others => '0') when register_mask,
+                       (0 => mask, others => '0') when register_mask,
                        general_registers(to_integer(unsigned(read_register_1_in))) when others;
 
   with to_integer(unsigned(read_register_2_in)) select
@@ -75,7 +75,7 @@ begin
                        address_hi when register_address_hi,
                        address_lo when register_address_lo,
                        lsu_data when register_lsu_data,
-                       (others => '0') when register_mask,
+                       (0 => mask, others => '0') when register_mask,
                        general_registers(to_integer(unsigned(read_register_2_in))) when others;
 
   registers: process (clk) is
