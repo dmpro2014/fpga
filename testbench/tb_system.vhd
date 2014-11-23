@@ -333,7 +333,6 @@ BEGIN
       write_memory(std_logic_vector(to_signed(55, 16)), 1);
       simulate_kernel(500, NUM_THREADS_LOAD);
 
-      check_memory(std_logic_vector(to_signed(55, 16)), 0);
       for i in 0 to NUM_THREADS_LOAD - 1 loop
         check_memory(std_logic_vector(to_signed(55, 16)), i + 2);
       end loop;
