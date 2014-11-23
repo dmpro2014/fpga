@@ -46,6 +46,8 @@ architecture Behavioral of load_store_unit is
 
     signal sp_sram_bus_data_out_i : sp_sram_datas_t;
 
+    signal writeback_barrel_line_next : barrel_row_t;
+
     function to_request_batch_t
         ( addresses    : sp_sram_addresses_t
         ; write_data   : sp_sram_datas_t
@@ -83,12 +85,14 @@ begin
         process (clock) begin
             if rising_edge(clock) then
                 if mem_request_accept = '1' then
-                    mem_write_enable      <= request_sram_bus_write_in;
+                    mem_write_enable <= request_sram_bus_write_in;
                 end if;
 
                 if request_sram_bus_read_in = '1' then
-                  writeback_barrel_line <= register_file_select_in;
+                  writeback_barrel_line_next <= register_file_select_in;
                 end if;
+
+                writeback_barrel_line <= writeback_barrel_line_next;
             end if;
         end process;
 
