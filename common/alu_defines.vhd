@@ -31,4 +31,7 @@ package alu_defines is
   constant ALU_FUNCTION_OR : alu_funct_t := "00111";
   constant ALU_FUNCTION_XOR : alu_funct_t := "01000";
 
+  constant ALU_FUNCTION_MULTIPLY : alu_funct_t := "01001";
+  constant ALU_FUNCTION_EQUAL : alu_funct_t := "01010";
+
 end package alu_defines;

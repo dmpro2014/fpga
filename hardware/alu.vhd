@@ -26,6 +26,8 @@ begin
         alu_result := signed(operand_a_in) + signed(operand_b_in);
       when ALU_FUNCTION_SUBTRACT =>
         alu_result := signed(operand_a_in) - signed(operand_b_in);
+      when ALU_FUNCTION_MULTIPLY =>
+        alu_result := resize(signed(operand_a_in) * signed(operand_b_in), WORD_WIDTH);
       when ALU_FUNCTION_AND =>
         alu_result := signed(operand_a_in) and signed(operand_b_in);
       when ALU_FUNCTION_OR =>
@@ -34,6 +36,12 @@ begin
         alu_result := signed(unsigned(operand_a_in) xor unsigned(operand_b_in));
       when ALU_FUNCTION_SLT =>
         if signed(operand_a_in) < signed(operand_b_in) then
+          alu_result := x"0001";
+        else
+          alu_result := x"0000";
+        end if;
+      when ALU_FUNCTION_EQUAL =>
+        if signed(operand_a_in) = signed(operand_b_in) then
           alu_result := x"0001";
         else
           alu_result := x"0000";
