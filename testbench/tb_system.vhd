@@ -296,7 +296,7 @@ BEGIN
 
       simulate_kernel(1, NUM_THREADS_SRL);
 
-      report "Checking memory";
+      report "Checking memory SRL";
       for i in 0 to NUM_THREADS_SRL - 1 loop
         check_memory(std_logic_vector(to_unsigned(i,16)), i);
       end loop;
@@ -310,7 +310,7 @@ BEGIN
       write_constant(std_logic_vector(to_signed(30, 16)), 0);
       simulate_kernel(200, NUM_THREADS_FILLSCREEN);
 
-      report "Checking memory";
+      report "Checking memory Constant";
       for i in 0 to NUM_THREADS_FILLSCREEN - 1 loop
         check_memory(std_logic_vector(to_signed(30, 16)), i);
       end loop;
@@ -333,6 +333,7 @@ BEGIN
       write_memory(std_logic_vector(to_signed(55, 16)), 1);
       simulate_kernel(500, NUM_THREADS_LOAD);
 
+      report "Checking load test memory";
       for i in 0 to NUM_THREADS_LOAD - 1 loop
         check_memory(std_logic_vector(to_signed(55, 16)), i + 2);
       end loop;
