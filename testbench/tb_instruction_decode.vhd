@@ -103,6 +103,7 @@ begin
          assert_equals('0', lsu_write_enable_out, "lsu_write_enable_out should be low on r_type instructions.");
          assert_equals('0', thread_done_out, "thread_done_out should be low on dead instructions.");   
          assert_equals('0', constant_write_enable_out, "constant_write_enable_out should be low on constant load instructions.");
+         report "Passed R type" severity note;
          -- Test load
          instruction_in <= "0" & LW_OPCODE & "00000000000000000000000000";
          wait for 1 ns;
@@ -111,6 +112,7 @@ begin
          assert_equals('0', lsu_write_enable_out, "lsu_write_enable_out should be low on r_type instructions.");
          assert_equals('0', thread_done_out, "thread_done_out should be low on dead instructions.");   
          assert_equals('0', constant_write_enable_out, "constant_write_enable_out should be low on constant load instructions.");
+         report "Passed LW" severity note;
          -- Test store
          instruction_in <= "1" & SW_OPCODE & "00000000000000000000000000";
          wait for 1 ns;
@@ -119,22 +121,25 @@ begin
          assert_equals('0', register_write_enable_out, "register_write_enable_out should be low on r_type instructions.");
          assert_equals('0', thread_done_out, "thread_done_out should be low on dead instructions.");    
          assert_equals('0', constant_write_enable_out, "constant_write_enable_out should be low on constant load instructions."); 
+         report "Passed SW" severity note;
          -- Test dead/sync thingy.
-         instruction_in <="1" & THREAD_FINISHED_OPCODE & "00000000000000000000000000";
+         instruction_in <="1" & THREAD_FINISHED_OPCODE & "10000000000000000000000000";
          wait for 1 ns;
          assert_equals('1', thread_done_out, "thread_done_out should be high on dead instructions.");
          assert_equals('0', lsu_load_enable_out, "lsu_load_enable_out should be low on loads.");
          assert_equals('0', register_write_enable_out, "register_write_enable_out should be low on r_type instructions.");
          assert_equals('0', lsu_write_enable_out, "lsu_write_enable_out should be low on r_type instructions.");
          assert_equals('0', constant_write_enable_out, "constant_write_enable_out should be low on constant load instructions.");
+         report "Passed thread finished" severity note;
          -- Test load constant.
          instruction_in <= "1" & LOAD_CONSTANT_OPCODE & "00000000000000000000000000";
          wait for 1 ns;
          assert_equals('1', constant_write_enable_out, "constant_write_enable_out should be high on constant load instructions.");
          assert_equals('0', lsu_load_enable_out, "lsu_load_enable_out should be low on loads.");
-         assert_equals('0', register_write_enable_out, "register_write_enable_out should be low on r_type instructions.");
+         assert_equals('1', register_write_enable_out, "register_write_enable_out should be low on r_type instructions.");
          assert_equals('0', lsu_write_enable_out, "lsu_write_enable_out should be low on r_type instructions.");
-         assert_equals('0', thread_done_out, "thread_done_out should be low on dead instructions.");         
+         assert_equals('0', thread_done_out, "thread_done_out should be low on dead instructions.");   
+         report "Passed load constant" severity note;
          wait;
        end process tb;
   --  end test bench 

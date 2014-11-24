@@ -39,10 +39,7 @@ architecture behavior of tb_register_file is
   signal predicate_out: std_logic;
 
   
-  -- Constant storage
-  signal constant_value_in: word_t;
-  signal constant_write_enable_in: std_logic;
-  
+
   function get_reg_addr(reg: integer) return std_logic_vector is
     begin
       return make_reg_addr(reg, reg_addr_bits);
@@ -74,9 +71,7 @@ architecture behavior of tb_register_file is
               lsu_write_data_out => lsu_write_data_out,
 
               lsu_address_out => lsu_address_out,
-              constant_value_in => constant_value_in,
-              predicate_out => predicate_out,
-              constant_write_enable_in => constant_write_enable_in
+              predicate_out => predicate_out
         );
 
   clk_process :process
@@ -145,11 +140,11 @@ architecture behavior of tb_register_file is
      begin
       -- Register $1,$2 ID HI,LOW      
       id_register_write_enable_in <= '1';
-      id_register_in <= "1111111111111111111"; 
+      id_register_in <= (others => '1'); 
       read_register_1_in <= get_reg_addr(register_id_hi);
       read_register_2_in <= get_reg_addr(register_id_lo);
       wait for clk_period;
-      assert_equals(make_word(7), read_data_1_out, "ID value should be split into high and low registers.");
+      assert_equals(make_word(15), read_data_1_out, "ID value should be split into high and low registers.");
       assert_equals("1111111111111111", read_data_2_out, "ID value should be split into high and low registers.");
       write_register_in <= get_reg_addr(register_id_hi);
       write_data_in <= make_word(4);
@@ -157,7 +152,7 @@ architecture behavior of tb_register_file is
       wait for clk_period;
       write_register_in <= get_reg_addr(register_id_lo);
       wait for clk_period;
-      assert_equals(make_word(7), read_data_1_out, "ID should be readonly.");
+      assert_equals(make_word(15), read_data_1_out, "ID should be readonly.");
       assert_equals("1111111111111111", read_data_2_out, "ID should be readonly.");
      end assert_id_registers;
      
@@ -183,17 +178,7 @@ architecture behavior of tb_register_file is
       end loop;
     end procedure assert_general_purpose_registers;
     
-    procedure assert_constant_register_write is
-     begin
-      constant_write_enable_in <= '1';
-      constant_value_in <= make_word(99);
-      write_register_in <= get_reg_addr(7);
-      read_register_1_in <= get_reg_addr(7);
-      wait for clk_period;
-      assert_equals(make_word(99), read_data_1_out, "Should be able to write constants to registers");
-      constant_write_enable_in <= '0'; 
-    end procedure assert_constant_register_write;
-    
+
     procedure assert_mask_register is
      begin
       register_write_enable_in <= '1';
@@ -215,7 +200,6 @@ architecture behavior of tb_register_file is
       
       assert_mask_register;
    
-      assert_constant_register_write;
       
       assert_general_purpose_registers;
 

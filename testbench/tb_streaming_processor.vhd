@@ -103,7 +103,7 @@ begin
    procedure load_id_registers_with(value: integer) is
     begin
       id_write_enable_in <= '1';
-      id_data_in <= to_logic_vector(value, 19);
+      id_data_in <= to_logic_vector(value, 20);
       wait for clk_period;
       id_write_enable_in <= '0';
    end procedure load_id_registers_with;
@@ -155,7 +155,7 @@ begin
       for row in 0 to BARREL_HEIGHT -1 loop
        barrel_select_in <= make_row(row);
        wait for 1 ns;
-       assert_equals(to_logic_vector(row*10, 19), lsu_address_out, "ID should have been moved into lsu address");
+       assert_equals(to_logic_vector(row*10, 20), lsu_address_out, "ID should have been moved into lsu address");
       end loop;
    end procedure assert_id_register_load;
    
