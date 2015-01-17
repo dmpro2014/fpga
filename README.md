@@ -11,7 +11,11 @@ and generate visual output over HDMI.
 The majority of the code is the "hardware" directory. 
 
 The top level module is System.vhdl, which contains four important modules: 
+
 The Communication Module that communicates over EBI with the CPU of the computer.
+
 The Video Module which is our HDMI implementation. (It might be a useful resource for anyone looking for HDMI in VHDL)
+
 The SRAM Arbiter which controls access to the memory.
+
 And finally the "ghettocuda" module, which is the implementation of the GPU architecture.
