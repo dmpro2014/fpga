@@ -3,7 +3,7 @@ VHDL implementation of Demolicious' custom GPU
 
 This is a Xilinx ISE project with all the VHDL source code that implements our custom GPU.
 
-For a general introduction to this project, please read/skim the [report](https://github.com/dmpro2014/report).
+For a general introduction to this project, please **read/skim the [report](https://github.com/dmpro2014/report).**
 
 The GPU has been tested on an FPGA and can execute kernels on hundreds of thousands of threads 
 and generate visual output over HDMI.
