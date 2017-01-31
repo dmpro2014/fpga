@@ -1,15 +1,11 @@
 VHDL implementation of Demolicious' custom GPU
 ===============
+**For a general introduction to this project, please read/skim the [report](https://github.com/dmpro2014/report).** 
 
-This is a Xilinx ISE project with all the VHDL source code that implements our custom GPU.
 
-For a general introduction to this project, please **read/skim the [report](https://github.com/dmpro2014/report).**
-
-The GPU has been tested on an FPGA and can execute kernels on hundreds of thousands of threads 
-and generate visual output over HDMI.
-
+This is a Xilinx ISE project with all the VHDL source code that implements our custom GPU. 
+The GPU has been tested on an FPGA and can execute kernels on hundreds of thousands of threads and generate visual output over HDMI.
 The majority of the code is the "hardware" directory. 
-
 The top level module is System.vhdl, which contains four important modules: 
 
 The Communication Module that communicates over EBI with the CPU of the computer.
